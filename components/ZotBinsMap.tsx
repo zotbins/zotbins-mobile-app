@@ -34,6 +34,7 @@ const ZotBinsMap = () => {
   const closeModal = () => {
     setDisplayModal(false);
     setActiveBinName("");
+    setActiveBinCoordinates([]);
   };
 
   const getDirections = async (start: number[], end: number[]) => {
