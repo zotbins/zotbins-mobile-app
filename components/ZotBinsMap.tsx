@@ -7,10 +7,10 @@ import Mapbox, {
   PointAnnotation,
   ShapeSource,
 } from "@rnmapbox/maps";
-import React, { useRef, useState, useEffect } from "react";
-import { Image, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Image, View, ActivityIndicator } from "react-native";
 import ZotBinsLogo from "../assets/images/zotbins_logo.png";
-import { markers } from "../assets/markers.js";
+import { markers } from "../assets/markers.js"; // bins @ sci lib, langson lib, student center: 
 
 import mapboxSdk from '@mapbox/mapbox-sdk';
 import mapboxDirections from '@mapbox/mapbox-sdk/services/directions';
@@ -22,12 +22,18 @@ Mapbox.setTelemetryEnabled(false);
 
 const directionsClient = mapboxDirections(mapboxSdk({ accessToken: process.env.EXPO_PUBLIC_MAPBOXACCESSTOKEN as string }));
 
+type Marker = {
+  name: string;
+  longitude: number;
+  latitude: number;
+};
 
 const ZotBinsMap = () => {
   const [displayModal, setDisplayModal] = useState(false);
   const [activeBinName, setActiveBinName] = useState("");
   const [activeBinCoordinates, setActiveBinCoordinates] = useState<number[]>([]);
   const [route, setRoute] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userLocation, setUserLocation] = useState<number[]>([]);
 
   useEffect(() => {
@@ -36,11 +42,25 @@ const ZotBinsMap = () => {
       if (status !== 'granted') {
         return;
       }
+
+      // get the users location
       const { coords } = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
       });
-      
+
       setUserLocation([coords.longitude, coords.latitude]);
+
+      // find nearest bin
+      const userCoords: [number, number] = [coords.longitude, coords.latitude];
+      const nearestBin = findNearestBin(userCoords, markers);
+
+      // set the active ben
+      setActiveBinName(nearestBin.name);
+      setActiveBinCoordinates([nearestBin.longitude, nearestBin.latitude]);
+
+      // get directions to nearest bin
+      await getDirections(userCoords, [nearestBin.longitude, nearestBin.latitude]);
+      setIsLoading(false);
     })();
   }, []);
 
@@ -51,6 +71,54 @@ const ZotBinsMap = () => {
     setDisplayModal(false);
     setActiveBinName("");
     setActiveBinCoordinates([]);
+  };
+
+  // function to calculate two distances, uses Haversine formula
+  // calculates straight distance, not Euclidean
+  const getDistance = (coord1: [number, number], coord2: [number, number]) => {
+    const toRad = (x: number) => (x * Math.PI) / 180;
+
+    const [lon1, lat1] = coord1;
+    const [lon2, lat2] = coord2;
+
+    const earthRad = 6371e3; // earth radius in meters
+    const lat1Rad = toRad(lat1);
+    const lat2Rad = toRad(lat2);
+    const latDiffRad = toRad(lat2 - lat1);
+    const longDiffRad = toRad(lon2 - lon1);
+
+    const a =
+      Math.sin(latDiffRad / 2) * Math.sin(latDiffRad / 2) +
+      Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+      Math.sin(longDiffRad / 2) * Math.sin(longDiffRad / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distance = earthRad * c; // distance in meters
+    return distance;
+  }
+
+
+  /* Find nearest bin from user's location
+      - set an initial bin to be the nearest bin
+      - calculate the distance to that bin (from user location)
+      - then calculate all distances from remaining bin 
+
+      datatype of output is a marker --> markers.js
+  */
+  const findNearestBin = (userCoords: [number, number], bins: Marker[]) => {
+    let nearest = bins[0]
+    let minDistance = getDistance(userCoords, [bins[0].longitude, bins[0].latitude]);
+
+    for (let i = 1; i < bins.length; i++) {
+      let distance = getDistance(userCoords, [bins[i].longitude, bins[i].latitude]);
+      if (distance < minDistance) {
+        nearest = bins[i];
+        minDistance = distance;
+      }
+    }
+
+    return nearest;
   };
 
   const getDirections = async (start: number[], end: number[]) => {
@@ -84,6 +152,14 @@ const ZotBinsMap = () => {
     getDirections(start, end);
   }
 
+  // show a loading indicator while fetching location and directions
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center align-center">
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <View className="w-full h-full">
