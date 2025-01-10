@@ -7,13 +7,15 @@ import Mapbox, {
   PointAnnotation,
   ShapeSource,
 } from "@rnmapbox/maps";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Image, View } from "react-native";
 import ZotBinsLogo from "../assets/images/zotbins_logo.png";
 import { markers } from "../assets/markers.js";
 
 import mapboxSdk from '@mapbox/mapbox-sdk';
 import mapboxDirections from '@mapbox/mapbox-sdk/services/directions';
+
+import * as Location from 'expo-location';
 
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOXACCESSTOKEN as string);
 Mapbox.setTelemetryEnabled(false);
@@ -27,7 +29,21 @@ const ZotBinsMap = () => {
   const [activeBinCoordinates, setActiveBinCoordinates] = useState<number[]>([]);
   const [route, setRoute] = useState<any>(null);
   const [userLocation, setUserLocation] = useState<number[]>([]);
-  
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        return;
+      }
+      const { coords } = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+      
+      setUserLocation([coords.longitude, coords.latitude]);
+    })();
+  }, []);
+
   // make type more specific instead of "any"
   const markerRefs: { [key: string]: any } = useRef({});
 
@@ -40,18 +56,18 @@ const ZotBinsMap = () => {
   const getDirections = async (start: number[], end: number[]) => {
     try {
       const response = await directionsClient.getDirections({
-          profile: 'walking',
-          waypoints: [
-              { coordinates: [start[0], start[1]] },
-              { coordinates: [end[0], end[1]] }
-          ],
-          geometries: 'geojson'
-        }).send();
+        profile: 'walking',
+        waypoints: [
+          { coordinates: [start[0], start[1]] },
+          { coordinates: [end[0], end[1]] }
+        ],
+        geometries: 'geojson'
+      }).send();
 
-        if (response && response.body && response.body.routes.length) {
-          setRoute(response.body.routes[0].geometry);
-        }
-    } 
+      if (response && response.body && response.body.routes.length) {
+        setRoute(response.body.routes[0].geometry);
+      }
+    }
     catch (error) {
       console.error(error);
     }
@@ -59,11 +75,15 @@ const ZotBinsMap = () => {
 
   const activateRouting = () => {
     // start is set to first bin for now, needs to be changed to user location
-    const start = [markers[0].longitude, markers[0].latitude];
+    // const start = [markers[0].longitude, markers[0].latitude];
+    if (!userLocation || userLocation.length !== 2) {
+      return;
+    }
+    const start = userLocation;
     const end = activeBinCoordinates;
     getDirections(start, end);
   }
-    
+
 
   return (
     <View className="w-full h-full">
@@ -127,11 +147,11 @@ const ZotBinsMap = () => {
       </MapView>
       {displayModal && (
         <View className="justify-center items-center">
-          <BinStatusModal 
-            name={activeBinName} 
+          <BinStatusModal
+            name={activeBinName}
             closeModal={closeModal}
             activateRouting={activateRouting}
-            />
+          />
         </View>
       )}
     </View>
