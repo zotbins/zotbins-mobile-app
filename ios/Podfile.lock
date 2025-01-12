@@ -1610,12 +1610,12 @@ PODS:
     - hermes-engine/Pre-built (= 0.74.5)
   - hermes-engine/Pre-built (0.74.5)
   - leveldb-library (1.22.6)
-  - MapboxCommon (23.11.2)
-  - MapboxCoreMaps (10.19.2):
+  - MapboxCommon (23.11.0)
+  - MapboxCoreMaps (10.19.1):
     - MapboxCommon (~> 23.11)
-  - MapboxMaps (10.19.1):
-    - MapboxCommon (= 23.11.2)
-    - MapboxCoreMaps (= 10.19.2)
+  - MapboxMaps (10.19.0):
+    - MapboxCommon (= 23.11.0)
+    - MapboxCoreMaps (= 10.19.1)
     - MapboxMobileEvents (= 2.0.0)
     - Turf (= 2.8.0)
   - MapboxMobileEvents (2.0.0)
@@ -2552,7 +2552,6 @@ PODS:
   - React-Mapbuffer (0.74.5):
     - glog
     - React-debug
-  - react-native-geolocation (3.4.0):
   - react-native-image-editor (4.2.1):
     - DoubleConversion
     - glog
@@ -2974,7 +2973,6 @@ DEPENDENCIES:
   - React-jsitracing (from `../node_modules/react-native/ReactCommon/hermes/executor/`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
-  - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - "react-native-image-editor (from `../node_modules/@react-native-community/image-editor`)"
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -3146,8 +3144,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   React-Mapbuffer:
     :path: "../node_modules/react-native/ReactCommon"
-  react-native-geolocation:
-    :path: "../node_modules/@react-native-community/geolocation"
   react-native-image-editor:
     :path: "../node_modules/@react-native-community/image-editor"
   react-native-maps:
@@ -3270,9 +3266,9 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 923b710231ad3d6f3f0495ac1ced35421e07d9a6
   hermes-engine: 8c1577f3fdb849cbe7729c2e7b5abc4b845e88f8
   leveldb-library: cc8b8f8e013647a295ad3f8cd2ddf49a6f19be19
-  MapboxCommon: 873b75dd0e8c5d7029e0c849437eba365f4887e5
-  MapboxCoreMaps: 35685edba03e44468aed57c3dfd7f8795edafda8
-  MapboxMaps: 05822ab0ee74f7d626e6471572439afe35c1c116
+  MapboxCommon: 119f3759f7dc9457f0695848108ab323eb643cb4
+  MapboxCoreMaps: ca17f67baced23f8c952166ac6314c35bad3f66c
+  MapboxMaps: b7f29ec7c33f7dc6d2947c1148edce6db81db9a7
   MapboxMobileEvents: d044b9edbe0ec7df60f6c2c9634fe9a7f449266b
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   RCT-Folly: 02617c592a293bd6d418e0a88ff4ee1f88329b47
@@ -3299,7 +3295,6 @@ SPEC CHECKSUMS:
   React-jsitracing: c83efb63c8e9e1dff72a3c56e88ae1c530a87795
   React-logger: 257858bd55f3a4e1bc0cf07ddc8fb9faba6f8c7c
   React-Mapbuffer: dce508662b995ffefd29e278a16b78217039d43d
-  react-native-geolocation: 997e9bf75e3996045de9d24fc9ef976b2fc95aad
   react-native-image-editor: e550291f882ad7220048736bfcc840029eda4833
   react-native-maps: cbf2f03bfeebfd7ec45966b066db13a075fd2af3
   react-native-safe-area-context: a240ad4b683349e48b1d51fed1611138d1bdad97
@@ -3343,6 +3338,6 @@ SPEC CHECKSUMS:
   VisionCamera: c95a8ad535f527562be1fb05fb2fd324578e769c
   Yoga: 33622183a85805e12703cd618b2c16bfd18bfffb
 
-PODFILE CHECKSUM: 001b892c6a000063c1dfb7842a0ad7dbcbb7362f
+PODFILE CHECKSUM: 3a3c5b5f017203c1804d0487531ef977c9f9de5c
 
 COCOAPODS: 1.15.2
