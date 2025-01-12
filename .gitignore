@@ -23,3 +23,8 @@ expo-env.d.ts
 google-services.json
 GoogleService-Info.plist
 
+
+# Expo
+.expo
+dist/
+web-build/

@@ -1372,8 +1372,6 @@ PODS:
     - Yoga
   - ExpoAsset (10.0.10):
     - ExpoModulesCore
-  - ExpoFileSystem (17.0.1):
-    - ExpoModulesCore
   - ExpoFont (12.0.9):
     - ExpoModulesCore
   - ExpoHead (3.5.21):
@@ -1445,7 +1443,7 @@ PODS:
   - Firebase/Storage (11.4.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 11.4.0)
-  - FirebaseAppCheckInterop (11.5.0)
+  - FirebaseAppCheckInterop (11.4.0)
   - FirebaseAuth (11.4.0):
     - FirebaseAppCheckInterop (~> 11.0)
     - FirebaseAuthInterop (~> 11.0)
@@ -1455,14 +1453,14 @@ PODS:
     - GoogleUtilities/Environment (~> 8.0)
     - GTMSessionFetcher/Core (< 5.0, >= 3.4)
     - RecaptchaInterop (~> 100.0)
-  - FirebaseAuthInterop (11.5.0)
+  - FirebaseAuthInterop (11.4.0)
   - FirebaseCore (11.4.0):
     - FirebaseCoreInternal (~> 11.0)
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/Logger (~> 8.0)
   - FirebaseCoreExtension (11.4.1):
     - FirebaseCore (~> 11.0)
-  - FirebaseCoreInternal (11.5.0):
+  - FirebaseCoreInternal (11.4.2):
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
   - FirebaseFirestore (11.4.0):
     - FirebaseCore (~> 11.4)
@@ -1484,7 +1482,7 @@ PODS:
     - gRPC-Core (~> 1.65.0)
     - leveldb-library (~> 1.22)
     - nanopb (~> 3.30910.0)
-  - FirebaseSharedSwift (11.5.0)
+  - FirebaseSharedSwift (11.4.0)
   - FirebaseStorage (11.4.0):
     - FirebaseAppCheckInterop (~> 11.0)
     - FirebaseAuthInterop (~> 11.0)
@@ -2552,6 +2550,28 @@ PODS:
   - React-Mapbuffer (0.74.5):
     - glog
     - React-debug
+  - react-native-image-editor (4.2.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-RCTImage
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-maps (1.14.0):
     - React-Core
   - react-native-safe-area-context (4.10.5):
@@ -2824,6 +2844,15 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNImageCropPicker (0.41.6):
+    - React-Core
+    - React-RCTImage
+    - RNImageCropPicker/QBImagePickerController (= 0.41.6)
+    - TOCropViewController (~> 2.7.4)
+  - RNImageCropPicker/QBImagePickerController (0.41.6):
+    - React-Core
+    - React-RCTImage
+    - TOCropViewController (~> 2.7.4)
   - rnmapbox-maps (10.1.33):
     - MapboxMaps (~> 10.19.0)
     - React
@@ -2879,6 +2908,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - Yoga
   - SocketRocket (0.7.0)
+  - TOCropViewController (2.7.4)
   - Turf (2.8.0)
   - VisionCamera (4.6.1):
     - VisionCamera/Core (= 4.6.1)
@@ -2901,7 +2931,6 @@ DEPENDENCIES:
   - expo-dev-menu (from `../node_modules/expo-dev-menu`)
   - expo-dev-menu-interface (from `../node_modules/expo-dev-menu-interface/ios`)
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
-  - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
   - ExpoHead (from `../node_modules/expo-router/ios`)
   - ExpoImagePicker (from `../node_modules/expo-image-picker/ios`)
@@ -2941,6 +2970,7 @@ DEPENDENCIES:
   - React-jsitracing (from `../node_modules/react-native/ReactCommon/hermes/executor/`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
+  - "react-native-image-editor (from `../node_modules/@react-native-community/image-editor`)"
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
@@ -2972,6 +3002,7 @@ DEPENDENCIES:
   - "RNFBFirestore (from `../node_modules/@react-native-firebase/firestore`)"
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - "rnmapbox-maps (from `../node_modules/@rnmapbox/maps`)"
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -3005,6 +3036,7 @@ SPEC REPOS:
     - nanopb
     - RecaptchaInterop
     - SocketRocket
+    - TOCropViewController
     - Turf
 
 EXTERNAL SOURCES:
@@ -3032,8 +3064,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-dev-menu-interface/ios"
   ExpoAsset:
     :path: "../node_modules/expo-asset/ios"
-  ExpoFileSystem:
-    :path: "../node_modules/expo-file-system/ios"
   ExpoFont:
     :path: "../node_modules/expo-font/ios"
   ExpoHead:
@@ -3109,6 +3139,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   React-Mapbuffer:
     :path: "../node_modules/react-native/ReactCommon"
+  react-native-image-editor:
+    :path: "../node_modules/@react-native-community/image-editor"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
   react-native-safe-area-context:
@@ -3171,6 +3203,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
   rnmapbox-maps:
     :path: "../node_modules/@rnmapbox/maps"
   RNReanimated:
@@ -3197,7 +3231,6 @@ SPEC CHECKSUMS:
   expo-dev-menu: 5b14897ecce3a8cf9e9cf9109344c2c192a3766a
   expo-dev-menu-interface: be32c09f1e03833050f0ee290dcc86b3ad0e73e4
   ExpoAsset: 323700f291684f110fb55f0d4022a3362ea9f875
-  ExpoFileSystem: 80bfe850b1f9922c16905822ecbf97acd711dc51
   ExpoFont: e7f2275c10ca8573c991e007329ad6bf98086485
   ExpoHead: 342c7a6692f00bd9f23169183098a5c78eebe644
   ExpoImagePicker: 12a420923383ae38dccb069847218f27a3b87816
@@ -3209,15 +3242,15 @@ SPEC CHECKSUMS:
   EXUpdatesInterface: 996527fd7d1a5d271eb523258d603f8f92038f24
   FBLazyVector: ac12dc084d1c8ec4cc4d7b3cf1b0ebda6dab85af
   Firebase: cf1b19f21410b029b6786a54e9764a0cacad3c99
-  FirebaseAppCheckInterop: d265d9f4484e7ec1c591086408840fdd383d1213
+  FirebaseAppCheckInterop: 1b9643ae2f1ee214488caa2f8e32b7bc2f0f3735
   FirebaseAuth: c359af98bd703cbf4293eec107a40de08ede6ce6
-  FirebaseAuthInterop: 1219bee9b23e6ebe84c256a0d95adab53d11c331
+  FirebaseAuthInterop: 9ac948965ac13ec9d8a080f39490ddb2bda30520
   FirebaseCore: e0510f1523bc0eb21653cac00792e1e2bd6f1771
   FirebaseCoreExtension: f1bc67a4702931a7caa097d8e4ac0a1b0d16720e
-  FirebaseCoreInternal: f47dd28ae7782e6a4738aad3106071a8fe0af604
+  FirebaseCoreInternal: 35731192cab10797b88411be84940d2beb33a238
   FirebaseFirestore: 2ccdf893fd7e175aa8ec58faa06338b346d27db8
   FirebaseFirestoreInternal: 004452c4669d5df8869c9f8f7a24ee0009852d5b
-  FirebaseSharedSwift: 302ac5967857ad7e7388b15382d705b8c8d892aa
+  FirebaseSharedSwift: 505dae2d05969dbf6d43749a642bb1bf230f0252
   FirebaseStorage: 1bf8f80ac3bb02c72844b7350e95e10be7113ef0
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
   glog: fdfdfe5479092de0c4bdbebedd9056951f092c4f
@@ -3256,6 +3289,7 @@ SPEC CHECKSUMS:
   React-jsitracing: c83efb63c8e9e1dff72a3c56e88ae1c530a87795
   React-logger: 257858bd55f3a4e1bc0cf07ddc8fb9faba6f8c7c
   React-Mapbuffer: dce508662b995ffefd29e278a16b78217039d43d
+  react-native-image-editor: e550291f882ad7220048736bfcc840029eda4833
   react-native-maps: cbf2f03bfeebfd7ec45966b066db13a075fd2af3
   react-native-safe-area-context: a240ad4b683349e48b1d51fed1611138d1bdad97
   React-nativeconfig: f326487bc61eba3f0e328da6efb2711533dcac46
@@ -3288,14 +3322,16 @@ SPEC CHECKSUMS:
   RNFBFirestore: 28d7bf76ed99961318e0f9bfffa94612588c64a0
   RNFBStorage: fa5af9e3b67d73d9bb433413d3dda9f58d5de047
   RNGestureHandler: 20a4307fd21cbff339abfcfa68192f3f0a6a518b
+  RNImageCropPicker: 8e39c01f205e00d739c31e682f068aac315587bf
   rnmapbox-maps: 4523a49f44df8c03ac9ea4000d9495e775b1bd85
   RNReanimated: d51431fd3597a8f8320319dce8e42cee82a5445f
   RNScreens: 30249f9331c3b00ae7cb7922e11f58b3ed369c07
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
+  TOCropViewController: 80b8985ad794298fb69d3341de183f33d1853654
   Turf: aa2ede4298009639d10db36aba1a7ebaad072a5e
   VisionCamera: c95a8ad535f527562be1fb05fb2fd324578e769c
   Yoga: 33622183a85805e12703cd618b2c16bfd18bfffb
 
-PODFILE CHECKSUM: 3a3c5b5f017203c1804d0487531ef977c9f9de5c
+PODFILE CHECKSUM: 001b892c6a000063c1dfb7842a0ad7dbcbb7362f
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.15.2
