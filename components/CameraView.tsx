@@ -1,5 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Camera } from "react-native-vision-camera";
@@ -19,6 +17,10 @@ const CameraView: React.FC<CameraViewProps> = ({
 }) => {
   return (
     <>
+      <View className="bg-black/30 z-10 w-screen h-screen flex justify-center items-center">
+        <View className="border-4 border-dashed rounded-md border-white bg-white/20 w-96 h-96 z-20" />
+      </View>
+
       <Camera
         style={StyleSheet.absoluteFill}
         device={device}
@@ -28,16 +30,7 @@ const CameraView: React.FC<CameraViewProps> = ({
       />
 
       <TouchableOpacity
-        className=" p-3 rounded-lg top-10 left-0 absolute"
-        onPress={() => {
-          router.back();
-        }}
-      >
-        <Ionicons name="chevron-back" size={40} color="white" />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        className=" p-3 rounded-lg bottom-12 absolute"
+        className="p-3 rounded-lg bottom-12 absolute z-20"
         onPress={takePicture}
       >
         <View className="border-4 border-white p-4 rounded-full">

@@ -23,7 +23,7 @@ const Home = () => {
         resizeMode="contain"
         className="w-2/5 h-2/5"
       />
-      <Text className="text-black text-3xl mb-5">Welcome to ZotZero!</Text>
+      <Text className="text-black text-3xl mb-5">Welcome to ZotBins!</Text>
 
       <View className="items-center justify-center w-full">
         {/* Onboarding Slides */}
