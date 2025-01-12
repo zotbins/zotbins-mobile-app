@@ -1,17 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
 const BackButton = () => {
   return (
-    <TouchableOpacity
-      className="bg-white rounded-full p-2"
+    <Pressable
+      className="bg-white rounded-full p-2 active:opacity-50"
       onPress={() => router.back()}
     >
       <Ionicons name="chevron-back" size={24} color={Colors.black} />
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

@@ -131,7 +131,7 @@ const Signup = () => {
         ) : (
           <>
             <Pressable
-              className="items-center justify-center py-5 rounded-md bg-tintColor mt-2"
+              className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50"
               onPress={signUp}
             >
               <Text className="text-white text-xl">Sign Up</Text>
@@ -146,7 +146,7 @@ const Signup = () => {
       </KeyboardAvoidingView>
       <View className="absolute bottom-12 left-5 z-10">
         <Pressable
-          className="bg-tintColor w-12 h-12 rounded-full justify-center items-center"
+          className="bg-tintColor w-12 h-12 rounded-full justify-center items-center active:opacity-50"
           onPress={() => router.push("/onboarding")}
         >
           <Text className="text-white text-3xl">?</Text>

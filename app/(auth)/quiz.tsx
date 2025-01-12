@@ -60,7 +60,7 @@ const Quiz = () => {
           <Pressable
             key={option}
             disabled={isOptionsDisabled}
-            className={`h-24 rounded-[10px] flex-row items-center justify-between px-5 my-3 
+            className={`h-24 rounded-[10px] flex-row items-center justify-between px-5 my-3 active:opacity-50
               ${
                 option == answer
                   ? "bg-tintColor"
@@ -93,7 +93,7 @@ const Quiz = () => {
         <Pressable
           onPress={handleNext}
           className="w-full border-2 border-grey bg-white px-5 my-2.5 h-16 rounded-[10px] 
-            flex-row items-center justify-center"
+            flex-row items-center justify-center active:opacity-50"
         >
           <Text className="text-2xl text-black text-center">
             {currentQuestionIndex == questions.length - 1
@@ -143,7 +143,7 @@ const Quiz = () => {
             </Text>
             <View className="pt-12">
               <Link href="/home" asChild>
-                <Pressable className="items-center justify-center py-5 px-8 rounded-sm shadow-sm bg-tintColor">
+                <Pressable className="items-center justify-center py-5 px-8 rounded-sm shadow-sm bg-tintColor active:opacity-50">
                   <Text className="text-black">Back to Home</Text>
                 </Pressable>
               </Link>
