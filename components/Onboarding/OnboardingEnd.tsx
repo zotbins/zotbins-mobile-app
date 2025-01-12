@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Pressable,
   Image,
-  TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
@@ -22,13 +21,13 @@ const OnboardingEnd = () => {
       <Text className="text-4xl font-bold text-lime-900 text-center mb-5">
         Get Started with Sustainability today!
       </Text>
-      <TouchableOpacity
-        className="rounded-lg px-6 py-3 flex items-center justify-center"
+      <Pressable
+        className="rounded-lg px-6 py-3 flex items-center justify-center active:opacity-50"
         style={{ backgroundColor: Colors.tintColor }}
         onPress={handleSignUp}
       >
         <Text className="text-white">Sign Up</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };

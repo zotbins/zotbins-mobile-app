@@ -1,6 +1,6 @@
 import auth from "@react-native-firebase/auth";
 import React, { useState } from "react";
-import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Text, TextInput, Pressable, View } from "react-native";
 
 const isSecure = (password: string) => {
   const passwordRegex = new RegExp(
@@ -137,17 +137,17 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({
         editable={!loading}
       />
 
-      <TouchableOpacity
+      <Pressable
         onPress={handleChangePassword}
         disabled={loading}
-        className={`px-4 py-3 my-2 rounded-lg ${
+        className={`px-4 py-3 my-2 rounded-lg active:opacity-50 ${
           loading ? "bg-blue" : "bg-blue"
         }`}
       >
         <Text className="text-white text-center">
           {loading ? "Changing Password..." : "Change Password"}
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };

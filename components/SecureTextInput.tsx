@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { TextInput, TouchableOpacity, View } from "react-native";
+import { TextInput, Pressable, View } from "react-native";
 
 interface SecureTextInputProps {
   password: string;
@@ -26,8 +26,8 @@ const SecureTextInput: React.FC<SecureTextInputProps> = ({
         value={password}
         onChangeText={setPassword}
       />
-      <TouchableOpacity
-        className="absolute right-0 top-0 h-full justify-center pr-3"
+      <Pressable
+        className="absolute right-0 top-0 h-full justify-center pr-3 active:opacity-50"
         onPress={() => setSecureTextEntry(!secureTextEntry)}
       >
         <Ionicons
@@ -35,7 +35,7 @@ const SecureTextInput: React.FC<SecureTextInputProps> = ({
           size={24}
           color="black"
         />
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };

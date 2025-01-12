@@ -23,3 +23,9 @@ expo-env.d.ts
 google-services.json
 GoogleService-Info.plist
 
+android/gradle.properties
+
+# Expo
+.expo
+dist/
+web-build/
