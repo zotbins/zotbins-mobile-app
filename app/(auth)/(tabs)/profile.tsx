@@ -5,7 +5,7 @@ import storage from "@react-native-firebase/storage";
 import * as ImagePicker from "expo-image-picker";
 import { Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, Pressable, Text, View } from "react-native";
 
 const Profile = () => {
   const user = auth().currentUser;
@@ -95,30 +95,30 @@ const Profile = () => {
           source={{ uri: profilePic }}
           className="w-24 h-24 rounded-full"
         />
-        <TouchableOpacity
+        <Pressable
           onPress={pickImage}
-          className="bg-blue px-4 py-3 rounded-lg my-2"
+          className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
         >
           <Text className="text-black"> Change Profile Picture </Text>
-        </TouchableOpacity>
+        </Pressable>
         <Text> USER: {user?.email}</Text>
         <Text> First name: {userDoc?.firstname} </Text>
         <Text> Last name: {userDoc?.lastname} </Text>
-        <TouchableOpacity
+        <Pressable
           onPress={() => auth().signOut()}
-          className="bg-blue px-4 py-3 rounded-lg my-2"
+          className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
         >
           <Text className="text-white"> Sign Out </Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           onPress={() => setShowPasswordForm(!showPasswordForm)}
-          className="bg-blue px-4 py-3 rounded-lg my-2"
+          className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
         >
           <Text className="text-white text-center">
             {showPasswordForm ? "Cancel Password Change" : "Change Password"}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
 
         {/* Conditionally render the PasswordChange form */}
         {showPasswordForm && (

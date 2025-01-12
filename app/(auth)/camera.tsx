@@ -1,15 +1,18 @@
+import BackButton from "@/components/BackButton";
 import CameraView from "@/components/CameraView";
 import ScanResults from "@/components/ScanResults";
 import { router, Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, SafeAreaView } from "react-native";
+import { ActivityIndicator, Alert, View } from "react-native";
 import { Camera, useCameraDevice } from "react-native-vision-camera";
 
 const CameraScreen = () => {
   const [cameraVisible, setCameraVisible] = useState<boolean>(false);
 
   const [image, setImage] = useState<string | null>(null);
-
+  const [imageDimensions, setImageDimensions] = useState<
+    [number, number] | null
+  >(null);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   const [camera, setCamera] = useState<Camera | null>(null);
@@ -38,8 +41,8 @@ const CameraScreen = () => {
       if (!camera) return;
 
       const photo = await camera.takePhoto();
-      const photoPath = `file://${photo.path}`;
-      setImage(photoPath);
+      setImage(photo.path);
+      setImageDimensions([photo.height, photo.width]);
     } catch (error) {
       console.error("Take picture error:", error);
       Alert.alert("Camera Error", "Failed to take picture");
@@ -63,8 +66,16 @@ const CameraScreen = () => {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
-      <SafeAreaView className="flex-1 bg-white items-center justify-center">
+      <Stack.Screen
+        options={{
+          headerShadowVisible: false,
+          headerBackVisible: false,
+          headerTransparent: true,
+          headerLeft: () => <BackButton />,
+          headerTitle: "",
+        }}
+      />
+      <View className="flex-1 bg-white items-center justify-center">
         {hasPermission === null ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : !image ? (
@@ -75,9 +86,13 @@ const CameraScreen = () => {
             takePicture={takePicture}
           />
         ) : (
-          <ScanResults image={image} setImage={setImage} />
+          <ScanResults
+            image={image}
+            imageDimensions={imageDimensions}
+            setImage={setImage}
+          />
         )}
-      </SafeAreaView>
+      </View>
     </>
   );
 };

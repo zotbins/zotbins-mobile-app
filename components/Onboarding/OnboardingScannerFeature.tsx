@@ -1,10 +1,7 @@
 import {
   View,
   Text,
-  StyleSheet,
-  Pressable,
   Image,
-  TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
@@ -14,10 +11,6 @@ import DotIndicator from "../DotIndicator";
 const OnboardingScannerFeature = () => {
   const router = useRouter();
   const totalPages = 4; // Update this to match the actual number of slides
-
-  // const goToNextPage = () => {
-  //   router.push("/quizFeature"); // Navigate to the next slide
-  // };
 
   return (
     <View className="flex-1 px-5 py-12 justify-center items-center bg-amber-50">
