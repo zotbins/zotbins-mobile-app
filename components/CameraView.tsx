@@ -1,6 +1,5 @@
-import { router, Stack } from "expo-router";
 import React from "react";
-import { StyleSheet, TouchableOpacity, View, Dimensions } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Camera } from "react-native-vision-camera";
 
 interface CameraViewProps {

@@ -3,7 +3,7 @@ import CameraView from "@/components/CameraView";
 import ScanResults from "@/components/ScanResults";
 import { router, Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, SafeAreaView, View } from "react-native";
+import { ActivityIndicator, Alert, View } from "react-native";
 import { Camera, useCameraDevice } from "react-native-vision-camera";
 
 const CameraScreen = () => {
