@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 
+// initialize user doc in firestore
 const createUserDocument = async (
   uid: string,
   email: string,
@@ -27,6 +28,7 @@ const createUserDocument = async (
   });
 };
 
+// verifies password has at least one uppercase, one lowercase, one number, and is at least 6 characters long
 const isSecure = (password: string) => {
   const passwordRegex = new RegExp(
     "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})"
@@ -62,6 +64,7 @@ const Signup = () => {
     }
   };
 
+  // create user with email and password in firebase auth and create user doc in firestore
   const signUp = async () => {
     setLoading(true);
     try {
