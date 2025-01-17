@@ -20,6 +20,7 @@ const Quiz = () => {
     outputRange: ["0%", "100%"],
   });
 
+  // show a progress bar of the quiz
   const displayProgress = () => {
     return (
       <View className="w-full h-5 rounded-[20px] bg-black/20">
@@ -31,6 +32,7 @@ const Quiz = () => {
     );
   };
 
+  // display quiz question
   const displayQuestion = () => {
     Animated.timing(progress, {
       toValue: currentQuestionIndex + 1,
@@ -53,6 +55,7 @@ const Quiz = () => {
     );
   };
 
+  // display possible answers
   const displayOptions = () => {
     return (
       <View>
@@ -77,6 +80,7 @@ const Quiz = () => {
     );
   };
 
+  // checks if answer selected is correct
   const checkAnswer = (selected: string) => {
     let answer = questions[currentQuestionIndex]["answer"];
     setCurrentSelected(selected);
@@ -87,6 +91,7 @@ const Quiz = () => {
     }
   };
 
+  // display "next question" button after current one is answered
   const showNextButton = () => {
     if (isOptionsDisabled) {
       return (
@@ -107,6 +112,7 @@ const Quiz = () => {
     }
   };
 
+  // update states for next question
   const handleNext = () => {
     if (currentQuestionIndex == questions.length - 1) {
       setShowResults(true);

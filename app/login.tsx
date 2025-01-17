@@ -18,6 +18,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // sign in the user or alert if error occures
   const signIn = async () => {
     setLoading(true);
     try {
