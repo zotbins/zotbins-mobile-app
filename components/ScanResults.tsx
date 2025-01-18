@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Image, Text, Pressable, View } from "react-native";
+import { Image, Text, View, TouchableOpacity } from "react-native";
 import ImageEditor from "@react-native-community/image-editor";
 
 interface ScanResultsProps {
@@ -27,6 +27,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({
     classifyWaste();
   }, [croppedImage, base64Image]);
 
+  // crop image to be 1600 x 1600 pixels for waste recognition model
   const cropImage = () => {
     if (imageDimensions) {
       const cropData = {
@@ -53,6 +54,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({
     }
   };
 
+  // send image to waste recognition model and get returned results
   const classifyWaste = async () => {
     if (croppedImage && base64Image) {
       const formData = new FormData();

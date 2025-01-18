@@ -18,6 +18,7 @@ const CameraScreen = () => {
   const [camera, setCamera] = useState<Camera | null>(null);
   const device = useCameraDevice("back");
 
+  // request camera permission and set cameraVisible to true if permission granted
   const requestCameraPermission = async () => {
     try {
       const permission = await Camera.requestCameraPermission();
@@ -36,6 +37,8 @@ const CameraScreen = () => {
     }
   };
 
+
+  // take picture with camera and set image state, rendering ScanResults component
   const takePicture = async () => {
     try {
       if (!camera) return;
@@ -49,10 +52,12 @@ const CameraScreen = () => {
     }
   };
 
+  // request camera permission on mount
   useEffect(() => {
     requestCameraPermission();
   }, []);
 
+  // only render camera view if camera permission granted and camera available
   useEffect(() => {
     if (hasPermission === false || !device) {
       router.back();
