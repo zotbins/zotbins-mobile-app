@@ -20,11 +20,23 @@ const createUserDocument = async (
   firstname: string,
   lastname: string
 ) => {
+  // initialize default values for user doc
+  const totalPoints: number = 0;
+  const dailyStreak: number = 0;
+  const lastStreakUpdate: number = Date.now();
+  const footprint: number = 0;
+  const spiritTrash: string = "Coca Cola";
   await firestore().collection("users").doc(uid).set({
     email,
     uid,
     firstname,
     lastname,
+    
+    totalPoints,
+    dailyStreak,
+    lastStreakUpdate,
+    footprint,
+    spiritTrash,
   });
 };
 

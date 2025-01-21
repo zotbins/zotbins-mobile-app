@@ -1,14 +1,68 @@
 import { View, Text, Pressable } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Stack } from "expo-router";
 import Header from "@/components/Header";
+import firestore from "@react-native-firebase/firestore";
+import auth from "@react-native-firebase/auth";
 
 const Home = () => {
+
+  const user = auth().currentUser;
+
+  const [streak, setStreak] = useState(0);
+
+  //checking streak within home in case we want a modal to pop up
+  const updateStreak = async (uid: any) => {
+    if (!uid) return;
+
+    const userDoc = firestore().collection("users").doc(uid);
+    const userData = (await userDoc.get()).data();
+    if (!userData) return;
+
+    const { dailyStreak, lastStreakUpdate } = userData;
+
+    const now = new Date();
+    const lastStreakUpdateDate = new Date(lastStreakUpdate);
+
+    const timeDiff = now.getTime() - lastStreakUpdateDate.getTime();
+
+    const hoursDiff = timeDiff / (1000 * 3600);
+
+    if (hoursDiff >= 24 && hoursDiff < 48) {
+      // increment dailystreak
+      await userDoc.update({
+        dailyStreak: dailyStreak + 1,
+        lastStreakUpdate: now.getTime(),
+      });
+      setStreak(dailyStreak + 1);
+      console.log("increment streak");
+    } else if (hoursDiff >= 48) {
+      // reset dailystreak
+      await userDoc.update({
+        dailyStreak: 0,
+        lastStreakUpdate: now.getTime(),
+      });
+      setStreak(0);
+      console.log("reset streak");
+    }
+    else {
+      setStreak(dailyStreak);
+      console.log("no streak update");
+    }
+  }
+
+  useEffect(() => {
+    if (user) {
+      updateStreak(user.uid);
+    }
+  }, [user]);
+
+
   return (
     <>
       <Stack.Screen
         options={{
-          header: () => <Header />,
+          header: () => <Header streak={streak}/>,
         }}
       />
 
