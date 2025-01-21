@@ -17,6 +17,12 @@ const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardUser[]>([]);
   const [userScore, setUserScore] = useState<number>(0);
   const [userRank, setUserRank] = useState<number>(0);
+  
+ /**
+ * @description Gets descending order of scores and searches to find the current user's score. 
+ * Adds rank, usernames, and scores to the leaderboard. Leaderboard only displays top 10 users.
+ */
+
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
@@ -71,19 +77,17 @@ const Leaderboard = () => {
           {currentUser.points} Points
         </Text>
         <Text className="text-2xl font-semibold mb-2">All Rankings</Text>
+
+        {/* Renders top 10 on leaderboard, if user is in top 10 then highlights user */}
         {leaderboardData.map((user) =>
           user.rank == userRank ? (
-            <Text
-              className="text-lg text-center mb-2 bg-tintColor"
-              key={user.rank}
-            >
+            <Text className="text-lg text-center mb-2 bg-tintColor"
+              key={user.rank}>
               Rank {userRank} - {"You"} - {userScore} Points
             </Text>
           ) : (
             <Text
-              className="text-lg text-center mb-2 text-black"
-              key={user.rank}
-            >
+              className="text-lg text-center mb-2 text-black" key={user.rank}>
               Rank {user.rank} - {user.username} - {user.points} Points
             </Text>
           )

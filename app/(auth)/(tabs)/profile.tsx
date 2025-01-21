@@ -9,7 +9,7 @@ import { Alert, Image, Pressable, Text, View } from "react-native";
 
 const Profile = () => {
   const user = auth().currentUser;
-
+  // set profile picture to user's photoURL or placeholder image
   const [profilePic, setProfilePic] = useState<string>(
     user?.photoURL || "https://via.placeholder.com/250"
   );
@@ -18,6 +18,7 @@ const Profile = () => {
 
   const [showPasswordForm, setShowPasswordForm] = useState(false);
 
+  // on user change, fetch user document from firestore
   useEffect(() => {
     const fetchUserDoc = async () => {
       const uid = user?.uid;
@@ -41,6 +42,7 @@ const Profile = () => {
     fetchUserDoc();
   }, [user]);
 
+  // request permission to access camera roll
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -50,6 +52,7 @@ const Profile = () => {
     }
   };
 
+  // pick image from camera roll, upload to firebase storage, and set user photoURL to storage URL
   const pickImage = async () => {
     requestPermission();
 
