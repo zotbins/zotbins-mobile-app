@@ -8,28 +8,31 @@ import auth from "@react-native-firebase/auth";
 const FriendRequests = () => {
   const [activeTab, setActiveTab] = useState<"sent" | "received">("sent");
   const [username, setUsername] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>();
-  const [friendRequestsSent, setFriendRequestsSent] = useState<string[]>([]);
   const [friendRequestsReceived, setFriendRequestsReceived] = useState<
     string[]
   >(["Alice", "Bob"]); // sample data
   const user = auth().currentUser;
 
+  // get information of current user
   useEffect(() => {
-    setLoading(false);
-    const findUsername = async () => {
+    const findCurrentUser = async () => {
       const querySnapshot = await firestore()
         .collection("users")
         .where("email", "==", user?.email)
         .get();
+
       setCurrentUser(querySnapshot.docs[0].data());
     };
-    findUsername();
+
+    findCurrentUser();
+    setLoading(false);
+    console.log("TRIGGERED");
   }, [loading]);
 
-  // finds and returns a user if it exists
-  async function findUser(username: string) {
+  // finds and returns a (receiving) user if it exists
+  async function findReceivingUser(username: string) {
     const querySnapshot = await firestore()
       .collection("users")
       .where("username", "==", username)
@@ -46,10 +49,10 @@ const FriendRequests = () => {
   }
 
   const handleAddFriend = async () => {
+    setLoading(true);
     // validation and request handling
-    const foundUser = await findUser(username.trim());
-    console.log(foundUser?.blockedUsers);
-    if (foundUser == null || foundUser == undefined) {
+    const receivingUser = await findReceivingUser(username.trim());
+    if (receivingUser == null || receivingUser == undefined) {
       Alert.alert(
         "Error",
         `Unable to send friend request: user ${username.trim()} not found!`
@@ -58,26 +61,28 @@ const FriendRequests = () => {
     }
     // cannot send request to blocked user
     else if (
-      foundUser.length > 0 &&
-      foundUser.blocked.includes(currentUser.username)
+      receivingUser.length > 0 &&
+      receivingUser.blocked.includes(currentUser.username)
     ) {
       Alert.alert("Error", "You cannot send a request to this user.");
       return;
     }
 
-    // update sent friend requests array (the current user)
+    // add receiving user to current user's sentFriendRequests
     firestore()
       .collection("users")
       .doc(currentUser.uid)
       .update({
         // no need to check for duplicates since arrayUnion handles that
-        friendRequestsSent: firestore.FieldValue.arrayUnion(foundUser.username),
+        friendRequestsSent: firestore.FieldValue.arrayUnion(
+          receivingUser.username
+        ),
       });
 
-    // update received friend requests array (the receiving user)
+    // add current user to receiving user's receivedFriendRequests
     firestore()
       .collection("users")
-      .doc(foundUser.uid)
+      .doc(receivingUser.uid)
       .update({
         // no need to check for duplicates since arrayUnion handles that
         friendRequestsReceived: firestore.FieldValue.arrayUnion(
@@ -102,6 +107,14 @@ const FriendRequests = () => {
     Alert.alert("Blocked", `You blocked ${user}.`);
     setFriendRequestsReceived((prev) => prev.filter((u) => u !== user));
   };
+
+  if (loading) {
+    return (
+      <View>
+        <Text>Loading</Text>
+      </View>
+    );
+  }
 
   return (
     <View className="pt-32 flex-1 p-5 bg-white">
@@ -159,12 +172,14 @@ const FriendRequests = () => {
 
           {/* view list of sent requests */}
           <Text className="text-xl font-bold mb-3">Friend Requests Sent:</Text>
-          {friendRequestsSent.length > 0 ? (
-            friendRequestsSent.map((request, index) => (
-              <Text key={index} className="text-lg py-1">
-                {request}
-              </Text>
-            ))
+          {currentUser && currentUser.friendRequestsSent.length > 0 ? (
+            currentUser.friendRequestsSent.map(
+              (request: string, index: number) => (
+                <Text key={index} className="text-lg py-1">
+                  {request}
+                </Text>
+              )
+            )
           ) : (
             <Text className="text-gray-500">No sent requests.</Text>
           )}
