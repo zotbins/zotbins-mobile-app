@@ -3,11 +3,12 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import * as ImagePicker from "expo-image-picker";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 
 const Profile = () => {
+  const router = useRouter();
 
   const user = auth().currentUser;
   // set profile picture to user's photoURL or placeholder image
@@ -109,9 +110,9 @@ const Profile = () => {
         </View>
 
         {/* socials container */}
-        <View className="bg-tealLite justify-center items-center">
+        <View className="bg-tealLite pt-10 justify-center items-center">
         <Pressable
-              onPress={pickImage}
+              onPress={() => router.push('/friendrequests')}
               className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2">
               <Text className="text-white text-center">Friend Requests</Text>
           </Pressable>
