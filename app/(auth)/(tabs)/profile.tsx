@@ -6,6 +6,8 @@ import * as ImagePicker from "expo-image-picker";
 import { Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { FontAwesome } from "@expo/vector-icons";
 
 const Profile = () => {
   const user = auth().currentUser;
@@ -76,7 +78,7 @@ const Profile = () => {
 
       uploadTask.on(
         "state_changed",
-        () => {},
+        () => { },
         (error) => {
           console.error(error);
         },
@@ -92,42 +94,66 @@ const Profile = () => {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <View className="bg-white flex-1 justify-center items-center">
-        <Text className="text-black">Profile</Text>
-        <Image
-          source={{ uri: profilePic }}
-          className="w-24 h-24 rounded-full"
-        />
-        <Pressable
-          onPress={pickImage}
-          className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-        >
-          <Text className="text-black"> Change Profile Picture </Text>
-        </Pressable>
-        <Text> USER: {user?.email}</Text>
-        <Text> First name: {userDoc?.firstname} </Text>
-        <Text> Last name: {userDoc?.lastname} </Text>
-        <Pressable
-          onPress={() => auth().signOut()}
-          className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-        >
-          <Text className="text-white"> Sign Out </Text>
-        </Pressable>
+      <SafeAreaView className="bg-white flex-1">
+        <View className="p-4">
+          <View className="flex-row items-center">
+            <View className="relative">
+              <Pressable onPress={pickImage}>
+                <Image
+                  source={{ uri: profilePic }}
+                  className="w-24 h-24 rounded-full"
+                />
+                <View className="absolute bottom-0 right-0 bg-gray-800 rounded-full p-2">
+                  <FontAwesome name="pencil" size={14} color="white" />
+                </View>
+              </Pressable>
+            </View>
+            <View className="flex-1 ml-4">
+              <Text className="text-black text-lg font-bold">{user?.email}</Text>
+              <Text className="text-black">Points: {userDoc?.totalPoints}</Text>
+            </View>
+            <Text className="text-black text-lg font-bold">
+              Streak: {userDoc?.dailyStreak}
+            </Text>
+          </View>
+        </View>
 
-        <Pressable
-          onPress={() => setShowPasswordForm(!showPasswordForm)}
-          className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-        >
-          <Text className="text-white text-center">
-            {showPasswordForm ? "Cancel Password Change" : "Change Password"}
-          </Text>
-        </Pressable>
+        <View className="w-full h-[1px] bg-gray-300 my-4" />
 
-        {/* Conditionally render the PasswordChange form */}
-        {showPasswordForm && (
-          <PasswordChange onComplete={() => setShowPasswordForm(false)} />
-        )}
-      </View>
+        <View className="flex-1 p-4">
+          <View className="flex-row justify-between items-center mb-4">
+            <View className="items-center">
+              <Text className="text-black text-lg font-bold">Footprint</Text>
+              <Text className="text-black">{userDoc?.footprint}</Text>
+            </View>
+            <View className="items-center">
+              <Text className="text-black text-lg font-bold">Spirit Trash</Text>
+              <Text className="text-black">{userDoc?.spiritTrash}</Text>
+            </View>
+          </View>
+
+          <Pressable
+            onPress={() => auth().signOut()}
+            className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
+          >
+            <Text className="text-white text-center">Sign Out</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => setShowPasswordForm(!showPasswordForm)}
+            className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
+          >
+            <Text className="text-white text-center">
+              {showPasswordForm ? "Cancel Password Change" : "Change Password"}
+            </Text>
+          </Pressable>
+
+          {/* Conditionally render the PasswordChange form */}
+          {showPasswordForm && (
+            <PasswordChange onComplete={() => setShowPasswordForm(false)} />
+          )}
+        </View>
+      </SafeAreaView>
     </>
   );
 };
