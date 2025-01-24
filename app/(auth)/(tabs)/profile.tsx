@@ -17,7 +17,8 @@ const Profile = () => {
   );
 
   const [userDoc, setUserDoc] = useState<any>(null);
-
+  const [username, setUsername] = useState("");
+  // const [loading, setLoading] = useState(true);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   // on user change, fetch user document from firestore
@@ -42,7 +43,16 @@ const Profile = () => {
     };
 
     fetchUserDoc();
+    findUsername();
   }, [user]);
+
+  const findUsername = async () => {
+    const querySnapshot = await firestore()
+      .collection("users")
+      .where("email", "==", user?.email)
+      .get();
+    setUsername(querySnapshot.docs[0].data().username);
+  };
 
   // request permission to access camera roll
   const requestPermission = async () => {
@@ -95,40 +105,46 @@ const Profile = () => {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View className="bg-white h-screen w-screen">
-
         {/* container for profile photo, username, and full name */}
-        <View className="bg-teal pt-24 items-center"> 
-          
+        <View className="bg-teal pt-24 items-center">
           <Image
             source={{ uri: profilePic }}
-            className="mb-3 w-36 h-36 rounded-full"/>
+            className="mb-3 w-36 h-36 rounded-full"
+          />
 
-          <Text className="text-3xl">@{user?.email?.split('@')[0]}</Text>
+          {/* <Text className="text-3xl">@{user?.email?.split('@')[0]}</Text> */}
+          <Text className="text-3xl">@{username}</Text>
           {/* parse email to create a username from username@gmail.com  */}
-          <Text className="text-xl pb-4">{userDoc?.firstname} {userDoc?.lastname}</Text>
-
+          <Text className="text-xl pb-4">
+            {userDoc?.firstname} {userDoc?.lastname}
+          </Text>
         </View>
 
         {/* socials container */}
         <View className="bg-tealLite pt-10 justify-center items-center">
-        <Pressable
-              onPress={() => router.push('/friendrequests')}
-              className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2">
-              <Text className="text-white text-center">Friend Requests</Text>
+          <Pressable
+            onPress={() => router.push("/friendrequests")}
+            className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2"
+          >
+            <Text className="text-white text-center">Friend Requests</Text>
           </Pressable>
         </View>
 
         {/* view container for change profile, password, sign out */}
         <View className="bg-tealLite flex-1 justify-center items-center">
           <Pressable
-              onPress={pickImage}
-              className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2">
-              <Text className="text-white text-center">Change Profile Picture</Text>
+            onPress={pickImage}
+            className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2"
+          >
+            <Text className="text-white text-center">
+              Change Profile Picture
+            </Text>
           </Pressable>
 
           <Pressable
             onPress={() => setShowPasswordForm(!showPasswordForm)}
-            className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2">
+            className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2"
+          >
             <Text className="text-white text-center">
               {showPasswordForm ? "Cancel Password Change" : "Change Password"}
             </Text>
@@ -141,14 +157,12 @@ const Profile = () => {
 
           <Pressable
             onPress={() => auth().signOut()}
-            className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2">
+            className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2"
+          >
             <Text className="text-white text-center">Sign Out</Text>
           </Pressable>
-
         </View>
-          
       </View>
-
     </>
   );
 };
