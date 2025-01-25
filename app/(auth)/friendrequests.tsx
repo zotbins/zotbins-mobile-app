@@ -8,11 +8,11 @@ import auth from "@react-native-firebase/auth";
 const FriendRequests = () => {
   const [activeTab, setActiveTab] = useState<"sent" | "received">("sent");
   const [username, setUsername] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>();
-  const [friendRequestsReceived, setFriendRequestsReceived] = useState<
-    string[]
-  >(["Alice", "Bob"]); // sample data
+  const [loading, setLoading] = useState(true);
+  const [currentUsername, setCurrentUsername] = useState<any>();
+  const [friendRequestsSent, setFriendRequestsSent] = useState<string[]>([]);
+  const [friendRequestsReceived, setFriendRequestsReceived] =
+    useState<string[]>(); // sample data
   const user = auth().currentUser;
 
   // get information of current user
@@ -20,15 +20,16 @@ const FriendRequests = () => {
     const findCurrentUser = async () => {
       const querySnapshot = await firestore()
         .collection("users")
-        .where("email", "==", user?.email)
+        .doc(user?.uid)
         .get();
-
-      setCurrentUser(querySnapshot.docs[0].data());
+      setCurrentUsername(querySnapshot.data()?.username);
+      setFriendRequestsSent(querySnapshot.data()?.friendRequestsSent);
+      setFriendRequestsReceived(querySnapshot.data()?.friendRequestsReceived);
     };
 
     findCurrentUser();
+
     setLoading(false);
-    console.log("TRIGGERED");
   }, [loading]);
 
   // finds and returns a (receiving) user if it exists
@@ -48,8 +49,30 @@ const FriendRequests = () => {
     return null;
   }
 
+  // TODO: update typescript later
+  // clears a friend request for both sender and recipient
+  const clearFriendRequest = async (requestedUser: any) => {
+    // remove requested user from current user's friendRequestsReceived
+    await firestore()
+      .collection("users")
+      .doc(user?.uid)
+      .update({
+        friendRequestsReceived: firestore.FieldValue.arrayRemove(
+          requestedUser.username
+        ),
+      });
+
+    // remove current user from requested user's friendRequestsSent
+    await firestore()
+      .collection("users")
+      .doc(requestedUser.uid)
+      .update({
+        friendRequestsReceived:
+          firestore.FieldValue.arrayRemove(currentUsername),
+      });
+  };
+
   const handleAddFriend = async () => {
-    setLoading(true);
     // validation and request handling
     const receivingUser = await findReceivingUser(username.trim());
     if (receivingUser == null || receivingUser == undefined) {
@@ -61,17 +84,22 @@ const FriendRequests = () => {
     }
     // cannot send request to blocked user
     else if (
-      receivingUser.length > 0 &&
-      receivingUser.blocked.includes(currentUser.username)
+      receivingUser.blockedUsers.length > 0 &&
+      receivingUser.blockedUsers.includes(currentUsername)
     ) {
       Alert.alert("Error", "You cannot send a request to this user.");
       return;
+    } else if (friendRequestsSent.includes(username.trim())) {
+      Alert.alert(
+        "Error",
+        "You have already sent a friend request to this user!"
+      );
+      return;
     }
-
     // add receiving user to current user's sentFriendRequests
     firestore()
       .collection("users")
-      .doc(currentUser.uid)
+      .doc(user?.uid)
       .update({
         // no need to check for duplicates since arrayUnion handles that
         friendRequestsSent: firestore.FieldValue.arrayUnion(
@@ -85,27 +113,75 @@ const FriendRequests = () => {
       .doc(receivingUser.uid)
       .update({
         // no need to check for duplicates since arrayUnion handles that
-        friendRequestsReceived: firestore.FieldValue.arrayUnion(
-          currentUser.username
-        ),
+        friendRequestsReceived:
+          firestore.FieldValue.arrayUnion(currentUsername),
       });
     Alert.alert("Success!", `Friend request sent to ${username}`);
     setUsername("");
+    setFriendRequestsSent((prev) => [...prev, username]);
   };
 
-  const handleAccept = (user: string) => {
-    Alert.alert("Accepted", `You accepted ${user}'s friend request.`);
-    setFriendRequestsReceived((prev) => prev.filter((u) => u !== user));
+  const handleAccept = async (requestedUser: string) => {
+    Alert.alert("Accepted", `You accepted ${requestedUser}'s friend request.`);
+    const foundRequestedUser = await findReceivingUser(requestedUser);
+
+    // add requested user to current user's friends list
+    firestore()
+      .collection("users")
+      .doc(user?.uid)
+      .update({
+        // no need to check for duplicates since arrayUnion handles that
+        friendsList: firestore.FieldValue.arrayUnion(
+          foundRequestedUser?.username
+        ),
+      });
+
+    // add current user to requested user's friends list
+    firestore()
+      .collection("users")
+      .doc(foundRequestedUser?.uid)
+      .update({
+        // no need to check for duplicates since arrayUnion handles that
+        friendsList: firestore.FieldValue.arrayUnion(currentUsername),
+      });
+
+    clearFriendRequest(foundRequestedUser);
+
+    setFriendRequestsReceived((prev) =>
+      prev?.filter((u) => u !== requestedUser)
+    );
   };
 
-  const handleDecline = (user: string) => {
-    Alert.alert("Declined", `You declined ${user}'s friend request.`);
-    setFriendRequestsReceived((prev) => prev.filter((u) => u !== user));
+  const handleDecline = async (requestedUser: string) => {
+    Alert.alert("Declined", `You declined ${requestedUser}'s friend request.`);
+    const foundRequestedUser = await findReceivingUser(requestedUser);
+    clearFriendRequest(foundRequestedUser);
+
+    setFriendRequestsReceived((prev) =>
+      prev?.filter((u) => u !== requestedUser)
+    );
   };
 
-  const handleBlock = (user: string) => {
-    Alert.alert("Blocked", `You blocked ${user}.`);
-    setFriendRequestsReceived((prev) => prev.filter((u) => u !== user));
+  const handleBlock = async (requestedUser: string) => {
+    Alert.alert("Blocked", `You blocked ${requestedUser}.`);
+    const foundRequestedUser = await findReceivingUser(requestedUser);
+
+    // add requested user to current user's blocked list
+    firestore()
+      .collection("users")
+      .doc(user?.uid)
+      .update({
+        // no need to check for duplicates since arrayUnion handles that
+        blockedUsers: firestore.FieldValue.arrayUnion(
+          foundRequestedUser?.username
+        ),
+      });
+
+    clearFriendRequest(foundRequestedUser);
+
+    setFriendRequestsReceived((prev) =>
+      prev?.filter((u) => u !== requestedUser)
+    );
   };
 
   if (loading) {
@@ -172,14 +248,12 @@ const FriendRequests = () => {
 
           {/* view list of sent requests */}
           <Text className="text-xl font-bold mb-3">Friend Requests Sent:</Text>
-          {currentUser && currentUser.friendRequestsSent.length > 0 ? (
-            currentUser.friendRequestsSent.map(
-              (request: string, index: number) => (
-                <Text key={index} className="text-lg py-1">
-                  {request}
-                </Text>
-              )
-            )
+          {friendRequestsSent.length > 0 ? (
+            friendRequestsSent.map((request: string, index: number) => (
+              <Text key={index} className="text-lg py-1">
+                {request}
+              </Text>
+            ))
           ) : (
             <Text className="text-gray-500">No sent requests.</Text>
           )}
