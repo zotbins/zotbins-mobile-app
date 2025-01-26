@@ -1,4 +1,4 @@
-import BinStatusModal from "@/components/BinStatusModal";
+import BinStatusModal from "@/components/Map/BinStatusModal";
 import Mapbox, {
   Camera,
   LineLayer,
@@ -9,18 +9,22 @@ import Mapbox, {
 } from "@rnmapbox/maps";
 import React, { useEffect, useRef, useState } from "react";
 import { Image, View, ActivityIndicator } from "react-native";
-import ZotBinsLogo from "../assets/images/zotbins_logo.png";
-import { markers } from "../assets/markers.js"; // bins @ sci lib, langson lib, student center: 
+import ZotBinsLogo from "../../assets/images/zotbins_logo.png";
+import { markers } from "../../assets/markers.js"; // bins @ sci lib, langson lib, student center:
 
-import mapboxSdk from '@mapbox/mapbox-sdk';
-import mapboxDirections from '@mapbox/mapbox-sdk/services/directions';
+import mapboxSdk from "@mapbox/mapbox-sdk";
+import mapboxDirections from "@mapbox/mapbox-sdk/services/directions";
 
-import * as Location from 'expo-location';
+import * as Location from "expo-location";
 
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOXACCESSTOKEN as string);
 Mapbox.setTelemetryEnabled(false);
 
-const directionsClient = mapboxDirections(mapboxSdk({ accessToken: process.env.EXPO_PUBLIC_MAPBOXACCESSTOKEN as string }));
+const directionsClient = mapboxDirections(
+  mapboxSdk({
+    accessToken: process.env.EXPO_PUBLIC_MAPBOXACCESSTOKEN as string,
+  })
+);
 
 type Marker = {
   name: string;
@@ -31,7 +35,9 @@ type Marker = {
 const ZotBinsMap = () => {
   const [displayModal, setDisplayModal] = useState(false);
   const [activeBinName, setActiveBinName] = useState("");
-  const [activeBinCoordinates, setActiveBinCoordinates] = useState<number[]>([]);
+  const [activeBinCoordinates, setActiveBinCoordinates] = useState<number[]>(
+    []
+  );
   const [route, setRoute] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userLocation, setUserLocation] = useState<number[]>([]);
@@ -39,7 +45,7 @@ const ZotBinsMap = () => {
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
+      if (status !== "granted") {
         return;
       }
 
@@ -59,7 +65,10 @@ const ZotBinsMap = () => {
       setActiveBinCoordinates([nearestBin.longitude, nearestBin.latitude]);
 
       // get directions to nearest bin
-      await getDirections(userCoords, [nearestBin.longitude, nearestBin.latitude]);
+      await getDirections(userCoords, [
+        nearestBin.longitude,
+        nearestBin.latitude,
+      ]);
       setIsLoading(false);
     })();
   }, []);
@@ -89,15 +98,16 @@ const ZotBinsMap = () => {
 
     const a =
       Math.sin(latDiffRad / 2) * Math.sin(latDiffRad / 2) +
-      Math.cos(lat1Rad) * Math.cos(lat2Rad) *
-      Math.sin(longDiffRad / 2) * Math.sin(longDiffRad / 2);
+      Math.cos(lat1Rad) *
+        Math.cos(lat2Rad) *
+        Math.sin(longDiffRad / 2) *
+        Math.sin(longDiffRad / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     const distance = earthRad * c; // distance in meters
     return distance;
-  }
-
+  };
 
   /* Find nearest bin from user's location
       - set an initial bin to be the nearest bin
@@ -107,11 +117,17 @@ const ZotBinsMap = () => {
       datatype of output is a marker --> markers.js
   */
   const findNearestBin = (userCoords: [number, number], bins: Marker[]) => {
-    let nearest = bins[0]
-    let minDistance = getDistance(userCoords, [bins[0].longitude, bins[0].latitude]);
+    let nearest = bins[0];
+    let minDistance = getDistance(userCoords, [
+      bins[0].longitude,
+      bins[0].latitude,
+    ]);
 
     for (let i = 1; i < bins.length; i++) {
-      let distance = getDistance(userCoords, [bins[i].longitude, bins[i].latitude]);
+      let distance = getDistance(userCoords, [
+        bins[i].longitude,
+        bins[i].latitude,
+      ]);
       if (distance < minDistance) {
         nearest = bins[i];
         minDistance = distance;
@@ -123,23 +139,24 @@ const ZotBinsMap = () => {
 
   const getDirections = async (start: number[], end: number[]) => {
     try {
-      const response = await directionsClient.getDirections({
-        profile: 'walking',
-        waypoints: [
-          { coordinates: [start[0], start[1]] },
-          { coordinates: [end[0], end[1]] }
-        ],
-        geometries: 'geojson'
-      }).send();
+      const response = await directionsClient
+        .getDirections({
+          profile: "walking",
+          waypoints: [
+            { coordinates: [start[0], start[1]] },
+            { coordinates: [end[0], end[1]] },
+          ],
+          geometries: "geojson",
+        })
+        .send();
 
       if (response && response.body && response.body.routes.length) {
         setRoute(response.body.routes[0].geometry);
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   const activateRouting = () => {
     // start is set to first bin for now, needs to be changed to user location
@@ -150,7 +167,7 @@ const ZotBinsMap = () => {
     const start = userLocation;
     const end = activeBinCoordinates;
     getDirections(start, end);
-  }
+  };
 
   // show a loading indicator while fetching location and directions
   if (isLoading) {

@@ -1,12 +1,8 @@
-import {
-  View,
-  Text,
-  Image,
-} from "react-native";
+import { View, Text, Image } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
-import DotIndicator from "../DotIndicator";
+import DotIndicator from "../Reusables/DotIndicator";
 
 const OnboardingScannerFeature = () => {
   const router = useRouter();

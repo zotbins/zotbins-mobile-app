@@ -1,4 +1,4 @@
-import BackButton from "@/components/BackButton";
+import BackButton from "@/components/Reusables/BackButton";
 import { Link, Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Animated, Pressable, Text, View } from "react-native";

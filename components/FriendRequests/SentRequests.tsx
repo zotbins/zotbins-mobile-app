@@ -1,4 +1,4 @@
-import BackButton from "@/components/BackButton";
+import BackButton from "@/components/Reusables/BackButton";
 import { Stack } from "expo-router";
 import firestore from "@react-native-firebase/firestore";
 import React, { useEffect, useState } from "react";
@@ -21,7 +21,9 @@ const SentRequests = () => {
         .doc(user?.uid)
         .get();
       setCurrentUsername(querySnapshot.data()?.username);
-      setFriendRequestsSent(querySnapshot.data()?.friendRequestsSent || friendRequestsSent);
+      setFriendRequestsSent(
+        querySnapshot.data()?.friendRequestsSent || friendRequestsSent
+      );
     };
 
     findCurrentUser();
@@ -33,7 +35,7 @@ const SentRequests = () => {
   async function findReceivingUser(username: string) {
     const querySnapshot = await firestore()
       .collection("users")
-      .where("username", "==", username)
+      .where("username", "==", username.toLowerCase())
       .get();
 
     // check if username exists and is not the user's own
@@ -52,7 +54,7 @@ const SentRequests = () => {
     if (receivingUser == null || receivingUser == undefined) {
       Alert.alert(
         "Error",
-        `Unable to send friend request: user ${usernameInput.trim()} not found!`
+        `Unable to send friend request: user "${usernameInput.trim()}" unavailable!`
       );
       return;
     }
@@ -120,6 +122,7 @@ const SentRequests = () => {
             placeholder="Enter username"
             value={usernameInput}
             onChangeText={setUsernameInput}
+            autoCapitalize="none"
           />
           <Pressable
             className="bg-tealMed px-4 py-2 rounded"

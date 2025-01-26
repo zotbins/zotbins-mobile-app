@@ -1,4 +1,4 @@
-import DotIndicator from "@/components/DotIndicator";
+import DotIndicator from "@/components/Reusables/DotIndicator";
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 import OnboardingAbout from "../components/Onboarding/OnboardingAbout";

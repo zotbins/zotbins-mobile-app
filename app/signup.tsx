@@ -19,18 +19,29 @@ const createUserDocument = async (
   email: string,
   firstname: string,
   lastname: string,
-  username: string,
+  username: string
 ) => {
+  // initialize default values for user doc
+  const totalPoints: number = 0;
+  const dailyStreak: number = 0;
+  const lastStreakUpdate: number = Date.now();
+  const footprint: number = 0;
+  const spiritTrash: string = "Coca Cola";
   await firestore().collection("users").doc(uid).set({
     email,
     uid,
     firstname,
     lastname,
+    totalPoints,
+    dailyStreak,
+    lastStreakUpdate,
+    footprint,
+    spiritTrash,
     username,
     friendsList: [],
     friendRequestsSent: [],
     friendRequestsReceived: [],
-    blockedUsers: []
+    blockedUsers: [],
   });
 };
 
@@ -85,7 +96,10 @@ const Signup = () => {
     try {
       const usernameAvailable = await isUsernameAvailable(username);
       if (!usernameAvailable) {
-        Alert.alert("Error", "This username is already taken. Please choose another one.");
+        Alert.alert(
+          "Error",
+          "This username is already taken. Please choose another one."
+        );
       }
 
       if (validatePassword() && usernameAvailable) {
@@ -115,10 +129,11 @@ const Signup = () => {
   return (
     <View className="mx-5 flex-1 justify-center">
       <KeyboardAvoidingView behavior="padding">
-      <TextInput
+        <TextInput
           className="my-1 h-14 border rounded-md p-2 bg-white"
           value={username}
           onChangeText={setUsername}
+          autoCapitalize="none"
           placeholder="Username"
         />
         <TextInput

@@ -2,9 +2,14 @@ import auth from "@react-native-firebase/auth";
 import React from "react";
 import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ZotBinsLogo from "../assets/images/zotbins_logo.png";
+import ZotBinsLogo from "../../assets/images/zotbins_logo.png";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
-const Header = () => {
+interface HeaderProps {
+  streak: number;
+}
+
+const Header: React.FC<HeaderProps> = ({ streak }) => {
   const user = auth().currentUser;
 
   return (
@@ -17,7 +22,13 @@ const Header = () => {
         />
 
         <View className="flex-row items-center">
-          <Text className="mr-2 text-[#fc8803] text-sm">21</Text>
+          <Text className="mr-1 text-[#fc8803] text-sm">{streak}</Text>
+          <FontAwesome5
+            name="fire"
+            size={10}
+            color="#fc8803"
+            className="mr-2"
+          />
           <Image
             source={{
               uri: user?.photoURL || "https://via.placeholder.com/250",
