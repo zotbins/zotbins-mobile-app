@@ -25,7 +25,7 @@ const FriendRequests = () => {
         .doc(user?.uid)
         .get();
       setCurrentUsername(querySnapshot.data()?.username);
-      setFriendRequestsReceived(querySnapshot.data()?.friendRequestsReceived);
+      setFriendRequestsReceived(querySnapshot.data()?.friendRequestsReceived || friendRequestsReceived);
     };
 
     findCurrentUser();
