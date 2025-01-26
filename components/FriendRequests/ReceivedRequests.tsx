@@ -1,4 +1,4 @@
-import BackButton from "@/components/BackButton";
+import BackButton from "@/components/Reusables/BackButton";
 import { Stack } from "expo-router";
 import firestore from "@react-native-firebase/firestore";
 import React, { useEffect, useState } from "react";
@@ -25,7 +25,9 @@ const FriendRequests = () => {
         .doc(user?.uid)
         .get();
       setCurrentUsername(querySnapshot.data()?.username);
-      setFriendRequestsReceived(querySnapshot.data()?.friendRequestsReceived || friendRequestsReceived);
+      setFriendRequestsReceived(
+        querySnapshot.data()?.friendRequestsReceived || friendRequestsReceived
+      );
     };
 
     findCurrentUser();
@@ -68,8 +70,7 @@ const FriendRequests = () => {
       .collection("users")
       .doc(requestedUser.uid)
       .update({
-        friendRequestsReceived:
-          firestore.FieldValue.arrayRemove(currentUsername),
+        friendRequestsSent: firestore.FieldValue.arrayRemove(currentUsername),
       });
   };
 

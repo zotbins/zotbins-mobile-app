@@ -1,6 +1,6 @@
-import BackButton from "@/components/BackButton";
-import CameraView from "@/components/CameraView";
-import ScanResults from "@/components/ScanResults";
+import BackButton from "@/components/Reusables/BackButton";
+import CameraView from "@/components/Scan/CameraView";
+import ScanResults from "@/components/Scan/ScanResults";
 import { router, Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, View } from "react-native";
@@ -36,7 +36,6 @@ const CameraScreen = () => {
       setHasPermission(false);
     }
   };
-
 
   // take picture with camera and set image state, rendering ScanResults component
   const takePicture = async () => {

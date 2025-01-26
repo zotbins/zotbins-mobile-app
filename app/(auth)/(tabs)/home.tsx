@@ -1,12 +1,11 @@
 import { View, Text, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Link, Stack } from "expo-router";
-import Header from "@/components/Header";
+import Header from "@/components/Reusables/Header";
 import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 
 const Home = () => {
-
   const user = auth().currentUser;
 
   const [streak, setStreak] = useState(0);
@@ -44,12 +43,11 @@ const Home = () => {
       });
       setStreak(0);
       console.log("reset streak");
-    }
-    else {
+    } else {
       setStreak(dailyStreak);
       console.log("no streak update");
     }
-  }
+  };
 
   useEffect(() => {
     if (user) {
@@ -57,12 +55,11 @@ const Home = () => {
     }
   }, [user]);
 
-
   return (
     <>
       <Stack.Screen
         options={{
-          header: () => <Header streak={streak}/>,
+          header: () => <Header streak={streak} />,
         }}
       />
 

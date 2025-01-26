@@ -4,7 +4,7 @@ import { Pressable, Text, View } from "react-native";
 // @ts-ignore
 import ProgressBar from "react-native-progress/Bar";
 import resolveConfig from "tailwindcss/resolveConfig";
-import tailwindConfig from "../tailwind.config";
+import tailwindConfig from "../../tailwind.config";
 
 const fullConfig = resolveConfig(tailwindConfig) as any;
 

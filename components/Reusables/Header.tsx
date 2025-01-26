@@ -2,7 +2,7 @@ import auth from "@react-native-firebase/auth";
 import React from "react";
 import { Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ZotBinsLogo from "../assets/images/zotbins_logo.png";
+import ZotBinsLogo from "../../assets/images/zotbins_logo.png";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 interface HeaderProps {

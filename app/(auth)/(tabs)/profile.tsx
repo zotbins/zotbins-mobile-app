@@ -1,4 +1,4 @@
-import PasswordChange from "@/components/PasswordChange";
+import PasswordChange from "@/components/Profile/PasswordChange";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
@@ -7,7 +7,7 @@ import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 
 const Profile = () => {
   const router = useRouter();
@@ -15,12 +15,10 @@ const Profile = () => {
   const user = auth().currentUser;
   // set profile picture to user's photoURL or placeholder image
   const [profilePic, setProfilePic] = useState<string>(
-    user?.photoURL || "https://via.placeholder.com/250"
+    user?.photoURL || "https://placehold.co/250"
   );
 
   const [userDoc, setUserDoc] = useState<any>(null);
-  // const [username, setUsername] = useState("");
-  // const [loading, setLoading] = useState(true);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   // on user change, fetch user document from firestore
@@ -81,7 +79,7 @@ const Profile = () => {
 
       uploadTask.on(
         "state_changed",
-        () => { },
+        () => {},
         (error) => {
           console.error(error);
         },
@@ -99,6 +97,7 @@ const Profile = () => {
       <Stack.Screen options={{ headerShown: false }} />
 
       <SafeAreaView className="bg-white flex-1">
+        {/* Above Divider */}
         <View className="p-4">
           <View className="flex-row items-center">
             <View className="relative">
@@ -113,17 +112,25 @@ const Profile = () => {
               </Pressable>
             </View>
             <View className="flex-1 ml-4">
-              <Text className="text-black text-lg font-bold">{user?.email}</Text>
+              <Text className="text-3xl">@{userDoc?.username}</Text>
               <Text className="text-black">Points: {userDoc?.totalPoints}</Text>
             </View>
-            <Text className="text-black text-lg font-bold">
-              Streak: {userDoc?.dailyStreak}
+            <Text className="mr-1 text-[#fc8803] text-lg">
+              {userDoc?.dailyStreak}
             </Text>
+            <FontAwesome5
+              name="fire"
+              size={12}
+              color="#fc8803"
+              className="mr-2"
+            />
           </View>
         </View>
 
+        {/* Profile Divider */}
         <View className="w-full h-[1px] bg-gray-300 my-4" />
 
+        {/* Below Divider */}
         <View className="flex-1 p-4">
           <View className="flex-row justify-between items-center mb-4">
             <View className="items-center">
@@ -136,52 +143,30 @@ const Profile = () => {
             </View>
           </View>
 
+          {/* Friends container */}
+          <View className="pb-2">
+            <Pressable
+              onPress={() => router.push("/friendrequests")}
+              className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
+            >
+              <Text className="text-white text-center">Friend Requests</Text>
+            </Pressable>
+            <Text className="text-xl font-bold">Friends</Text>
+            <Text className="text-center">
+              {userDoc?.friendsList > 0
+                ? userDoc?.friendsList
+                : "No friends added yet!"}
+            </Text>
+          </View>
+
           <Pressable
             onPress={() => auth().signOut()}
             className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
           >
             <Text className="text-white text-center">Sign Out</Text>
-
-      <View className="bg-white h-screen w-screen">
-        {/* container for profile photo, username, and full name */}
-        <View className="bg-teal pt-24 items-center">
-          <Image
-            source={{ uri: profilePic }}
-            className="mb-3 w-36 h-36 rounded-full"
-          />
-
-          {/* <Text className="text-3xl">@{user?.email?.split('@')[0]}</Text> */}
-          <Text className="text-3xl">@{userDoc?.username}</Text>
-          {/* parse email to create a username from username@gmail.com  */}
-          <Text className="text-xl pb-4">
-            {userDoc?.firstname} {userDoc?.lastname}
-          </Text>
-        </View>
-
-        {/* socials container */}
-        <View className="bg-tealLite pt-10 justify-center items-center">
-          <Pressable
-            onPress={() => router.push("/friendrequests")}
-            className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2"
-          >
-            <Text className="text-white text-center">Friend Requests</Text>
-          </Pressable>
-          <Text className="text-xl font-bold">Friends</Text>
-          <Text className="text-center">{userDoc?.friendsList}</Text>
-        </View>
-
-        {/* view container for change profile, password, sign out */}
-        <View className="bg-tealLite flex-1 justify-center items-center">
-          <Pressable
-            onPress={pickImage}
-            className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2"
-          >
-            <Text className="text-white text-center">
-              Change Profile Picture
-            </Text>
-
           </Pressable>
 
+          {/* Conditionally render the PasswordChange form */}
           <Pressable
             onPress={() => setShowPasswordForm(!showPasswordForm)}
             className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
@@ -190,24 +175,11 @@ const Profile = () => {
               {showPasswordForm ? "Cancel Password Change" : "Change Password"}
             </Text>
           </Pressable>
-
-          {/* Conditionally render the PasswordChange form */}
           {showPasswordForm && (
             <PasswordChange onComplete={() => setShowPasswordForm(false)} />
           )}
-
         </View>
       </SafeAreaView>
-
-          <Pressable
-            onPress={() => auth().signOut()}
-            className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2"
-          >
-            <Text className="text-white text-center">Sign Out</Text>
-          </Pressable>
-        </View>
-      </View>
-
     </>
   );
 };
