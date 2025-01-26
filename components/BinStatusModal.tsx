@@ -8,7 +8,11 @@ import tailwindConfig from "../tailwind.config";
 
 const fullConfig = resolveConfig(tailwindConfig) as any;
 
-const BinStatusModal = (props: { name: string; closeModal: Function, activateRouting: Function }) => {
+const BinStatusModal = (props: {
+  name: string;
+  closeModal: Function;
+  activateRouting: Function;
+}) => {
   return (
     <View className=" bg-white rounded-xl shadow-lg absolute bottom-8 h-[150px] w-[350px] flex flex-col gap-12 items-center justify-center">
       <Pressable
@@ -26,8 +30,12 @@ const BinStatusModal = (props: { name: string; closeModal: Function, activateRou
         <Text className="absolute left-4 top-4 text-2xl font-bold color-blue">
           {props.name}
         </Text>
-        <Pressable onPress={()=> {props.activateRouting()}}
-          className="px-4 py-2 rounded-md bg-tintColor active:opacity-50 items-center justify-center absolute right-4 top-4">
+        <Pressable
+          onPress={() => {
+            props.activateRouting();
+          }}
+          className="px-4 py-2 rounded-md bg-tintColor active:opacity-50 items-center justify-center absolute right-4 top-4"
+        >
           <Text className="text-white">Directions</Text>
         </Pressable>
       </View>

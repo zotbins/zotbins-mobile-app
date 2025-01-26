@@ -107,11 +107,11 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({
   };
 
   return (
-    <View className="w-64 px-4">
-      <Text className="px-4 py-3 font-semibold">Change Password</Text>
+    <View className="w-full px-4">
+      <Text className="py-3 font-semibold">Change Password</Text>
 
       <TextInput
-        className="px-4 py-3 my-2 rounded-lg bg-slate-100"
+        className="px-4 py-3 my-2 rounded-lg bg-slate-100 border-2"
         placeholder="Current Password"
         secureTextEntry
         value={currentPassword}
@@ -120,7 +120,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({
       />
 
       <TextInput
-        className="px-4 py-3 my-2 rounded-lg bg-slate-100"
+        className="px-4 py-3 my-2 rounded-lg bg-slate-100 border-2"
         placeholder="New Password"
         secureTextEntry
         value={newPassword}
@@ -129,7 +129,7 @@ const PasswordChangeForm: React.FC<PasswordChangeFormProps> = ({
       />
 
       <TextInput
-        className="px-4 py-3 my-2 rounded-lg bg-slate-100"
+        className="px-4 py-3 my-2 rounded-lg bg-slate-100 border-2"
         placeholder="Confirm New Password"
         secureTextEntry
         value={confirmPassword}
