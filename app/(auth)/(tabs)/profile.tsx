@@ -3,11 +3,13 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import * as ImagePicker from "expo-image-picker";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 
 const Profile = () => {
+  const router = useRouter();
+
   const user = auth().currentUser;
   // set profile picture to user's photoURL or placeholder image
   const [profilePic, setProfilePic] = useState<string>(
@@ -15,7 +17,8 @@ const Profile = () => {
   );
 
   const [userDoc, setUserDoc] = useState<any>(null);
-
+  // const [username, setUsername] = useState("");
+  // const [loading, setLoading] = useState(true);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   // on user change, fetch user document from firestore
@@ -92,41 +95,66 @@ const Profile = () => {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <View className="bg-white flex-1 justify-center items-center">
-        <Text className="text-black">Profile</Text>
-        <Image
-          source={{ uri: profilePic }}
-          className="w-24 h-24 rounded-full"
-        />
-        <Pressable
-          onPress={pickImage}
-          className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-        >
-          <Text className="text-black"> Change Profile Picture </Text>
-        </Pressable>
-        <Text> USER: {user?.email}</Text>
-        <Text> First name: {userDoc?.firstname} </Text>
-        <Text> Last name: {userDoc?.lastname} </Text>
-        <Pressable
-          onPress={() => auth().signOut()}
-          className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-        >
-          <Text className="text-white"> Sign Out </Text>
-        </Pressable>
+      <View className="bg-white h-screen w-screen">
+        {/* container for profile photo, username, and full name */}
+        <View className="bg-teal pt-24 items-center">
+          <Image
+            source={{ uri: profilePic }}
+            className="mb-3 w-36 h-36 rounded-full"
+          />
 
-        <Pressable
-          onPress={() => setShowPasswordForm(!showPasswordForm)}
-          className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-        >
-          <Text className="text-white text-center">
-            {showPasswordForm ? "Cancel Password Change" : "Change Password"}
+          {/* <Text className="text-3xl">@{user?.email?.split('@')[0]}</Text> */}
+          <Text className="text-3xl">@{userDoc?.username}</Text>
+          {/* parse email to create a username from username@gmail.com  */}
+          <Text className="text-xl pb-4">
+            {userDoc?.firstname} {userDoc?.lastname}
           </Text>
-        </Pressable>
+        </View>
 
-        {/* Conditionally render the PasswordChange form */}
-        {showPasswordForm && (
-          <PasswordChange onComplete={() => setShowPasswordForm(false)} />
-        )}
+        {/* socials container */}
+        <View className="bg-tealLite pt-10 justify-center items-center">
+          <Pressable
+            onPress={() => router.push("/friendrequests")}
+            className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2"
+          >
+            <Text className="text-white text-center">Friend Requests</Text>
+          </Pressable>
+          <Text className="text-xl font-bold">Friends</Text>
+          <Text className="text-center">{userDoc?.friendsList}</Text>
+        </View>
+
+        {/* view container for change profile, password, sign out */}
+        <View className="bg-tealLite flex-1 justify-center items-center">
+          <Pressable
+            onPress={pickImage}
+            className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2"
+          >
+            <Text className="text-white text-center">
+              Change Profile Picture
+            </Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => setShowPasswordForm(!showPasswordForm)}
+            className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2"
+          >
+            <Text className="text-white text-center">
+              {showPasswordForm ? "Cancel Password Change" : "Change Password"}
+            </Text>
+          </Pressable>
+
+          {/* Conditionally render the PasswordChange form */}
+          {showPasswordForm && (
+            <PasswordChange onComplete={() => setShowPasswordForm(false)} />
+          )}
+
+          <Pressable
+            onPress={() => auth().signOut()}
+            className="bg-tealMed px-4 py-3 rounded-lg my-2 active:opacity-50 w-1/2"
+          >
+            <Text className="text-white text-center">Sign Out</Text>
+          </Pressable>
+        </View>
       </View>
     </>
   );

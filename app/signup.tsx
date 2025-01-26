@@ -18,13 +18,19 @@ const createUserDocument = async (
   uid: string,
   email: string,
   firstname: string,
-  lastname: string
+  lastname: string,
+  username: string,
 ) => {
   await firestore().collection("users").doc(uid).set({
     email,
     uid,
     firstname,
     lastname,
+    username,
+    friendsList: [],
+    friendRequestsSent: [],
+    friendRequestsReceived: [],
+    blockedUsers: []
   });
 };
 
@@ -36,10 +42,19 @@ const isSecure = (password: string) => {
   return passwordRegex.test(password);
 };
 
+async function isUsernameAvailable(username: string) {
+  const querySnapshot = await firestore()
+    .collection("users")
+    .where("username", "==", username)
+    .get();
+  return querySnapshot.empty;
+}
+
 const Signup = () => {
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -68,7 +83,12 @@ const Signup = () => {
   const signUp = async () => {
     setLoading(true);
     try {
-      if (validatePassword()) {
+      const usernameAvailable = await isUsernameAvailable(username);
+      if (!usernameAvailable) {
+        Alert.alert("Error", "This username is already taken. Please choose another one.");
+      }
+
+      if (validatePassword() && usernameAvailable) {
         const response = await auth().createUserWithEmailAndPassword(
           email,
           password
@@ -78,7 +98,7 @@ const Signup = () => {
           const uid = response.user.uid;
           const email = response.user.email;
           if (uid && email) {
-            await createUserDocument(uid, email, firstName, lastName);
+            await createUserDocument(uid, email, firstName, lastName, username);
           }
         } else {
           Alert.alert("Info", "This account already exists.");
@@ -95,6 +115,12 @@ const Signup = () => {
   return (
     <View className="mx-5 flex-1 justify-center">
       <KeyboardAvoidingView behavior="padding">
+      <TextInput
+          className="my-1 h-14 border rounded-md p-2 bg-white"
+          value={username}
+          onChangeText={setUsername}
+          placeholder="Username"
+        />
         <TextInput
           className="my-1 h-14 border rounded-md p-2 bg-white"
           value={firstName}
