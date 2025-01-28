@@ -7,8 +7,16 @@ import Mapbox, {
   PointAnnotation,
   ShapeSource,
 } from "@rnmapbox/maps";
+
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
+
 import React, { useEffect, useRef, useState } from "react";
-import { Image, View, ActivityIndicator } from "react-native";
+import { Image, View, ActivityIndicator, Text } from "react-native";
 import ZotBinsLogo from "../../assets/images/zotbins_logo.png";
 import { markers } from "../../assets/markers.js"; // bins @ sci lib, langson lib, student center:
 
@@ -41,6 +49,13 @@ const ZotBinsMap = () => {
   const [route, setRoute] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userLocation, setUserLocation] = useState<number[]>([]);
+
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  useEffect(() => {
+    console.log("Presenting bottom sheet");
+    bottomSheetModalRef.current?.present();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -172,7 +187,7 @@ const ZotBinsMap = () => {
   // show a loading indicator while fetching location and directions
   if (isLoading) {
     return (
-      <View className="flex-1 justify-center align-center">
+      <View className="flex-1 justify-center items-center ">
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
@@ -180,73 +195,96 @@ const ZotBinsMap = () => {
 
   return (
     <View className="w-full h-full">
-      <MapView
-        styleURL="mapbox://styles/mapbox/streets-v12"
-        style={{ flex: 1 }}
-        zoomEnabled={true}
-        rotateEnabled={true}
-        scaleBarEnabled={false}
-      >
-        <Camera
-          zoomLevel={14}
-          centerCoordinate={[-117.84272383250185, 33.646044797114584]}
-          pitch={0}
-          animationMode={"flyTo"}
-          animationDuration={500}
-        />
+      <GestureHandlerRootView>
+          <BottomSheetModalProvider>
+          <BottomSheetModal
+              ref={bottomSheetModalRef}
+              name="bottomSheet"
+              snapPoints={["20%", "50%"]}
+              index={0}
+              animateOnMount={true}
+            >
+              <BottomSheetView
+                style={{
+                  backgroundColor: "white",
+                  padding: 16,
+                  height: "100%",
+                }}
+              >
+                <Text>Bottom Sheet Content</Text>
+            </BottomSheetView>
+          </BottomSheetModal>
+            <MapView
+              styleURL="mapbox://styles/mapbox/streets-v12"
+              style={{ flex: 1 }}
+              zoomEnabled={true}
+              rotateEnabled={true}
+              scaleBarEnabled={false}
+            >
+              <Camera
+                zoomLevel={14}
+                centerCoordinate={[-117.84272383250185, 33.646044797114584]}
+                pitch={0}
+                animationMode={"flyTo"}
+                animationDuration={500}
+              />
 
-        <LocationPuck
-          puckBearingEnabled
-          puckBearing="heading"
-          pulsing={{ isEnabled: true }}
-        />
+              <LocationPuck
+                puckBearingEnabled
+                puckBearing="heading"
+                pulsing={{ isEnabled: true }}
+              />
 
-        {/* <ShapeSource id="zotbins" shape={} */}
+              {/* <ShapeSource id="zotbins" shape={} */}
 
-        {markers.map((marker) => (
-          <PointAnnotation
-            ref={(ref) => (markerRefs.current[marker.name] = ref)}
-            key={marker.name}
-            id={marker.name}
-            coordinate={[marker.longitude, marker.latitude]}
-            onSelected={() => {
-              setDisplayModal(true);
-              setActiveBinName(marker.name);
-              setActiveBinCoordinates([marker.longitude, marker.latitude]);
-            }}
-          >
-            <Image
-              source={ZotBinsLogo}
-              resizeMode="contain"
-              className={`h-12 w-12`}
-              onLoad={() => markerRefs.current[marker.name]?.refresh()}
-            />
-          </PointAnnotation>
-        ))}
+              {markers.map((marker) => (
+                <PointAnnotation
+                  ref={(ref) => (markerRefs.current[marker.name] = ref)}
+                  key={marker.name}
+                  id={marker.name}
+                  coordinate={[marker.longitude, marker.latitude]}
+                  onSelected={() => {
+                    setDisplayModal(true);
+                    setActiveBinName(marker.name);
+                    setActiveBinCoordinates([marker.longitude, marker.latitude]);
+                  }}
+                >
+                  <Image
+                    source={ZotBinsLogo}
+                    resizeMode="contain"
+                    className={`h-12 w-12`}
+                    onLoad={() => markerRefs.current[marker.name]?.refresh()}
+                  />
+                </PointAnnotation>
+              ))}
 
-        {route && (
-          <ShapeSource id="routeSource" shape={route}>
-            <LineLayer
-              id="routeFill"
-              style={{
-                lineColor: "#66aec4",
-                lineWidth: 3,
-                lineCap: "round",
-                lineJoin: "round",
-              }}
-            />
-          </ShapeSource>
-        )}
-      </MapView>
-      {displayModal && (
-        <View className="justify-center items-center">
-          <BinStatusModal
-            name={activeBinName}
-            closeModal={closeModal}
-            activateRouting={activateRouting}
-          />
-        </View>
-      )}
+              {route && (
+                <ShapeSource id="routeSource" shape={route}>
+                  <LineLayer
+                    id="routeFill"
+                    style={{
+                      lineColor: "#66aec4",
+                      lineWidth: 3,
+                      lineCap: "round",
+                      lineJoin: "round",
+                    }}
+                  />
+                </ShapeSource>
+              )}
+            </MapView>
+            {displayModal && (
+              <View className="justify-center items-center">
+                <BinStatusModal
+                  name={activeBinName}
+                  closeModal={closeModal}
+                  activateRouting={activateRouting}
+                />
+                
+              </View>
+            )}
+           
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
     </View>
   );
 };
