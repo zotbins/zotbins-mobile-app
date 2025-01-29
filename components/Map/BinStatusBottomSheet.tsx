@@ -32,7 +32,7 @@ const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> = ({ bottomSheet
             <Pressable
             onPress={activateRouting}
             className="px-6 py-2 bg-tintColor rounded-full flex-row items-center justify-center active:opacity-50">
-                <Ionicons name="walk"   size={20} color="white" />
+                <Ionicons name="walk"   size={16} color="white" />
                 <Text className="text-white ">Go</Text>
 
             </Pressable>
