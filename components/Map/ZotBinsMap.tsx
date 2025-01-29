@@ -24,6 +24,7 @@ import mapboxSdk from "@mapbox/mapbox-sdk";
 import mapboxDirections from "@mapbox/mapbox-sdk/services/directions";
 
 import * as Location from "expo-location";
+import BinStatusBottomSheet from "./BinStatusBottomSheet";
 
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOXACCESSTOKEN as string);
 Mapbox.setTelemetryEnabled(false);
@@ -51,11 +52,6 @@ const ZotBinsMap = () => {
   const [userLocation, setUserLocation] = useState<number[]>([]);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
-  useEffect(() => {
-    console.log("Presenting bottom sheet");
-    bottomSheetModalRef.current?.present();
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -91,7 +87,15 @@ const ZotBinsMap = () => {
   // make type more specific instead of "any"
   const markerRefs: { [key: string]: any } = useRef({});
 
+
+  const openModal = () => {
+
+    setDisplayModal(true);
+    bottomSheetModalRef.current?.present();
+  };
+
   const closeModal = () => {
+    bottomSheetModalRef.current?.dismiss();
     setDisplayModal(false);
     setActiveBinName("");
     setActiveBinCoordinates([]);
@@ -197,23 +201,12 @@ const ZotBinsMap = () => {
     <View className="w-full h-full">
       <GestureHandlerRootView>
           <BottomSheetModalProvider>
-          <BottomSheetModal
-              ref={bottomSheetModalRef}
-              name="bottomSheet"
-              snapPoints={["20%", "50%"]}
-              index={0}
-              animateOnMount={true}
-            >
-              <BottomSheetView
-                style={{
-                  backgroundColor: "white",
-                  padding: 16,
-                  height: "100%",
-                }}
-              >
-                <Text>Bottom Sheet Content</Text>
-            </BottomSheetView>
-          </BottomSheetModal>
+            <BinStatusBottomSheet
+              bottomSheetRef={bottomSheetModalRef}
+              onClose={closeModal}
+              name={activeBinName}
+              activateRouting={activateRouting}
+            />
             <MapView
               styleURL="mapbox://styles/mapbox/streets-v12"
               style={{ flex: 1 }}
@@ -244,7 +237,7 @@ const ZotBinsMap = () => {
                   id={marker.name}
                   coordinate={[marker.longitude, marker.latitude]}
                   onSelected={() => {
-                    setDisplayModal(true);
+                    openModal();
                     setActiveBinName(marker.name);
                     setActiveBinCoordinates([marker.longitude, marker.latitude]);
                   }}
@@ -272,16 +265,6 @@ const ZotBinsMap = () => {
                 </ShapeSource>
               )}
             </MapView>
-            {displayModal && (
-              <View className="justify-center items-center">
-                <BinStatusModal
-                  name={activeBinName}
-                  closeModal={closeModal}
-                  activateRouting={activateRouting}
-                />
-                
-              </View>
-            )}
            
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
