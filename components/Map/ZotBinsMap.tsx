@@ -32,13 +32,14 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
 import React, { useEffect, useRef, useState } from "react";
-import { Image, View, ActivityIndicator, Pressable, Text } from "react-native";
+import { Image, View, ActivityIndicator, Pressable, Text, Alert } from "react-native";
 import ZotBinsLogo from "../../assets/images/zotbins_logo.png";
 import { markers } from "../../assets/markers.js";
 import mapboxSdk from "@mapbox/mapbox-sdk";
 import mapboxDirections from "@mapbox/mapbox-sdk/services/directions";
 import * as Location from "expo-location";
 import BinStatusBottomSheet from "./BinStatusBottomSheet";
+import { router } from "expo-router";
 
 // Mapbox Configuration
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOXACCESSTOKEN as string);
@@ -117,7 +118,8 @@ const ZotBinsMap = () => {
       if (response?.body?.routes?.[0]) {
         const route = response.body.routes[0];
         setRoute(route.geometry);
-        setActiveBin(prev => prev ? { ...prev, distance: route.distance } : null);
+        const eta = route.duration;
+        setActiveBin(prev => prev ? { ...prev, distance: route.distance, eta } : null);
       }
     } catch (error) {
       console.error('Error fetching directions:', error);
@@ -142,6 +144,7 @@ const ZotBinsMap = () => {
       eta,
     });
 
+    setRoute(null);
 
     //center map on selected bin
     cameraRef.current?.setCamera({
@@ -176,7 +179,11 @@ const ZotBinsMap = () => {
   useEffect(() => {
     const initializeLocation = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") return;
+      if (status !== "granted") {
+        Alert.alert("Permission Required", "Please enable location services to use this feature.");
+        router.back();
+        return;
+      }
 
       const { coords } = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
