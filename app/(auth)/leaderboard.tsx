@@ -1,7 +1,7 @@
 import BackButton from "@/components/Reusables/BackButton";
 import firestore from "@react-native-firebase/firestore";
 import { Stack, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { currentUserUid } from "../_layout";
 import auth from "@react-native-firebase/auth";
@@ -35,8 +35,9 @@ const Leaderboard = () => {
    * @description Gets descending order of scores and searches to find the current user's score.
    * Adds rank, usernames, and scores to the leaderboard. Leaderboard only displays top 10 users.
    */
-
+  const dataLoaded = useRef(false);
   useEffect(() => {
+    if (dataLoaded.current) return;
     const fetchLeaderboard = async () => {
       try {
         const leaderboardQuery = firestore()
@@ -60,7 +61,7 @@ const Leaderboard = () => {
             points: doc.data().totalPoints,
           });
         }
-
+        dataLoaded.current = true;
         setLeaderboardData(leaderboard.slice(0, 10));
       } catch (error) {
         console.error("Error fetching leaderboard data: ", error);
@@ -94,14 +95,14 @@ const Leaderboard = () => {
         <Text className="text-3xl font-medium text-black mb-6">All Rankings</Text>
         {/* Renders top 10 on leaderboard, if user is in top 10 then bolds user */}
         <View className="flex flex-row items-center mb-4 w-full px-4 border-b border-gray-300 py-2">
-          <Text className="text-xl text-black font-semibold w-1/4 text-center">Rank</Text>
+          <Text className="text-xl text-black font-semibold w-1/4 text-left">Rank</Text>
           <Text className="text-xl text-black font-semibold w-1/2 text-left pl-14">User</Text>
-          <Text className="text-xl text-black font-semibold w-1/4 text-center">Points</Text>
+          <Text className="text-xl text-black font-semibold w-1/4 text-right pr-3">Points</Text>
         </View>
         {leaderboardData.map((user, index) =>
           <React.Fragment key={user.rank}>
           <View className="flex flex-row items-center mb-2 w-full px-4">
-            <Text className="text-xl text-black font-semibold w-1/4 text-center">
+            <Text className="text-xl text-black font-semibold w-1/4 pl-4">
               {user.rank}
             </Text>
       
@@ -109,12 +110,12 @@ const Leaderboard = () => {
               <Image
                 source={{ uri: user.pfp }}
                 className={`w-10 h-10 rounded-full mr-4 ${
-                  user.rank === userRank ? 'border-2 border-darkTintColor' : 'border-2 border-gray-200'
+                  user.rank === userRank ? 'border-2 border-tintColor' : 'border-2 border-gray-200'
                 }`}
               />
               <Text
-                className={`text-xl font-semibold ${
-                  user.rank === userRank ? 'font-bold text-darkTintColor' : 'text-black'
+                className={`text-xl ${
+                  user.rank === userRank ? 'text-tintColor' : 'text-black'
                 }`}
               >
                 {user.rank === userRank ? 'You' : user.username}
@@ -123,7 +124,7 @@ const Leaderboard = () => {
       
             <Text
               className="text-xl w-1/4 text-center text-black">
-              {user.points} Points
+              {user.points}
             </Text>
           </View>
       
