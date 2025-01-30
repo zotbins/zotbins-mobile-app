@@ -101,8 +101,7 @@ const ZotBinsMap = () => {
     openModal(nearestBin);
   };
 
-  // get directions from user location to active bin
-  const getDirections = async (start: number[], end: number[]) => {
+  const getRouteData = async (start: number[], end: number[]) => {
     try {
       const response = await directionsClient
         .getDirections({
@@ -117,14 +116,25 @@ const ZotBinsMap = () => {
 
       if (response?.body?.routes?.[0]) {
         const route = response.body.routes[0];
-        setRoute(route.geometry);
-        const eta = route.duration;
-        setActiveBin(prev => prev ? { ...prev, distance: route.distance, eta } : null);
+        return route;
       }
     } catch (error) {
       console.error('Error fetching directions:', error);
     }
-  };
+  }
+
+  // get directions from user location to active bin
+  const getDirections = async (start: number[], end: number[]) => {
+
+    const route = await getRouteData(start, end);
+
+    if (route) {
+      setRoute(route.geometry);
+      const eta = route.duration;
+      setActiveBin(prev => prev ? { ...prev, distance: route.distance, eta } : null);
+    }
+
+  }
 
   // open modal and set active bin
   const openModal = (marker: Marker) => {
