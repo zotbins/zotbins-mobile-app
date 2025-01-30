@@ -11,6 +11,7 @@ interface BinData {
   distance: number | null;
   coordinates: [number, number];
   eta?: number;
+  routeData: any | null;
 }
 
 const WALKING_SPEED_MPS = 1.4; // meters per second
@@ -54,7 +55,7 @@ const directionsClient = mapboxDirections(
 const ZotBinsMap = () => {
   const [displayModal, setDisplayModal] = useState(false);
   const [activeBin, setActiveBin] = useState<BinData | null>(null);
-  const [route, setRoute] = useState<any>(null);
+  const [activeRoute, setActiveRoute] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userLocation, setUserLocation] = useState<number[]>([]);
 
@@ -126,35 +127,42 @@ const ZotBinsMap = () => {
   // get directions from user location to active bin
   const getDirections = async (start: number[], end: number[]) => {
 
+    if (activeBin?.routeData) {
+      console.log("Using stored route")
+      setActiveRoute(activeBin.routeData.geometry);
+      return;
+    }
+
     const route = await getRouteData(start, end);
 
     if (route) {
-      setRoute(route.geometry);
-      const eta = route.duration;
-      setActiveBin(prev => prev ? { ...prev, distance: route.distance, eta } : null);
+      setActiveRoute(route.geometry);
     }
 
   }
 
   // open modal and set active bin
-  const openModal = (marker: Marker) => {
+  const openModal = async (marker: Marker) => {
     setDisplayModal(true);
     
-    const distanceToBin = userLocation.length === 2
+    const straightDistanceToBin = userLocation.length === 2
       ? getDistance(userLocation as [number, number], [marker.longitude, marker.latitude])
       : 0;
 
-    const eta = distanceToBin / WALKING_SPEED_MPS;
+    const straightETA = straightDistanceToBin / WALKING_SPEED_MPS;
+
+    const routeData = await getRouteData(userLocation, [marker.longitude, marker.latitude]);
 
     setActiveBin({
       name: marker.name,
       capacity: 0,
-      distance: distanceToBin || null,
+      distance: routeData?.distance || straightDistanceToBin,
       coordinates: [marker.longitude, marker.latitude],
-      eta,
+      eta: routeData?.duration || straightETA,
+      routeData: routeData || null,
     });
 
-    setRoute(null);
+    setActiveRoute(null);
 
     //center map on selected bin
     cameraRef.current?.setCamera({
@@ -178,7 +186,7 @@ const ZotBinsMap = () => {
     bottomSheetModalRef.current?.dismiss();
     setDisplayModal(false);
     setActiveBin(null);
-    setRoute(null);
+    setActiveRoute(null);
   };
 
   const activateRouting = () => {
@@ -224,8 +232,8 @@ const ZotBinsMap = () => {
             activateRouting={activateRouting}
             distance={activeBin?.distance || null}
             eta={activeBin?.eta || null}
-            route={route}
-            setRoute={setRoute}
+            activeRoute={activeRoute}
+            setActiveRoute={setActiveRoute}
           />
           <MapView
             styleURL="mapbox://styles/mapbox/streets-v12"
@@ -263,8 +271,8 @@ const ZotBinsMap = () => {
                 />
               </PointAnnotation>
             ))}
-            {route && (
-              <ShapeSource id="routeSource" shape={route}>
+            {activeRoute && (
+              <ShapeSource id="routeSource" shape={activeRoute}>
                 <LineLayer
                   id="routeFill"
                   style={{

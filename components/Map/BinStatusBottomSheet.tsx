@@ -13,8 +13,8 @@ interface BinStatusBottomSheetProps {
   activateRouting: () => void;
   distance: number | null;
   eta: number | null;
-  route: any;
-  setRoute: any;
+  activeRoute: any;
+  setActiveRoute: any;
 }
 
 const metersToMilesOrFeetString = (meters: number | null) => {
@@ -42,9 +42,11 @@ const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> =
       activateRouting, 
       distance, 
       eta,
-      route,
-      setRoute
+      activeRoute,
+      setActiveRoute,
   }) => {
+
+
   return (
     
     <BottomSheetModal
@@ -62,9 +64,9 @@ const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> =
                 {name}
             </Text>
 
-            {route ? (
+            {activeRoute ? (
                 <Pressable
-                onPress={() => setRoute(null)}
+                onPress={() => setActiveRoute(null)}
                 className="px-6 py-2 bg-tintColor rounded-full flex-row items-center justify-center active:opacity-50">
                     <Ionicons name="close" size={16} color="white" />
                     <Text className="text-white">Cancel</Text>
