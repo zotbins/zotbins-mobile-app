@@ -11,9 +11,42 @@ interface BinStatusBottomSheetProps {
   onClose: () => void;
   name: string;
   activateRouting: () => void;
+  distance: number | null;
+  eta: number | null;
+  route: any;
+  setRoute: any;
 }
-const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> = ({ bottomSheetRef, onClose, name, activateRouting }) => {
+
+const metersToMilesOrFeetString = (meters: number | null) => {
+  if (meters === null) {
+    return "N/A";
+  }
+  if (meters > 1609.34) {
+    return `${(meters / 1609.34).toFixed(2)} mi`;
+  } else {
+    return `${meters.toFixed(0)} ft`;
+  }
+}
+
+const secondsToMinutesString = (seconds: number | null) => {  
+  if (seconds === null) {
+    return "N/A";
+  }
+  return `${(seconds / 60).toFixed(0)} min`;
+}
+
+const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> = 
+  ({  bottomSheetRef, 
+      onClose, 
+      name, 
+      activateRouting, 
+      distance, 
+      eta,
+      route,
+      setRoute
+  }) => {
   return (
+    
     <BottomSheetModal
       ref={bottomSheetRef}
       snapPoints={[]}
@@ -22,20 +55,29 @@ const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> = ({ bottomSheet
       animateOnMount={true}
     >
       <BottomSheetView
-        className="items-center justify-center  px-8 py-8"
+        className="items-center justify-center p-8"
       >
         <View className="flex-row w-full justify-between px-4">
             <Text className="text-3xl font-extrabold text-black">
                 {name}
             </Text>
 
+            {route ? (
+                <Pressable
+                onPress={() => setRoute(null)}
+                className="px-6 py-2 bg-tintColor rounded-full flex-row items-center justify-center active:opacity-50">
+                    <Ionicons name="close" size={16} color="white" />
+                    <Text className="text-white">Cancel</Text>
+                </Pressable>
+            ) : (
             <Pressable
-            onPress={activateRouting}
-            className="px-6 py-2 bg-tintColor rounded-full flex-row items-center justify-center active:opacity-50">
+              onPress={activateRouting}
+              className="px-6 py-2 bg-tintColor rounded-full flex-row items-center justify-center active:opacity-50">
                 <Ionicons name="walk"   size={16} color="white" />
                 <Text className="text-white ">Go</Text>
-
+  
             </Pressable>
+            )}
 
         </View>
 
@@ -49,11 +91,11 @@ const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> = ({ bottomSheet
 
             <View className="flex-col items-start justify-center">
                 <Text className="text-black">Distance</Text>
-                <Text className="text-black font-bold">0.5 mi</Text>
+                <Text className="text-black font-bold">{metersToMilesOrFeetString(distance)}</Text>
             </View>
             <View className="flex-col items-start justify-center">
                 <Text className="text-black">ETA</Text>
-                <Text className="text-black font-bold">10 min</Text>
+                <Text className="text-black font-bold">{secondsToMinutesString(eta)}</Text>
             </View>
         </View>
       </BottomSheetView>
