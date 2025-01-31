@@ -5,6 +5,7 @@ interface Marker {
   latitude: number;
 }
 
+// bindata interface to store active bin attributes
 interface BinData {
   name: string;
   capacity: number;
@@ -53,12 +54,17 @@ const directionsClient = mapboxDirections(
 );
 
 const ZotBinsMap = () => {
+  // flag to check if bottom sheet is open
   const [displayModal, setDisplayModal] = useState(false);
+  // state to store active bin data
   const [activeBin, setActiveBin] = useState<BinData | null>(null);
+  // state to store active route data
   const [activeRoute, setActiveRoute] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  // state to store user location
   const [userLocation, setUserLocation] = useState<number[]>([]);
 
+  // ref to bottom sheet modal to control open/close
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const markerRefs = useRef<{ [key: string]: any }>({});
   const cameraRef = useRef<Mapbox.Camera | null>(null);
@@ -66,6 +72,7 @@ const ZotBinsMap = () => {
   // utility functions
   const toRadians = (degrees: number): number => (degrees * Math.PI) / 180;
 
+  // get straight distance between two coordinates
   const getDistance = (coord1: [number, number], coord2: [number, number]): number => {
     const [lon1, lat1] = coord1;
     const [lon2, lat2] = coord2;
@@ -97,13 +104,16 @@ const ZotBinsMap = () => {
     }, bins[0]);
   };
 
+  // open nearest bin modal
   const openNearestBin = () => {
     const nearestBin = findNearestBin(userLocation as [number, number], markers);
     openModal(nearestBin);
   };
 
+  // get route data from mapbox directions api
   const getRouteData = async (start: number[], end: number[]) => {
     try {
+      // call mapbox directions api
       const response = await directionsClient
         .getDirections({
           profile: "walking",
@@ -114,9 +124,12 @@ const ZotBinsMap = () => {
           geometries: "geojson",
         })
         .send();
-
+      // return routed data
       if (response?.body?.routes?.[0]) {
         const route = response.body.routes[0];
+        // route.geometry is a GeoJSON LineString
+        // route.distance is in meters
+        // route.duration is in seconds
         return route;
       }
     } catch (error) {
@@ -126,13 +139,13 @@ const ZotBinsMap = () => {
 
   // get directions from user location to active bin
   const getDirections = async (start: number[], end: number[]) => {
-
+    // use stored route data if available
     if (activeBin?.routeData) {
       console.log("Using stored route")
       setActiveRoute(activeBin.routeData.geometry);
       return;
     }
-
+    // fetch and set route data from mapbox directions api
     const route = await getRouteData(start, end);
 
     if (route) {
@@ -144,7 +157,7 @@ const ZotBinsMap = () => {
   // open modal and set active bin
   const openModal = async (marker: Marker) => {
     setDisplayModal(true);
-    
+    // get straight distance and ETA to bin in case mapbox directions api fails
     const straightDistanceToBin = userLocation.length === 2
       ? getDistance(userLocation as [number, number], [marker.longitude, marker.latitude])
       : 0;
@@ -171,29 +184,32 @@ const ZotBinsMap = () => {
       animationDuration: 500,
     });
 
-
+    // present bottom sheet modal
     bottomSheetModalRef.current?.present();
   };
 
 
   const closeModal = () => {
+    // unzoom map and reset camera
     cameraRef.current?.setCamera({
       centerCoordinate: DEFAULT_CENTER,
       zoomLevel: DEFAULT_ZOOM_LEVEL,
       animationDuration: 500,
     });
 
+    // dismiss bottom sheet modal
     bottomSheetModalRef.current?.dismiss();
     setDisplayModal(false);
     setActiveBin(null);
     setActiveRoute(null);
   };
-
+  // activate routing to active bin
   const activateRouting = () => {
     if (!userLocation?.length || !activeBin?.coordinates) return;
     getDirections(userLocation, activeBin.coordinates);
   };
 
+  // get user location on component mount
   useEffect(() => {
     const initializeLocation = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -213,6 +229,7 @@ const ZotBinsMap = () => {
     initializeLocation();
   }, []);
 
+  // render loading spinner while fetching user location
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center">
@@ -225,6 +242,7 @@ const ZotBinsMap = () => {
     <View className="w-full h-full">
       <GestureHandlerRootView>
         <BottomSheetModalProvider>
+          {/* Bottom Sheet Modal */}
           <BinStatusBottomSheet
             bottomSheetRef={bottomSheetModalRef}
             onClose={closeModal}
@@ -287,6 +305,7 @@ const ZotBinsMap = () => {
           </MapView>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
+      {/* Find Nearest Bin Button */}
       { activeBin == null && (
         <View className="absolute bottom-4 left-0 right-0 p-4 z-10 items-center justify-center">
         <Pressable

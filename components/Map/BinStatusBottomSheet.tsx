@@ -1,9 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import { Pressable, Text, View } from "react-native";
 
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-
 
 
 interface BinStatusBottomSheetProps {
@@ -16,7 +15,7 @@ interface BinStatusBottomSheetProps {
   activeRoute: any;
   setActiveRoute: any;
 }
-
+// string format for distance and eta
 const metersToMilesOrFeetString = (meters: number | null) => {
   if (meters === null) {
     return "N/A";
@@ -56,6 +55,7 @@ const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> =
       onDismiss={onClose}
       animateOnMount={true}
     >
+      {/* Bottom Sheet Content */}
       <BottomSheetView
         className="items-center justify-center p-8"
       >
@@ -64,6 +64,7 @@ const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> =
                 {name}
             </Text>
 
+            {/* Cancel or Go button depending on if a route is active */}
             {activeRoute ? (
                 <Pressable
                 onPress={() => setActiveRoute(null)}
@@ -84,7 +85,7 @@ const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> =
         </View>
 
         <View className="w-full border-b border-gray-200 py-3 mx-3" />
-
+        {/* Bin Capacity, Distance, ETA (capacity currently hardcoded) */}
         <View className="w-full flex-row items-center justify-between px-4 pt-4">
             <View className="flex-col items-start justify-center">
                 <Text className="text-black">Bin Capacity</Text>
