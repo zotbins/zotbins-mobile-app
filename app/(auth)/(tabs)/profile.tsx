@@ -151,12 +151,16 @@ const Profile = () => {
             >
               <Text className="text-white text-center">Friend Requests</Text>
             </Pressable>
-            <Text className="text-xl font-bold">Friends</Text>
-            <Text className="text-center">
-              {userDoc?.friendsList > 0
-                ? userDoc?.friendsList
-                : "No friends added yet!"}
-            </Text>
+            <Text className="text-xl text-center font-bold">Friends</Text>
+            {userDoc?.friendsList?.length > 0 ? (
+              userDoc.friendsList.map((friend, index) => (
+                <Text key={index} className="text-center">
+                  {friend}
+                </Text>
+              ))
+            ) : (
+          <Text>No friends added yet!</Text>
+          )}
           </View>
 
           <Pressable
