@@ -159,21 +159,21 @@ const Leaderboard = () => {
         <View className="flex flex-row mb-6 mt-2">
           <TouchableOpacity 
             onPress={() => setActiveTab('all-rankings')}
-            className={`mr-6 ${activeTab === 'all-rankings' ? 'font-semibold border-b-2 border-tintColor' : 'text-black'}`}
+            className={`flex-1 mx-2 rounded ${activeTab === 'all-rankings' ? 'border-b-4 border-tintColor' : 'text-black border-b-4 border-gray-200'}`}
           >
-            <Text className={`text-xl ${activeTab === 'all-rankings' ? 'text-darkTintColor' : 'text-black'}`}>All</Text>
+            <Text className={`text-xl text-center ${activeTab === 'all-rankings' ? 'font-semibold text-darkTintColor' : 'text-black'}`}>All</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             onPress={() => setActiveTab('weekly')}
-            className={`mr-6 ${activeTab === 'weekly' ? 'font-semibold border-b-2 border-tintColor' : 'text-black'}`}
+            className={`flex-1 mx-2 rounded ${activeTab === 'weekly' ? 'border-b-4 border-tintColor' : 'text-black border-b-4 border-gray-200'}`}
           >
-            <Text className={`text-xl ${activeTab === 'weekly' ? 'text-darkTintColor' : 'text-black'}`}>Weekly</Text>
+            <Text className={`text-xl text-center ${activeTab === 'weekly' ? 'text-darkTintColor font-semibold' : 'text-black'}`}>Weekly</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             onPress={() => setActiveTab('friends')}
-            className={`${activeTab === 'friends' ? 'font-semibold border-b-2 border-tintColor' : 'text-black'}`}
+            className={`flex-1 mx-2 rounded ${activeTab === 'friends' ? 'border-b-4 border-tintColor' : 'text-black border-b-4 border-gray-200'}`}
           >
-            <Text className={`text-xl ${activeTab === 'friends' ? 'text-darkTintColor' : 'text-black'}`}>Friends</Text>
+            <Text className={`text-xl text-center ${activeTab === 'friends' ? 'font-semibold text-darkTintColor' : 'text-black'}`}>Friends</Text>
           </TouchableOpacity>
         </View>
 
