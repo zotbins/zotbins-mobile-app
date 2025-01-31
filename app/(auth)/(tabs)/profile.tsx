@@ -153,14 +153,15 @@ const Profile = () => {
             </Pressable>
             <Text className="text-xl text-center font-bold">Friends</Text>
             {userDoc?.friendsList?.length > 0 ? (
-              userDoc.friendsList.map((friend, index) => (
+              // TODO: Update types
+              userDoc.friendsList.map((friend: any, index: number) => (
                 <Text key={index} className="text-center">
                   {friend}
                 </Text>
               ))
             ) : (
-          <Text>No friends added yet!</Text>
-          )}
+              <Text>No friends added yet!</Text>
+            )}
           </View>
 
           <Pressable
