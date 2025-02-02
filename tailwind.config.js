@@ -12,9 +12,6 @@ module.exports = {
         blue: "#66aec4",
         red: "#fc6565",
         grey: "#242424",
-        teal: "#a5d4c2",
-        tealLite: "#e9f5f0",
-        tealMed: "#73ba9f",
       },
     }
   },
