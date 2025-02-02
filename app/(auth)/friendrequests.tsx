@@ -1,7 +1,7 @@
 import BackButton from "@/components/Reusables/BackButton";
 import { Stack } from "expo-router";
 import React, { useState } from "react";
-import { View, Text, Pressable } from "react-native";
+import { SafeAreaView, View, Text, Pressable } from "react-native";
 import SentRequests from "@/components/FriendRequests/SentRequests";
 import ReceivedRequests from "@/components/FriendRequests/ReceivedRequests";
 
@@ -19,11 +19,11 @@ const FriendRequests = () => {
           headerTitle: "",
         }}
       />
-      <View className="flex-row mb-5">
+      <SafeAreaView className="flex-row mb-5">
         {/* sent requests tabs */}
         <Pressable
           className={`flex-1 p-3 items-center border-b-2 ${
-            activeTab === "sent" ? "border-blue-500" : "border-gray-300"
+            activeTab === "sent" ? "border-blue" : "border-gray-300"
           }`}
           onPress={() => setActiveTab("sent")}
         >
@@ -33,7 +33,7 @@ const FriendRequests = () => {
         {/* received requests tab */}
         <Pressable
           className={`flex-1 p-3 items-center border-b-2 ${
-            activeTab === "received" ? "border-blue-500" : "border-gray-300"
+            activeTab === "received" ? "border-blue" : "border-gray-300"
           }`}
           onPress={() => setActiveTab("received")}
         >
@@ -41,7 +41,7 @@ const FriendRequests = () => {
             Received Requests
           </Text>
         </Pressable>
-      </View>
+      </SafeAreaView>
 
       {/* tab screen for sent requests*/}
       {activeTab === "sent" ? (

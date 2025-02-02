@@ -143,6 +143,12 @@ const Profile = () => {
             </View>
           </View>
 
+          <Pressable 
+            onPress={() => router.push("/envimpact")}
+            className="bg-blue py-3 rounded-lg">
+            <Text className="text-white text-center">Check Environmental Impact</Text>
+          </Pressable>
+
           {/* Friends container */}
           <View className="pb-2">
             <Pressable
