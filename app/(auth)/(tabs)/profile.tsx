@@ -165,6 +165,20 @@ const Profile = () => {
           </View>
 
           <Pressable
+            onPress={() => router.push("/achievements")}
+            className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
+          >
+            <Text className="text-white text-center">Achievements</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => router.push("/faq")}
+            className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
+          >
+            <Text className="text-white text-center">FAQ</Text>
+          </Pressable>
+
+          <Pressable
             onPress={() => auth().signOut()}
             className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
           >
