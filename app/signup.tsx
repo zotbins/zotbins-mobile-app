@@ -22,6 +22,8 @@ const createUserDocument = async (
   username: string
 ) => {
   // initialize default values for user doc
+  const xp: number = 0;
+  const level: number = 1;
   const totalPoints: number = 0;
   const dailyStreak: number = 0;
   const lastStreakUpdate: number = Date.now();
@@ -32,6 +34,8 @@ const createUserDocument = async (
     uid,
     firstname,
     lastname,
+    xp,
+    level,
     totalPoints,
     dailyStreak,
     lastStreakUpdate,

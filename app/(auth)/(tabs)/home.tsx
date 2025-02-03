@@ -9,7 +9,7 @@ const Home = () => {
   const user = auth().currentUser;
 
   const [streak, setStreak] = useState(0);
-
+  const [level, setLevel] = useState(1);
   //checking streak within home in case we want a modal to pop up
   const updateStreak = async (uid: any) => {
     if (!uid) return;
@@ -18,7 +18,7 @@ const Home = () => {
     const userData = (await userDoc.get()).data();
     if (!userData) return;
 
-    const { dailyStreak, lastStreakUpdate } = userData;
+    const { dailyStreak, lastStreakUpdate, xp, level } = userData;
 
     const now = new Date();
     const lastStreakUpdateDate = new Date(lastStreakUpdate);
@@ -32,6 +32,7 @@ const Home = () => {
       await userDoc.update({
         dailyStreak: dailyStreak + 1,
         lastStreakUpdate: now.getTime(),
+        xp: firestore.FieldValue.increment(5)
       });
       setStreak(dailyStreak + 1);
       console.log("increment streak");
@@ -40,12 +41,22 @@ const Home = () => {
       await userDoc.update({
         dailyStreak: 0,
         lastStreakUpdate: now.getTime(),
+        xp: firestore.FieldValue.increment(5)
       });
       setStreak(0);
       console.log("reset streak");
     } else {
       setStreak(dailyStreak);
       console.log("no streak update");
+    }
+
+    const requiredXPforNextLevel = 50 * (level + 1);
+    if (xp >= requiredXPforNextLevel) {
+      const newLevel = level + 1;
+      await userDoc.update({
+        level: newLevel
+      });
+      setLevel(newLevel);
     }
   };
 

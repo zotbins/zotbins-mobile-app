@@ -1,12 +1,13 @@
 import BackButton from "@/components/Reusables/BackButton";
 import { Link, Stack, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Animated, Pressable, Text, View } from "react-native";
 import data from "../../data/QuizData.js";
+import firestore, { FieldValue } from "@react-native-firebase/firestore";
+import auth from "@react-native-firebase/auth";
 
 const Quiz = () => {
   const router = useRouter();
-
   const questions = data;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentSelected, setCurrentSelected] = useState<string | null>(null);
@@ -64,10 +65,9 @@ const Quiz = () => {
             key={option}
             disabled={isOptionsDisabled}
             className={`h-24 rounded-[10px] flex-row items-center justify-between px-5 my-3 active:opacity-50
-              ${
-                option == answer
-                  ? "bg-tintColor"
-                  : option == currentSelected
+              ${option == answer
+                ? "bg-tintColor"
+                : option == currentSelected
                   ? "bg-red"
                   : "bg-blue"
               }`}
@@ -123,6 +123,19 @@ const Quiz = () => {
       setIsOptionsDisabled(false);
     }
   };
+
+  useEffect(() => {
+    const user = auth().currentUser;
+
+    if (showResults && user) {
+      firestore()
+        .collection("users")
+        .doc(user.uid)
+        .update({
+          xp: firestore.FieldValue.increment(5)
+        });
+    }
+  }, [showResults]);
 
   return (
     <>

@@ -2,6 +2,8 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Image, Text, View, TouchableOpacity } from "react-native";
 import ImageEditor from "@react-native-community/image-editor";
+import firestore, { FieldValue } from "@react-native-firebase/firestore";
+import auth from "@react-native-firebase/auth";
 
 interface ScanResultsProps {
   image: string | null;
@@ -18,6 +20,18 @@ const ScanResults: React.FC<ScanResultsProps> = ({
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const [wasteObject, setWasteObject] = useState<string>("");
   const [wasteCategory, setWasteCategory] = useState<string>("");
+
+  useEffect(() => {
+    const user = auth().currentUser;
+    if (user) {
+      firestore()
+        .collection("users")
+        .doc(user.uid)
+        .update({
+          xp: firestore.FieldValue.increment(10)
+        });
+    }
+  }, []);
 
   useEffect(() => {
     cropImage();
