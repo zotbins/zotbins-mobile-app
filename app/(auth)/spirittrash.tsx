@@ -1,6 +1,6 @@
-import { StyleSheet, Text, SafeAreaView, View, TouchableOpacity } from 'react-native'
+import { Pressable, StyleSheet, Text, SafeAreaView, View, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { Stack } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import { useState } from 'react'
 
 const SpiritTrash = () => {
@@ -129,7 +129,6 @@ const SpiritTrash = () => {
   }
 
 
-
   return (
     <SafeAreaView className="flex-1 items-center mt-40">
 
@@ -163,12 +162,6 @@ const SpiritTrash = () => {
         </View>
 
       </View>
-        
-
-
-
-
-
         
 
     </SafeAreaView>
