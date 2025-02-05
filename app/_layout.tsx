@@ -15,6 +15,7 @@ export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
 
+  // checks if user has spiritTrash set
   const getSpiritTrash = async (uid: string) => {
     const snapshot = await firestore()
       .collection("users")
@@ -46,10 +47,13 @@ export default function RootLayout() {
     const inAuthGroup = segments[0] === "(auth)";
 
     if (user && !inAuthGroup) {
+      // check if user has spiritTrash set
       getSpiritTrash(user.uid).then((spiritTrash) => {
+        // if not, redirect to spirittrash page
         if (spiritTrash == "") {
           router.replace("/(auth)/spirittrash");
         }
+        // else, redirect to home page
         else {
           router.replace("/(auth)/(tabs)/home");
         }
