@@ -50,11 +50,11 @@ const Home = () => {
       console.log("no streak update");
     }
 
-    const requiredXPforNextLevel = 50 * (level + 1);
+    const requiredXPforNextLevel = 50 * (level);
     if (xp >= requiredXPforNextLevel) {
       const newLevel = level + 1;
       await userDoc.update({
-        level: newLevel
+        level: firestore.FieldValue.increment(1),
       });
       setLevel(newLevel);
     }

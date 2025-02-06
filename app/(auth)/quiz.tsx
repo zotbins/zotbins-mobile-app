@@ -3,7 +3,7 @@ import { Link, Stack, useRouter } from "expo-router";
 import React, { useState, useEffect } from "react";
 import { Animated, Pressable, Text, View } from "react-native";
 import data from "../../data/QuizData.js";
-import firestore, { FieldValue } from "@react-native-firebase/firestore";
+import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 
 const Quiz = () => {
@@ -126,14 +126,28 @@ const Quiz = () => {
 
   useEffect(() => {
     const user = auth().currentUser;
-
     if (showResults && user) {
-      firestore()
-        .collection("users")
-        .doc(user.uid)
-        .update({
-          xp: firestore.FieldValue.increment(5)
-        });
+      const userRef = firestore().collection("users").doc(user.uid);
+      userRef.get().then((docSnapshot) => {
+        if (docSnapshot.exists) {
+          const currentXP = docSnapshot.data()?.xp || 0;
+          const currentLevel = docSnapshot.data()?.level || 1;
+          const requiredXPforNextLevel = 50*(currentLevel);
+          const newXP = currentXP + 5;
+          if (newXP >= requiredXPforNextLevel) {
+            userRef.update({
+              xp: firestore.FieldValue.increment(5),
+              level: firestore.FieldValue.increment(1),
+            });
+          } else {
+            userRef.update({
+              xp: firestore.FieldValue.increment(5)
+          });
+        }
+      }
+      }).catch((error) => {
+        console.error("Error getting user data: ", error);
+      });
     }
   }, [showResults]);
 

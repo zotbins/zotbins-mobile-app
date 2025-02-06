@@ -24,12 +24,27 @@ const ScanResults: React.FC<ScanResultsProps> = ({
   useEffect(() => {
     const user = auth().currentUser;
     if (user) {
-      firestore()
-        .collection("users")
-        .doc(user.uid)
-        .update({
-          xp: firestore.FieldValue.increment(10)
-        });
+      const userRef = firestore().collection("users").doc(user.uid);
+      userRef.get().then((docSnapshot) => {
+        if (docSnapshot.exists) {
+          const currentXP = docSnapshot.data()?.xp || 0;
+          const currentLevel = docSnapshot.data()?.level || 1;
+          const requiredXPforNextLevel = 50*(currentLevel);
+          const newXP = currentXP + 10;
+          if (newXP >= requiredXPforNextLevel) {
+            userRef.update({
+              xp: firestore.FieldValue.increment(10),
+              level: firestore.FieldValue.increment(1),
+            });
+          } else {
+            userRef.update({
+              xp: firestore.FieldValue.increment(10)
+          });
+        }
+      }
+      }).catch((error) => {
+        console.error("Error getting user data: ", error);
+      });
     }
   }, []);
 
