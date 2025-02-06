@@ -1,7 +1,20 @@
 import { Pressable, StyleSheet, Text, SafeAreaView, View, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { router, Stack } from 'expo-router'
 import { useState } from 'react'
+import firestore from '@react-native-firebase/firestore'
+import auth from '@react-native-firebase/auth'
+
+// update spiritTrash in firestore
+const updateSpiritTrash = async (spiritTrash: string) => {
+  const uid = auth().currentUser?.uid;
+  if (!uid) return;
+
+  await firestore()
+    .collection("users")
+    .doc(uid)
+    .update({ spiritTrash });
+}
 
 const SpiritTrash = () => {
 
@@ -165,6 +178,12 @@ const SpiritTrash = () => {
   const spiritResult = showResult ? getSpiritTrash() : '';
   const spiritCategory = showResult ? getCategory(spiritResult) : '';
 
+  useEffect(() => {
+    if (showResult) {
+      updateSpiritTrash(spiritResult);
+    }
+  }, [showResult]);
+
   return (
     <SafeAreaView className="flex-1 items-center mt-40">
 
@@ -186,13 +205,13 @@ const SpiritTrash = () => {
           
           <View className='w-4/5'>
             {questions[currentQuestion].answers.map((answer, index) => (
-              <TouchableOpacity 
+              <Pressable 
                 key={index} 
                 className="border-2 rounded-3xl border-green-600 bg-tintColor my-2 text-2xl"
                 onPress={() => handleAnswer(answer.scores)}
               >
                 <Text className="text-2xl text-center p-2">{answer.text}</Text>
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </View>
         </View>
@@ -200,11 +219,17 @@ const SpiritTrash = () => {
       : 
       // else, show spirit trash results
       (
-        <View className='h-screen items-center mt-40 w-5/6'>
-          <Text className='text-3xl text-center'>Your spirit trash is...</Text>
-          <Text className='text-4xl font-bold my-4'>{spiritResult}!</Text>
-          <Text className='text-xl text-center'>Category: {spiritCategory}</Text>
-        </View>
+
+          <View className='h-screen items-center mt-40 w-5/6'>
+            <Text className='text-3xl text-center'>Your spirit trash is...</Text>
+            <Text className='text-4xl font-bold my-4'>{spiritResult}!</Text>
+            <Text className='text-xl text-center'>Category: {spiritCategory}</Text>
+            <Pressable className="border-2 rounded-3xl border-green-600 bg-tintColor my-2 text-2xl px-5"
+              onPress={() => router.replace("/(auth)/(tabs)/home")}>
+              <Text className="text-2xl text-center text-black">Back to Home</Text>
+            </Pressable>
+          </View>
+
       )}        
 
     </SafeAreaView>
