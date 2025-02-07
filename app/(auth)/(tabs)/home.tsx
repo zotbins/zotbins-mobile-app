@@ -29,12 +29,23 @@ const Home = () => {
 
     if (hoursDiff >= 24 && hoursDiff < 48) {
       // increment dailystreak
-      await userDoc.update({
-        dailyStreak: dailyStreak + 1,
+      const newStreak = dailyStreak + 1;
+
+      // Update data
+      const updatePayload: any = {
+        dailyStreak: newStreak,
         lastStreakUpdate: now.getTime(),
-        xp: firestore.FieldValue.increment(5)
-      });
-      setStreak(dailyStreak + 1);
+        xp: firestore.FieldValue.increment(5),
+      };
+
+      // Award 2 points only if streak is now greater than 1 day
+      if (newStreak > 1) {
+        updatePayload.totalPoints = firestore.FieldValue.increment(2);
+      }
+
+      await userDoc.update(updatePayload);
+      setStreak(newStreak);
+
       console.log("increment streak");
     } else if (hoursDiff >= 48) {
       // reset dailystreak
