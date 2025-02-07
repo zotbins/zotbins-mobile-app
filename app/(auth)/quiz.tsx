@@ -81,13 +81,26 @@ const Quiz = () => {
   };
 
   // checks if answer selected is correct
-  const checkAnswer = (selected: string) => {
+  const checkAnswer = async (selected: string) => {
     let answer = questions[currentQuestionIndex]["answer"];
     setCurrentSelected(selected);
     setAnswer(answer);
     setIsOptionsDisabled(true);
     if (selected == answer) {
       setScore(score + 1);
+
+      // award points for correct answers
+      const user = auth().currentUser;
+      if (user) {
+        try {
+          await firestore().collection("users").doc(user.uid).update({
+            totalPoints: firestore.FieldValue.increment(1),
+          });
+          console.log("Added points to totalPoints.");
+        } catch (error) {
+          console.error("Error updating totalPoints:", error);
+        }
+      }
     }
   };
 
@@ -132,7 +145,7 @@ const Quiz = () => {
         if (docSnapshot.exists) {
           const currentXP = docSnapshot.data()?.xp || 0;
           const currentLevel = docSnapshot.data()?.level || 1;
-          const requiredXPforNextLevel = 50*(currentLevel);
+          const requiredXPforNextLevel = 50 * (currentLevel);
           const newXP = currentXP + 5;
           if (newXP >= requiredXPforNextLevel) {
             userRef.update({
@@ -142,9 +155,9 @@ const Quiz = () => {
           } else {
             userRef.update({
               xp: firestore.FieldValue.increment(5)
-          });
+            });
+          }
         }
-      }
       }).catch((error) => {
         console.error("Error getting user data: ", error);
       });
