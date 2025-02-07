@@ -29,7 +29,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({
         if (docSnapshot.exists) {
           const currentXP = docSnapshot.data()?.xp || 0;
           const currentLevel = docSnapshot.data()?.level || 1;
-          const requiredXPforNextLevel = 50*(currentLevel);
+          const requiredXPforNextLevel = 50 * (currentLevel);
           const newXP = currentXP + 10;
           if (newXP >= requiredXPforNextLevel) {
             userRef.update({
@@ -39,9 +39,21 @@ const ScanResults: React.FC<ScanResultsProps> = ({
           } else {
             userRef.update({
               xp: firestore.FieldValue.increment(10)
-          });
+            });
+
+            // Gets the last scan date from firebase
+            const lastScanDate = docSnapshot.data()?.lastScanDate;
+            const todayDateString = new Date().toISOString().split("T")[0];
+
+            // Only award points if user hasn't scanned today
+            if (lastScanDate !== todayDateString) {
+              userRef.update({
+                lastScanDate: todayDateString,
+                totalPoints: firestore.FieldValue.increment(10),
+              });
+            }
+          }
         }
-      }
       }).catch((error) => {
         console.error("Error getting user data: ", error);
       });
