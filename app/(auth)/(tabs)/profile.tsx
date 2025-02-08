@@ -192,6 +192,13 @@ const Profile = () => {
           </Pressable>
 
           <Pressable
+            onPress={() => router.replace("/(auth)/spirittrash")}
+            className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
+            >
+              <Text className="text-white text-center">Retake Spirit Trash Quiz</Text>
+          </Pressable>
+
+          <Pressable
             onPress={() => auth().signOut()}
             className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
           >

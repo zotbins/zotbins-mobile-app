@@ -28,7 +28,7 @@ const createUserDocument = async (
   const dailyStreak: number = 0;
   const lastStreakUpdate: number = Date.now();
   const footprint: number = 0;
-  const spiritTrash: string = "Coca Cola";
+  const spiritTrash: string = "";
   await firestore().collection("users").doc(uid).set({
     email,
     uid,
