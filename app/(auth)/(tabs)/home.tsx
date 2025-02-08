@@ -9,7 +9,7 @@ const Home = () => {
   const user = auth().currentUser;
 
   const [streak, setStreak] = useState(0);
-
+  const [level, setLevel] = useState(1);
   //checking streak within home in case we want a modal to pop up
   const updateStreak = async (uid: any) => {
     if (!uid) return;
@@ -18,7 +18,7 @@ const Home = () => {
     const userData = (await userDoc.get()).data();
     if (!userData) return;
 
-    const { dailyStreak, lastStreakUpdate } = userData;
+    const { dailyStreak, lastStreakUpdate, xp, level } = userData;
 
     const now = new Date();
     const lastStreakUpdateDate = new Date(lastStreakUpdate);
@@ -29,23 +29,45 @@ const Home = () => {
 
     if (hoursDiff >= 24 && hoursDiff < 48) {
       // increment dailystreak
-      await userDoc.update({
-        dailyStreak: dailyStreak + 1,
+      const newStreak = dailyStreak + 1;
+
+      // Update data
+      const updatePayload: any = {
+        dailyStreak: newStreak,
         lastStreakUpdate: now.getTime(),
-      });
-      setStreak(dailyStreak + 1);
+        xp: firestore.FieldValue.increment(5),
+      };
+
+      // Award 2 points only if streak is now greater than 1 day
+      if (newStreak > 1) {
+        updatePayload.totalPoints = firestore.FieldValue.increment(2);
+      }
+
+      await userDoc.update(updatePayload);
+      setStreak(newStreak);
+
       console.log("increment streak");
     } else if (hoursDiff >= 48) {
       // reset dailystreak
       await userDoc.update({
         dailyStreak: 0,
         lastStreakUpdate: now.getTime(),
+        xp: firestore.FieldValue.increment(5)
       });
       setStreak(0);
       console.log("reset streak");
     } else {
       setStreak(dailyStreak);
       console.log("no streak update");
+    }
+
+    const requiredXPforNextLevel = 50 * (level);
+    if (xp >= requiredXPforNextLevel) {
+      const newLevel = level + 1;
+      await userDoc.update({
+        level: firestore.FieldValue.increment(1),
+      });
+      setLevel(newLevel);
     }
   };
 

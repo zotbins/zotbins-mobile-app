@@ -1,12 +1,13 @@
 import BackButton from "@/components/Reusables/BackButton";
 import { Link, Stack, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Animated, Pressable, Text, View } from "react-native";
 import data from "../../data/QuizData.js";
+import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
+import auth from "@react-native-firebase/auth";
 
 const Quiz = () => {
   const router = useRouter();
-
   const questions = data;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentSelected, setCurrentSelected] = useState<string | null>(null);
@@ -64,10 +65,9 @@ const Quiz = () => {
             key={option}
             disabled={isOptionsDisabled}
             className={`h-24 rounded-[10px] flex-row items-center justify-between px-5 my-3 active:opacity-50
-              ${
-                option == answer
-                  ? "bg-tintColor"
-                  : option == currentSelected
+              ${option == answer
+                ? "bg-tintColor"
+                : option == currentSelected
                   ? "bg-red"
                   : "bg-blue"
               }`}
@@ -81,13 +81,26 @@ const Quiz = () => {
   };
 
   // checks if answer selected is correct
-  const checkAnswer = (selected: string) => {
+  const checkAnswer = async (selected: string) => {
     let answer = questions[currentQuestionIndex]["answer"];
     setCurrentSelected(selected);
     setAnswer(answer);
     setIsOptionsDisabled(true);
     if (selected == answer) {
       setScore(score + 1);
+
+      // award points for correct answers
+      const user = auth().currentUser;
+      if (user) {
+        try {
+          await firestore().collection("users").doc(user.uid).update({
+            totalPoints: firestore.FieldValue.increment(1),
+          });
+          console.log("Added points to totalPoints.");
+        } catch (error) {
+          console.error("Error updating totalPoints:", error);
+        }
+      }
     }
   };
 
@@ -123,6 +136,33 @@ const Quiz = () => {
       setIsOptionsDisabled(false);
     }
   };
+
+  useEffect(() => {
+    const user = auth().currentUser;
+    if (showResults && user) {
+      const userRef = firestore().collection("users").doc(user.uid);
+      userRef.get().then((docSnapshot) => {
+        if (docSnapshot.exists) {
+          const currentXP = docSnapshot.data()?.xp || 0;
+          const currentLevel = docSnapshot.data()?.level || 1;
+          const requiredXPforNextLevel = 50 * (currentLevel);
+          const newXP = currentXP + 5;
+          if (newXP >= requiredXPforNextLevel) {
+            userRef.update({
+              xp: firestore.FieldValue.increment(5),
+              level: firestore.FieldValue.increment(1),
+            });
+          } else {
+            userRef.update({
+              xp: firestore.FieldValue.increment(5)
+            });
+          }
+        }
+      }).catch((error) => {
+        console.error("Error getting user data: ", error);
+      });
+    }
+  }, [showResults]);
 
   return (
     <>

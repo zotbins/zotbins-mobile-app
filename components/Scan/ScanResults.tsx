@@ -2,6 +2,8 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Image, Text, View, TouchableOpacity } from "react-native";
 import ImageEditor from "@react-native-community/image-editor";
+import firestore, { FieldValue } from "@react-native-firebase/firestore";
+import auth from "@react-native-firebase/auth";
 
 interface ScanResultsProps {
   image: string | null;
@@ -18,6 +20,45 @@ const ScanResults: React.FC<ScanResultsProps> = ({
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const [wasteObject, setWasteObject] = useState<string>("");
   const [wasteCategory, setWasteCategory] = useState<string>("");
+
+  useEffect(() => {
+    const user = auth().currentUser;
+    if (user) {
+      const userRef = firestore().collection("users").doc(user.uid);
+      userRef.get().then((docSnapshot) => {
+        if (docSnapshot.exists) {
+          const currentXP = docSnapshot.data()?.xp || 0;
+          const currentLevel = docSnapshot.data()?.level || 1;
+          const requiredXPforNextLevel = 50 * (currentLevel);
+          const newXP = currentXP + 10;
+          if (newXP >= requiredXPforNextLevel) {
+            userRef.update({
+              xp: firestore.FieldValue.increment(10),
+              level: firestore.FieldValue.increment(1),
+            });
+          } else {
+            userRef.update({
+              xp: firestore.FieldValue.increment(10)
+            });
+
+            // Gets the last scan date from firebase
+            const lastScanDate = docSnapshot.data()?.lastScanDate;
+            const todayDateString = new Date().toISOString().split("T")[0];
+
+            // Only award points if user hasn't scanned today
+            if (lastScanDate !== todayDateString) {
+              userRef.update({
+                lastScanDate: todayDateString,
+                totalPoints: firestore.FieldValue.increment(10),
+              });
+            }
+          }
+        }
+      }).catch((error) => {
+        console.error("Error getting user data: ", error);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     cropImage();

@@ -43,7 +43,7 @@ const Profile = () => {
     };
 
     fetchUserDoc();
-  }, [user]);
+  });
 
   // request permission to access camera roll
   const requestPermission = async () => {
@@ -113,6 +113,10 @@ const Profile = () => {
             </View>
             <View className="flex-1 ml-4">
               <Text className="text-3xl">@{userDoc?.username}</Text>
+              <Text className="text-black">
+                Level {userDoc?.level} | ({userDoc?.xp}/{userDoc?.level * 50}{" "}
+                XP)
+              </Text>
               <Text className="text-black">Points: {userDoc?.totalPoints}</Text>
             </View>
             <Text className="mr-1 text-[#fc8803] text-lg">
@@ -143,10 +147,13 @@ const Profile = () => {
             </View>
           </View>
 
-          <Pressable 
+          <Pressable
             onPress={() => router.push("/envimpact")}
-            className="bg-blue py-3 rounded-lg">
-            <Text className="text-white text-center">Check Environmental Impact</Text>
+            className="bg-blue py-3 rounded-lg"
+          >
+            <Text className="text-white text-center">
+              Check Environmental Impact
+            </Text>
           </Pressable>
 
           {/* Friends container */}
