@@ -34,6 +34,7 @@ const Home = () => {
       // Update data
       const updatePayload: any = {
         dailyStreak: newStreak,
+        dailyScans: 0,
         lastStreakUpdate: now.getTime(),
         xp: firestore.FieldValue.increment(5),
       };
@@ -51,6 +52,7 @@ const Home = () => {
       // reset dailystreak
       await userDoc.update({
         dailyStreak: 0,
+        dailyScans: 0,
         lastStreakUpdate: now.getTime(),
         xp: firestore.FieldValue.increment(5)
       });
