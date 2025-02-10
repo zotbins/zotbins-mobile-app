@@ -6,9 +6,19 @@ import data from "../../data/QuizData.js";
 import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 
+interface Question {
+  id?: string;
+  question: string;
+  choices: string[];
+  correctAnswer: string;
+  createdAt: Date;
+  image?: string | null;
+  multipleAnswers: boolean;
+}
+
 const Quiz = () => {
   const router = useRouter();
-  const questions = data;
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentSelected, setCurrentSelected] = useState<string | null>(null);
   const [answer, setAnswer] = useState<string | null>(null);
@@ -20,6 +30,40 @@ const Quiz = () => {
     inputRange: [0, questions.length],
     outputRange: ["0%", "100%"],
   });
+
+  const getQuestions = async () => {
+    try {
+      const querySnapshot = await firestore().collection('questions').get();
+      const allQuestions: Question[] = [];
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        allQuestions.push({
+          id: doc.id,
+          question: data.question,
+          choices: data.choices,
+          correctAnswer: data.correctAnswer,
+          createdAt: data.createdAt.toDate(),
+          image: data.image || null,
+          multipleAnswers: data.multipleAnswers,
+        });
+      });
+
+      // shuffle array
+      const shuffledQuestions = allQuestions.sort(() => Math.random() - 0.5);
+
+      // select the first 5 random questions
+      const randomQuestions = shuffledQuestions.slice(0, 5);
+
+      setQuestions(randomQuestions);
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+    }
+  };
+
+  useEffect(() => {
+    getQuestions();
+  }, []);
 
   // show a progress bar of the quiz
   const displayProgress = () => {
@@ -59,21 +103,21 @@ const Quiz = () => {
   // display possible answers
   const displayOptions = () => {
     return (
-      <View>
-        {questions[currentQuestionIndex]?.options.map((option) => (
+      <View className="flex-1 px-5 justify-start mt-4">
+        {questions[currentQuestionIndex]?.choices.slice(0, 5).map((choice, index) => (
           <Pressable
-            key={option}
+            key={`${choice}-${index}`}
             disabled={isOptionsDisabled}
-            className={`h-24 rounded-[10px] flex-row items-center justify-between px-5 my-3 active:opacity-50
-              ${option == answer
+            className={`min-h-16 max-h-20 rounded-[10px] flex-row items-center justify-between px-5 my-3 active:opacity-50
+              ${choice === answer
                 ? "bg-tintColor"
-                : option == currentSelected
+                : choice === currentSelected
                   ? "bg-red"
                   : "bg-blue"
               }`}
-            onPress={() => checkAnswer(option)}
+            onPress={() => checkAnswer(choice)}
           >
-            <Text className="text-xl text-white">{option}</Text>
+            <Text className="text-xl text-white">{choice}</Text>
           </Pressable>
         ))}
       </View>
@@ -82,7 +126,7 @@ const Quiz = () => {
 
   // checks if answer selected is correct
   const checkAnswer = async (selected: string) => {
-    let answer = questions[currentQuestionIndex]["answer"];
+    let answer = questions[currentQuestionIndex].correctAnswer;
     setCurrentSelected(selected);
     setAnswer(answer);
     setIsOptionsDisabled(true);
