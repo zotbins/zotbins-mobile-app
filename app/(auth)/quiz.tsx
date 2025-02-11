@@ -6,9 +6,19 @@ import data from "../../data/QuizData.js";
 import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 
+interface Question {
+  id?: string;
+  question: string;
+  choices: string[];
+  correctAnswer: string;
+  createdAt: Date;
+  image?: string | null;
+  multipleAnswers: boolean;
+}
+
 const Quiz = () => {
   const router = useRouter();
-  const questions = data;
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentSelected, setCurrentSelected] = useState<string | null>(null);
   const [answer, setAnswer] = useState<string | null>(null);
@@ -20,6 +30,40 @@ const Quiz = () => {
     inputRange: [0, questions.length],
     outputRange: ["0%", "100%"],
   });
+
+  const getQuestions = async () => {
+    try {
+      const querySnapshot = await firestore().collection('questions').get();
+      const allQuestions: Question[] = [];
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        allQuestions.push({
+          id: doc.id,
+          question: data.question,
+          choices: data.choices,
+          correctAnswer: data.correctAnswer,
+          createdAt: data.createdAt.toDate(),
+          image: data.image || null,
+          multipleAnswers: data.multipleAnswers,
+        });
+      });
+
+      // shuffle array
+      const shuffledQuestions = allQuestions.sort(() => Math.random() - 0.5);
+
+      // select the first 5 random questions
+      const randomQuestions = shuffledQuestions.slice(0, 5);
+
+      setQuestions(randomQuestions);
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+    }
+  };
+
+  useEffect(() => {
+    getQuestions();
+  }, []);
 
   // show a progress bar of the quiz
   const displayProgress = () => {
@@ -42,16 +86,18 @@ const Quiz = () => {
     }).start();
 
     return (
-      <View className="pt-8 pb-5">
-        <View className="flex-row items-end">
-          <Text className="text-black text-2xl">
-            {currentQuestionIndex + 1}{" "}
+      <View className="flex justify-center items-center">
+        <View className="pt-8 pb-5 w-11/12">
+          <View className="flex-row items-end pb-2">
+            <Text className="text-black text-2xl">
+              {currentQuestionIndex + 1}{" "}
+            </Text>
+            <Text className="text-black text-2xl">/ {questions.length}</Text>
+          </View>
+          <Text className="text-black text-4xl">
+            {questions[currentQuestionIndex]?.question}
           </Text>
-          <Text className="text-black text-2xl">/ {questions.length}</Text>
         </View>
-        <Text className="text-black text-4xl">
-          {questions[currentQuestionIndex]?.question}
-        </Text>
       </View>
     );
   };
@@ -59,21 +105,21 @@ const Quiz = () => {
   // display possible answers
   const displayOptions = () => {
     return (
-      <View>
-        {questions[currentQuestionIndex]?.options.map((option) => (
+      <View className="flex-1 px-5 mt-4">
+        {questions[currentQuestionIndex]?.choices.slice(0, 5).map((choice, index) => (
           <Pressable
-            key={option}
+            key={`${choice}-${index}`}
             disabled={isOptionsDisabled}
-            className={`h-24 rounded-[10px] flex-row items-center justify-between px-5 my-3 active:opacity-50
-              ${option == answer
+            className={`min-h-16 rounded-xl items-start justify-center px-5 py-3 my-2 active:opacity-50
+              ${choice === answer
                 ? "bg-tintColor"
-                : option == currentSelected
+                : choice === currentSelected
                   ? "bg-red"
                   : "bg-blue"
               }`}
-            onPress={() => checkAnswer(option)}
+            onPress={() => checkAnswer(choice)}
           >
-            <Text className="text-xl text-white">{option}</Text>
+            <Text className="text-xl text-white">{choice}</Text>
           </Pressable>
         ))}
       </View>
@@ -82,7 +128,7 @@ const Quiz = () => {
 
   // checks if answer selected is correct
   const checkAnswer = async (selected: string) => {
-    let answer = questions[currentQuestionIndex]["answer"];
+    let answer = questions[currentQuestionIndex].correctAnswer;
     setCurrentSelected(selected);
     setAnswer(answer);
     setIsOptionsDisabled(true);
@@ -108,10 +154,11 @@ const Quiz = () => {
   const showNextButton = () => {
     if (isOptionsDisabled) {
       return (
-        <Pressable
+        <View className="flex justify-center items-center">
+          <Pressable
           onPress={handleNext}
-          className="w-full border-2 border-grey bg-white px-5 my-2.5 h-16 rounded-[10px] 
-            flex-row items-center justify-center active:opacity-50"
+          className="w-11/12 border-2 border-grey bg-white my-2.5 h-16 rounded-[10px] 
+            flex justify-center active:opacity-50"
         >
           <Text className="text-2xl text-black text-center">
             {currentQuestionIndex == questions.length - 1
@@ -119,6 +166,9 @@ const Quiz = () => {
               : "Next Question"}
           </Text>
         </Pressable>
+        </View>
+        
+        
       );
     } else {
       return null;
@@ -183,14 +233,14 @@ const Quiz = () => {
 
         {showResults && (
           <View>
-            <Text className="text-5xl text-black text-center">Results</Text>
-            <Text className="text-2xl text-black text-center">
+            <Text className="text-5xl text-black text-center pb-2">Results</Text>
+            <Text className="text-3xl text-black text-center">
               {score} / {questions.length}
             </Text>
-            <View className="pt-12">
+            <View className="pt-10 flex items-center justify-center">
               <Link href="/home" asChild>
-                <Pressable className="items-center justify-center py-5 px-8 rounded-sm shadow-sm bg-tintColor active:opacity-50">
-                  <Text className="text-black">Back to Home</Text>
+                <Pressable className="w-11/12 items-center justify-center py-5 px-8 rounded-xl bg-tintColor active:opacity-50">
+                  <Text className="text-white text-xl">Back to Home</Text>
                 </Pressable>
               </Link>
             </View>
