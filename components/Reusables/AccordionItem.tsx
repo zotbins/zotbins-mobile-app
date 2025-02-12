@@ -17,11 +17,19 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   return (
     <View>
       <TouchableOpacity
-        className={row == 0 ? `border-y-2` : `border-b-2`}
+        className={
+          row == 0 && isOpen
+            ? "border-t-2"
+            : row == 0
+            ? "border-y-2"
+            : isOpen
+            ? ""
+            : "border-b-2"
+        }
         onPress={() => setIsOpen(!isOpen)}
       >
-        <View className="flex flex-row justify-between items-center p-2">
-          <Text>{question}</Text>
+        <View className="flex flex-row justify-between items-center p-4">
+          <Text className="font-semibold text-xl">{question}</Text>
           <Text>
             {isOpen ? (
               <Entypo name="chevron-up" size={24} color="black" />
@@ -32,7 +40,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         </View>
       </TouchableOpacity>
       {isOpen && (
-        <View className="flex flex-row border-b-2 items-center p-2">
+        <View className="flex flex-row border-b-2 items-center p-4">
           <Text>{answer}</Text>
         </View>
       )}
