@@ -4,27 +4,45 @@ import { Pressable, SafeAreaView, Text } from "react-native";
 import ScanResults from "@/components/Scan/ScanResults";
 import TestImage from "@/assets/images/test-image"
 import ScanLimitModal from "@/components/Scan/ScanLimitModal";
+import firestore from "@react-native-firebase/firestore";
+import auth from "@react-native-firebase/auth";
 
 const Scan = () => {
   const [image, setImage] = useState<string | null>(TestImage);
 
   const [showScanResults, setShowScanResults] = useState<boolean>(false);
   const [showScanLimitModal, setShowScanLimitModal] = useState<boolean>(false);
+  const user = auth().currentUser;
+  
+  const getDailyScanCount = async (user) => {
+    try {
+      const userDoc = await firestore().collection("users").doc(user.uid).get();
 
-  const [dailyScans, setDailyScans] = useState<number>(0);
+      if (userDoc.exists) {
+        const userData = userDoc.data();
+        return userData?.dailyScans || 0;
+      } else {
+        return 0;
+      }
+    } catch (error) {
+      console.error("Error getting daily scans:", error);
+      return 0;
+    }
+  };
 
   // handles the scan button press
-  const handleScan = () => {
-    // check if the user has reached the daily scan limit
-    if (dailyScans >= 3) {
-      setShowScanLimitModal(true);
-    }
-    // if the user has not reached the daily scan limit, navigate to the camera screen
-    else {
-      router.push("/(auth)/camera");
-    }
-  }
+  const handleScan = async () => {
 
+    // Get the daily scan count
+    const dailyScanCount = await getDailyScanCount(user);
+
+    // Check if the user has reached the scan limit
+    if (dailyScanCount >= 3) {
+      setShowScanLimitModal(true); // Show modal if the limit is reached
+    } else {
+      router.push("/(auth)/camera"); // Navigate to the camera screen
+    }
+  };
   const closeScanLimitModal = () => {
     setShowScanLimitModal(false);
   }

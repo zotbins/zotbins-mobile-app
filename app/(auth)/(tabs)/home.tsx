@@ -11,41 +11,32 @@ const Home = () => {
   const [streak, setStreak] = useState(0);
   const [level, setLevel] = useState(1);
   //checking streak within home in case we want a modal to pop up
-  const updateStreak = async (uid: any) => {
+  const updateLoginStreak = async (uid: any) => {
     if (!uid) return;
 
     const userDoc = firestore().collection("users").doc(uid);
     const userData = (await userDoc.get()).data();
     if (!userData) return;
 
-    const { dailyStreak, lastStreakUpdate, xp, level } = userData;
+    const { dailyStreak, lastLoginUpdate, xp, level } = userData;
 
     const now = new Date();
-    const lastStreakUpdateDate = new Date(lastStreakUpdate);
+    const lastLoginUpdateDate = new Date(lastLoginUpdate);
 
-    const timeDiff = now.getTime() - lastStreakUpdateDate.getTime();
+    const timeDiff = now.getTime() - lastLoginUpdateDate.getTime();
 
     const hoursDiff = timeDiff / (1000 * 3600);
 
     if (hoursDiff >= 24 && hoursDiff < 48) {
-      // increment dailystreak
-      const newStreak = dailyStreak + 1;
-
       // Update data
       const updatePayload: any = {
-        dailyStreak: newStreak,
         dailyScans: 0,
-        lastStreakUpdate: now.getTime(),
+        lastLoginUpdate: now.getTime(),
         xp: firestore.FieldValue.increment(5),
       };
 
-      // Award 2 points only if streak is now greater than 1 day
-      if (newStreak > 1) {
-        updatePayload.totalPoints = firestore.FieldValue.increment(2);
-      }
-
       await userDoc.update(updatePayload);
-      setStreak(newStreak);
+      setStreak(dailyStreak);
 
       console.log("increment streak");
     } else if (hoursDiff >= 48) {
@@ -53,7 +44,7 @@ const Home = () => {
       await userDoc.update({
         dailyStreak: 0,
         dailyScans: 0,
-        lastStreakUpdate: now.getTime(),
+        lastLoginUpdate: now.getTime(),
         xp: firestore.FieldValue.increment(5)
       });
       setStreak(0);
@@ -75,7 +66,7 @@ const Home = () => {
 
   useEffect(() => {
     if (user) {
-      updateStreak(user.uid);
+      updateLoginStreak(user.uid);
     }
   }, [user]);
 

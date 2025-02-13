@@ -27,6 +27,7 @@ const createUserDocument = async (
   const totalPoints: number = 0;
   const dailyStreak: number = 0;
   const dailyScans: number = 0;
+  const lastLoginUpdate: number = Date.now();
   const lastStreakUpdate: number = Date.now();
   const footprint: number = 0;
   const spiritTrash: string = "";
@@ -40,6 +41,7 @@ const createUserDocument = async (
     totalPoints,
     dailyStreak,
     dailyScans,
+    lastLoginUpdate,
     lastStreakUpdate,
     footprint,
     spiritTrash,
