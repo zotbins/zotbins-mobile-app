@@ -11,7 +11,15 @@ import {
   Text,
   TextInput,
   View,
+  Platform
 } from "react-native";
+import * as AppleAuthentication from "expo-apple-authentication";
+import { GoogleSignin, SignInResponse, statusCodes } from "@react-native-google-signin/google-signin";
+
+GoogleSignin.configure({
+  webClientId: process.env.EXPO_PUBLIC_GOOGLEWEBCLIENTID,
+  offlineAccess: true,
+});
 
 // initialize user doc in firestore
 const createUserDocument = async (
@@ -67,6 +75,32 @@ async function isUsernameAvailable(username: string) {
     .where("username", "==", username)
     .get();
   return querySnapshot.empty;
+}
+
+const handleGoogleSignIn = async () => {
+  try {
+    await GoogleSignin.hasPlayServices();
+    const userInfo:any = await GoogleSignin.signIn();
+    const idToken = userInfo.data.idToken;
+
+    if (!idToken) {
+      throw new Error("No idToken found");
+    }
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+    const response = await auth().signInWithCredential(googleCredential);
+
+    if (response.additionalUserInfo?.isNewUser) {
+      const uid = response.user.uid;
+      const email = response.user.email;
+      if (uid && email) {
+        await createUserDocument(uid, email, "", "", "");
+      }
+    }
+    
+  } catch (e: any) {
+    console.error(e);
+  }
 }
 
 const Signup = () => {
@@ -193,6 +227,12 @@ const Signup = () => {
                 <Text className="text-blue">I already have an account</Text>
               </Link>
             </View>
+            <Pressable
+              className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50"
+              onPress={handleGoogleSignIn}
+            >
+              <Text className="text-white text-xl">Sign Up with Google</Text>
+            </Pressable>
           </>
         )}
       </KeyboardAvoidingView>
