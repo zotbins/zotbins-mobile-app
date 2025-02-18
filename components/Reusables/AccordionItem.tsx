@@ -29,14 +29,13 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         onPress={() => setIsOpen(!isOpen)}
       >
         <View className="flex flex-row justify-between items-center p-4">
-          <Text className="font-semibold text-xl">{question}</Text>
-          <Text>
-            {isOpen ? (
-              <Entypo name="chevron-up" size={24} color="black" />
-            ) : (
-              <Entypo name="chevron-down" size={24} color="black" />
-            )}
-          </Text>
+          <Text className="font-semibold text-xl w-5/6">{question}</Text>
+
+          {isOpen ? (
+            <Entypo name="chevron-up" size={24} color="black" />
+          ) : (
+            <Entypo name="chevron-down" size={24} color="black" />
+          )}
         </View>
       </TouchableOpacity>
       {isOpen && (
