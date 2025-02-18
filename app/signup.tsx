@@ -77,10 +77,13 @@ async function isUsernameAvailable(username: string) {
   return querySnapshot.empty;
 }
 
+// function to handle google sign in
 const handleGoogleSignIn = async () => {
   try {
     await GoogleSignin.hasPlayServices();
+    // opens google sign in prompt
     const userInfo:any = await GoogleSignin.signIn();
+    // gets idToken from google sign in
     const idToken = userInfo.data.idToken;
 
     if (!idToken) {
@@ -88,8 +91,10 @@ const handleGoogleSignIn = async () => {
     }
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
+    // signs in with google credential
     const response = await auth().signInWithCredential(googleCredential);
 
+    // if user is new, create user doc in firestore
     if (response.additionalUserInfo?.isNewUser) {
       const uid = response.user.uid;
       const email = response.user.email;
