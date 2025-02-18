@@ -40,17 +40,30 @@ const ScanResults: React.FC<ScanResultsProps> = ({
             userRef.update({
               xp: firestore.FieldValue.increment(10)
             });
-
             // Gets the last scan date from firebase
             const lastScanDate = docSnapshot.data()?.lastScanDate;
             const todayDateString = new Date().toISOString().split("T")[0];
-
+            
+            // Increment dailyScans counter
+            userRef.update({dailyScans: firestore.FieldValue.increment(1)});
+             
             // Only award points if user hasn't scanned today
+            // Update dailyStreak for scanning
             if (lastScanDate !== todayDateString) {
               userRef.update({
                 lastScanDate: todayDateString,
                 totalPoints: firestore.FieldValue.increment(10),
+                dailyStreak: firestore.FieldValue.increment(1),
+                lastStreakUpdate: Date.now(),
               });
+              
+              // Check if dailyStreak is greater than 1 to award extra points for daily streak
+              const dailyStreak = docSnapshot.data()?.dailyStreak || 0;
+              if (dailyStreak > 1) {
+                userRef.update({
+                  totalPoints: firestore.FieldValue.increment(2),
+                });
+              }
             }
           }
         }
