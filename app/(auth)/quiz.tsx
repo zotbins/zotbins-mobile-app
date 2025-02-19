@@ -198,8 +198,9 @@ const Quiz = () => {
           const requiredXPforNextLevel = 50 * (currentLevel);
           const newXP = currentXP + 5;
           if (newXP >= requiredXPforNextLevel) {
+            const updateXP = newXP - requiredXPforNextLevel;
             userRef.update({
-              xp: firestore.FieldValue.increment(5),
+              xp: updateXP,
               level: firestore.FieldValue.increment(1),
             });
           } else {

@@ -56,9 +56,11 @@ const Home = () => {
 
     const requiredXPforNextLevel = 50 * (level);
     if (xp >= requiredXPforNextLevel) {
+      const newXP = xp - requiredXPforNextLevel;
       const newLevel = level + 1;
       await userDoc.update({
         level: firestore.FieldValue.increment(1),
+        xp: newXP,
       });
       setLevel(newLevel);
     }

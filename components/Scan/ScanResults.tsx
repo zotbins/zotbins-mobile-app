@@ -32,8 +32,9 @@ const ScanResults: React.FC<ScanResultsProps> = ({
           const requiredXPforNextLevel = 50 * (currentLevel);
           const newXP = currentXP + 10;
           if (newXP >= requiredXPforNextLevel) {
+            const updateXP = newXP - requiredXPforNextLevel;
             userRef.update({
-              xp: firestore.FieldValue.increment(10),
+              xp: updateXP,
               level: firestore.FieldValue.increment(1),
             });
           } else {
