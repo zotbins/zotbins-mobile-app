@@ -102,6 +102,41 @@ const handleGoogleSignIn = async () => {
   }
 }
 
+// function to handle apple sign in
+const handleAppleSignIn = async () => {
+  try {
+    // opens apple sign in prompt
+    const credential = await AppleAuthentication.signInAsync({
+      requestedScopes: [
+        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+        AppleAuthentication.AppleAuthenticationScope.EMAIL,
+      ],
+    });
+
+    if (credential) {
+      const { identityToken } = credential;
+      if (!identityToken) {
+        throw new Error("No identity token found");
+      }
+      // creates apple credential
+      const appleCredential = auth.AppleAuthProvider.credential(identityToken);
+
+      const response = await auth().signInWithCredential(appleCredential);
+
+      // if user is new, create user doc in firestore
+      if (response.additionalUserInfo?.isNewUser) {
+        const uid = response.user.uid;
+        const email = response.user.email;
+        if (uid && email) {
+          await createUserDocument(uid, email, "", "", "");
+        }
+      }
+    }
+  } catch (e: any) {
+    console.error(e);
+  }
+}
+
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -196,6 +231,12 @@ const Signup = () => {
                 <Text className="text-blue">I already have an account</Text>
               </Link>
             </View>
+            {/* Google and Apple sign in buttons */}
+            <View className="flex-row items-center justify-center p-3">
+              <View className="flex-1 border-t border-1 mr-4 border-grey" />
+              <Text className="text-lg text-grey ">or</Text>
+              <View className="flex-1 border-t border-1 ml-4 text-grey" />
+            </View>
             <Pressable
               className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50 flex-row"
               onPress={handleGoogleSignIn}
@@ -203,6 +244,16 @@ const Signup = () => {
               <Ionicons name="logo-google" size={24} color="white" />
               <Text className="ml-2 text-white text-xl">Sign Up with Google</Text>
             </Pressable>
+            {(true ||Platform.OS === "ios" )&& (
+              <Pressable
+                className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50 flex-row"
+                onPress={handleAppleSignIn}
+              >
+                <Ionicons name="logo-apple" size={24} color="white" />
+                <Text className="ml-2 text-white text-xl">Sign Up with Apple</Text>
+              </Pressable>
+            )}
+
           </>
         )}
       </KeyboardAvoidingView>
