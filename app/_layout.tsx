@@ -50,14 +50,13 @@ export default function RootLayout() {
     const inAuthGroup = segments[0] === "(auth)";
 
     if (user && !inAuthGroup) {
-
-
-      console.log(user);
       // check if user has spiritTrash set and account details set
       getSpiritTrashAndAccountDetails(user.uid).then(({ spiritTrash, username }) => {
+        // if user has no username, redirect to account setup
         if (username === "") {
           router.replace("/accountsetup");
         }
+        // if user has no spiritTrash, redirect to spirit trash quiz
         else if (spiritTrash === "") {
           router.replace("/spirittrash");
         } else {

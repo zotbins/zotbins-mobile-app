@@ -71,57 +71,30 @@ const isSecure = (password: string) => {
   return passwordRegex.test(password);
 };
 
-// function to handle google sign in
-const handleGoogleSignIn = async () => {
-  try {
-    await GoogleSignin.hasPlayServices();
-    // opens google sign in prompt
-    const userInfo:any = await GoogleSignin.signIn();
-    // gets idToken from google sign in
-    const idToken = userInfo.data.idToken;
 
-    if (!idToken) {
-      throw new Error("No idToken found");
-    }
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+const Signup = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    // signs in with google credential
-    const response = await auth().signInWithCredential(googleCredential);
+  // function to handle google sign in
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      await GoogleSignin.hasPlayServices();
+      // opens google sign in prompt
+      const userInfo:any = await GoogleSignin.signIn();
+      // gets idToken from google sign in
+      const idToken = userInfo.data.idToken;
 
-    // if user is new, create user doc in firestore
-    if (response.additionalUserInfo?.isNewUser) {
-      const uid = response.user.uid;
-      const email = response.user.email;
-      if (uid && email) {
-        await createUserDocument(uid, email, "", "", "");
+      if (!idToken) {
+        throw new Error("No idToken found");
       }
-    }
-    
-  } catch (e: any) {
-    console.error(e);
-  }
-}
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-// function to handle apple sign in
-const handleAppleSignIn = async () => {
-  try {
-    // opens apple sign in prompt
-    const credential = await AppleAuthentication.signInAsync({
-      requestedScopes: [
-        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-        AppleAuthentication.AppleAuthenticationScope.EMAIL,
-      ],
-    });
-
-    if (credential) {
-      const { identityToken } = credential;
-      if (!identityToken) {
-        throw new Error("No identity token found");
-      }
-      // creates apple credential
-      const appleCredential = auth.AppleAuthProvider.credential(identityToken);
-
-      const response = await auth().signInWithCredential(appleCredential);
+      // signs in with google credential
+      const response = await auth().signInWithCredential(googleCredential);
 
       // if user is new, create user doc in firestore
       if (response.additionalUserInfo?.isNewUser) {
@@ -131,30 +104,64 @@ const handleAppleSignIn = async () => {
           await createUserDocument(uid, email, "", "", "");
         }
       }
+      
+    } catch (e: any) {
+      console.error(e);
+    } finally{
+      setLoading(false);
     }
-  } catch (e: any) {
-    console.error(e);
   }
-}
 
-const Signup = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  // function to handle apple sign in
+  const handleAppleSignIn = async () => {
+    setLoading(true);
+    try {
+      // opens apple sign in prompt
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      if (credential) {
+        const { identityToken } = credential;
+        if (!identityToken) {
+          throw new Error("No identity token found");
+        }
+        // creates apple credential
+        const appleCredential = auth.AppleAuthProvider.credential(identityToken);
+
+        const response = await auth().signInWithCredential(appleCredential);
+
+        // if user is new, create user doc in firestore
+        if (response.additionalUserInfo?.isNewUser) {
+          const uid = response.user.uid;
+          const email = response.user.email;
+          if (uid && email) {
+            await createUserDocument(uid, email, "", "", "");
+          }
+        }
+      }
+    } catch (e: any) {
+      console.error(e);
+    } finally{
+      setLoading(false);
+    }
+  }
 
   // should be more robust in the future
   const validatePassword = () => {
     if (password !== confirmPassword) {
-      Alert.alert("Error", "New passwords don't match");
+      Alert.alert("Error", "Passwords don't match");
       return false;
     } else if (password.length < 6 || confirmPassword.length < 6) {
-      Alert.alert("Error", "New password must be at least 6 characters long");
+      Alert.alert("Error", "Password must be at least 6 characters long");
       return false;
     } else if (!isSecure(password)) {
       Alert.alert(
         "Error",
-        "New password must contain at least one uppercase letter, one lowercase letter, and one number"
+        "Password must contain at least one uppercase letter, one lowercase letter, and one number"
       );
       return false;
     } else {
@@ -164,6 +171,12 @@ const Signup = () => {
 
   // create user with email and password in firebase auth and create user doc in firestore
   const signUp = async () => {
+
+    if (email === "" || password === "" || confirmPassword === "") {
+      Alert.alert("Error", "Please fill out all fields");
+      return;
+    }
+
     setLoading(true);
     try {
 

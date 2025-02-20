@@ -4,6 +4,7 @@ import { FirebaseError } from "firebase/app";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -55,58 +56,31 @@ const createUserDocument = async (
     blockedUsers: [],
   });
 };
+const Login = () => {
+  const router = useRouter();
 
-// function to handle google sign in
-const handleGoogleSignIn = async () => {
-  try {
-    await GoogleSignin.hasPlayServices();
-    // opens google sign in prompt
-    const userInfo:any = await GoogleSignin.signIn();
-    // gets idToken from google sign in
-    const idToken = userInfo.data.idToken;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    if (!idToken) {
-      throw new Error("No idToken found");
-    }
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+  
+  // function to handle google sign in
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      await GoogleSignin.hasPlayServices();
+      // opens google sign in prompt
+      const userInfo:any = await GoogleSignin.signIn();
+      // gets idToken from google sign in
+      const idToken = userInfo.data.idToken;
 
-    // signs in with google credential
-    const response = await auth().signInWithCredential(googleCredential);
-
-    // if user is new, create user doc in firestore
-    if (response.additionalUserInfo?.isNewUser) {
-      const uid = response.user.uid;
-      const email = response.user.email;
-      if (uid && email) {
-        await createUserDocument(uid, email, "", "", "");
+      if (!idToken) {
+        throw new Error("No idToken found");
       }
-    }
-    
-  } catch (e: any) {
-    console.error(e);
-  }
-}
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-// function to handle apple sign in
-const handleAppleSignIn = async () => {
-  try {
-    // opens apple sign in prompt
-    const credential = await AppleAuthentication.signInAsync({
-      requestedScopes: [
-        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-        AppleAuthentication.AppleAuthenticationScope.EMAIL,
-      ],
-    });
-
-    if (credential) {
-      const { identityToken } = credential;
-      if (!identityToken) {
-        throw new Error("No identity token found");
-      }
-      // creates apple credential
-      const appleCredential = auth.AppleAuthProvider.credential(identityToken);
-
-      const response = await auth().signInWithCredential(appleCredential);
+      // signs in with google credential
+      const response = await auth().signInWithCredential(googleCredential);
 
       // if user is new, create user doc in firestore
       if (response.additionalUserInfo?.isNewUser) {
@@ -116,21 +90,60 @@ const handleAppleSignIn = async () => {
           await createUserDocument(uid, email, "", "", "");
         }
       }
+      
+    } catch (e: any) {
+      console.error(e);
+    } finally{
+      setLoading(false);
     }
-  } catch (e: any) {
-    console.error(e);
   }
-}
 
-const Login = () => {
-  const router = useRouter();
+  // function to handle apple sign in
+  const handleAppleSignIn = async () => {
+    setLoading(true);
+    try {
+      // opens apple sign in prompt
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+      if (credential) {
+        const { identityToken } = credential;
+        if (!identityToken) {
+          throw new Error("No identity token found");
+        }
+        // creates apple credential
+        const appleCredential = auth.AppleAuthProvider.credential(identityToken);
+
+        const response = await auth().signInWithCredential(appleCredential);
+
+        // if user is new, create user doc in firestore
+        if (response.additionalUserInfo?.isNewUser) {
+          const uid = response.user.uid;
+          const email = response.user.email;
+          if (uid && email) {
+            await createUserDocument(uid, email, "", "", "");
+          }
+        }
+      }
+    } catch (e: any) {
+      console.error(e);
+    } finally{
+      setLoading(false);
+    }
+  }
+
 
   // sign in the user or alert if error occures
   const signIn = async () => {
+    if (email === "" || password === "") {
+      Alert.alert("Error", "Please fill out all fields");
+      return;
+    }
+
     setLoading(true);
     try {
       await auth().signInWithEmailAndPassword(email, password);
