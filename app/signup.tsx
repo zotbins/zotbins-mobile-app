@@ -15,6 +15,8 @@ import {
 } from "react-native";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { GoogleSignin, SignInResponse, statusCodes } from "@react-native-google-signin/google-signin";
+import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 GoogleSignin.configure({
   webClientId: process.env.EXPO_PUBLIC_GOOGLEWEBCLIENTID,
@@ -69,14 +71,6 @@ const isSecure = (password: string) => {
   return passwordRegex.test(password);
 };
 
-async function isUsernameAvailable(username: string) {
-  const querySnapshot = await firestore()
-    .collection("users")
-    .where("username", "==", username)
-    .get();
-  return querySnapshot.empty;
-}
-
 // function to handle google sign in
 const handleGoogleSignIn = async () => {
   try {
@@ -109,10 +103,6 @@ const handleGoogleSignIn = async () => {
 }
 
 const Signup = () => {
-  const router = useRouter();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -141,15 +131,8 @@ const Signup = () => {
   const signUp = async () => {
     setLoading(true);
     try {
-      const usernameAvailable = await isUsernameAvailable(username);
-      if (!usernameAvailable) {
-        Alert.alert(
-          "Error",
-          "This username is already taken. Please choose another one."
-        );
-      }
 
-      if (validatePassword() && usernameAvailable) {
+      if (validatePassword()) {
         const response = await auth().createUserWithEmailAndPassword(
           email,
           password
@@ -159,7 +142,7 @@ const Signup = () => {
           const uid = response.user.uid;
           const email = response.user.email;
           if (uid && email) {
-            await createUserDocument(uid, email, firstName, lastName, username);
+            await createUserDocument(uid, email, "", "", "");
           }
         } else {
           Alert.alert("Info", "This account already exists.");
@@ -176,25 +159,6 @@ const Signup = () => {
   return (
     <View className="mx-5 flex-1 justify-center">
       <KeyboardAvoidingView behavior="padding">
-        <TextInput
-          className="my-1 h-14 border rounded-md p-2 bg-white"
-          value={username}
-          onChangeText={setUsername}
-          autoCapitalize="none"
-          placeholder="Username"
-        />
-        <TextInput
-          className="my-1 h-14 border rounded-md p-2 bg-white"
-          value={firstName}
-          onChangeText={setFirstName}
-          placeholder="First Name"
-        />
-        <TextInput
-          className="my-1 h-14 border rounded-md p-2 bg-white"
-          value={lastName}
-          onChangeText={setLastName}
-          placeholder="Last Name"
-        />
         <TextInput
           className="my-1 h-14 border rounded-md p-2 bg-white"
           value={email}
@@ -233,10 +197,11 @@ const Signup = () => {
               </Link>
             </View>
             <Pressable
-              className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50"
+              className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50 flex-row"
               onPress={handleGoogleSignIn}
             >
-              <Text className="text-white text-xl">Sign Up with Google</Text>
+              <Ionicons name="logo-google" size={24} color="white" />
+              <Text className="ml-2 text-white text-xl">Sign Up with Google</Text>
             </Pressable>
           </>
         )}

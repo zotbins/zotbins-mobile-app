@@ -15,17 +15,20 @@ export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
 
-  // checks if user has spiritTrash set
-  const getSpiritTrash = async (uid: string) => {
+  // checks if user has spiritTrash set and/or account details set
+  const getSpiritTrashAndAccountDetails = async (uid: string) => {
     const snapshot = await firestore()
       .collection("users")
       .doc(uid);
     
     const data = (await snapshot.get()).data();
     const spiritTrash = data ? data.spiritTrash : "";
+    const username = data ? data.username : "";
   
-    return spiritTrash;
+    return { spiritTrash, username };
   }
+
+
 
   const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
     // console.log("onAuthStateChanged", user);
@@ -47,16 +50,20 @@ export default function RootLayout() {
     const inAuthGroup = segments[0] === "(auth)";
 
     if (user && !inAuthGroup) {
-      // check if user has spiritTrash set
-      getSpiritTrash(user.uid).then((spiritTrash) => {
-        // if not, redirect to spirittrash page
-        if (spiritTrash == "") {
-          router.replace("/(auth)/spirittrash");
+
+
+      console.log(user);
+      // check if user has spiritTrash set and account details set
+      getSpiritTrashAndAccountDetails(user.uid).then(({ spiritTrash, username }) => {
+        if (username === "") {
+          router.replace("/accountsetup");
         }
-        // else, redirect to home page
-        else {
-          router.replace("/(auth)/(tabs)/home");
+        else if (spiritTrash === "") {
+          router.replace("/spirittrash");
+        } else {
+          router.replace("/(tabs)/home");
         }
+      
       });
     } else if (!user && inAuthGroup) {
       router.replace("/login");
