@@ -257,7 +257,8 @@ const Signup = () => {
               <Ionicons name="logo-google" size={24} color="white" />
               <Text className="ml-2 text-white text-xl">Sign Up with Google</Text>
             </Pressable>
-            {(true ||Platform.OS === "ios" )&& (
+            {/* Apple sign in is only available on iOS, but currently set to always show for testing purposes */}
+            {(true ||Platform.OS === "ios" ) && (
               <Pressable
                 className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50 flex-row"
                 onPress={handleAppleSignIn}
