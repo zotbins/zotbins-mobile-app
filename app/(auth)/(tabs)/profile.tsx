@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const Profile = () => {
   const router = useRouter();
@@ -194,8 +195,8 @@ const Profile = () => {
           <Pressable
             onPress={() => router.replace("/(auth)/spirittrash")}
             className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-            >
-              <Text className="text-white text-center">Retake Spirit Trash Quiz</Text>
+          >
+            <Text className="text-white text-center">Retake Spirit Trash Quiz</Text>
           </Pressable>
 
           <Pressable
@@ -207,16 +208,13 @@ const Profile = () => {
 
           {/* Conditionally render the PasswordChange form */}
           <Pressable
-            onPress={() => setShowPasswordForm(!showPasswordForm)}
+            onPress={() => router.push("/password")}
             className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
           >
             <Text className="text-white text-center">
-              {showPasswordForm ? "Cancel Password Change" : "Change Password"}
+              Change Password
             </Text>
           </Pressable>
-          {showPasswordForm && (
-            <PasswordChange onComplete={() => setShowPasswordForm(false)} />
-          )}
         </View>
       </SafeAreaView>
     </>
