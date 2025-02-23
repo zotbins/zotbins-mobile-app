@@ -1,4 +1,3 @@
-import PasswordChange from "@/components/Profile/PasswordChange";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
@@ -205,8 +204,10 @@ const Profile = () => {
           <Pressable
             onPress={() => router.replace("/(auth)/spirittrash")}
             className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-            >
-              <Text className="text-white text-center">Retake Spirit Trash Quiz</Text>
+          >
+            <Text className="text-white text-center">
+              Retake Spirit Trash Quiz
+            </Text>
           </Pressable>
 
           <Pressable
@@ -216,18 +217,12 @@ const Profile = () => {
             <Text className="text-white text-center">Sign Out</Text>
           </Pressable>
 
-          {/* Conditionally render the PasswordChange form */}
           <Pressable
-            onPress={() => setShowPasswordForm(!showPasswordForm)}
+            onPress={() => router.push("/passwordchange")}
             className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
           >
-            <Text className="text-white text-center">
-              {showPasswordForm ? "Cancel Password Change" : "Change Password"}
-            </Text>
+            <Text className="text-white text-center">Change Password</Text>
           </Pressable>
-          {showPasswordForm && (
-            <PasswordChange onComplete={() => setShowPasswordForm(false)} />
-          )}
         </View>
       </SafeAreaView>
     </>
