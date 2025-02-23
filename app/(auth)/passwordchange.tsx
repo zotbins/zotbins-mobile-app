@@ -13,7 +13,7 @@ const isSecure = (password: string) => {
   return passwordRegex.test(password);
 };
 
-const PasswordChangeScreen: React.FC = () => {
+const PasswordChange: React.FC = () => {
   const navigation = useNavigation();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -30,7 +30,10 @@ const PasswordChangeScreen: React.FC = () => {
     }
 
     // Check if new password is the same as the current password
-    if (currentPassword === newPassword || currentPassword === confirmPassword) {
+    if (
+      currentPassword === newPassword ||
+      currentPassword === confirmPassword
+    ) {
       Alert.alert(
         "Error",
         "Password cannot be the same as your current password"
@@ -127,7 +130,9 @@ const PasswordChangeScreen: React.FC = () => {
 
       <View className="flex-1 px-4 pt-12">
         {/* Title */}
-        <Text className="text-2xl font-bold text-gray-800 mb-4">Change Password</Text>
+        <Text className="text-2xl font-bold text-gray-800 mb-4">
+          Change Password
+        </Text>
 
         {/* Current Password Input */}
         <TextInput
@@ -176,4 +181,4 @@ const PasswordChangeScreen: React.FC = () => {
   );
 };
 
-export default PasswordChangeScreen;
+export default PasswordChange;

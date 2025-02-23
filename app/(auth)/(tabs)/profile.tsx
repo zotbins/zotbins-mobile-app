@@ -1,4 +1,3 @@
-import PasswordChange from "@/components/Profile/PasswordChange";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
@@ -8,7 +7,6 @@ import React, { useEffect, useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 
 const Profile = () => {
   const router = useRouter();
@@ -196,7 +194,9 @@ const Profile = () => {
             onPress={() => router.replace("/(auth)/spirittrash")}
             className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
           >
-            <Text className="text-white text-center">Retake Spirit Trash Quiz</Text>
+            <Text className="text-white text-center">
+              Retake Spirit Trash Quiz
+            </Text>
           </Pressable>
 
           <Pressable
@@ -206,14 +206,11 @@ const Profile = () => {
             <Text className="text-white text-center">Sign Out</Text>
           </Pressable>
 
-          {/* Conditionally render the PasswordChange form */}
           <Pressable
-            onPress={() => router.push("/password")}
+            onPress={() => router.push("/passwordchange")}
             className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
           >
-            <Text className="text-white text-center">
-              Change Password
-            </Text>
+            <Text className="text-white text-center">Change Password</Text>
           </Pressable>
         </View>
       </SafeAreaView>
