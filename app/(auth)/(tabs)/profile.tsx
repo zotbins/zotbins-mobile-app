@@ -5,7 +5,7 @@ import storage from "@react-native-firebase/storage";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert, Image, Pressable, Text, View } from "react-native";
+import { Alert, Image, ImageSourcePropType, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 
@@ -14,9 +14,16 @@ const Profile = () => {
 
   const user = auth().currentUser;
   // set profile picture to user's photoURL or placeholder image
-  const [profilePic, setProfilePic] = useState<string>(
-    user?.photoURL || "https://placehold.co/250"
+  const [profilePic, setProfilePic] = useState<string | ImageSourcePropType>(
+    user?.photoURL || require("@/assets/images/default_profile_picture.png")
   );
+
+  const getImageSource = (source: string | ImageSourcePropType) => {
+    if (typeof source === 'string') {
+      return { uri: source };
+    }
+    return source;
+  };
 
   const [userDoc, setUserDoc] = useState<any>(null);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -102,8 +109,12 @@ const Profile = () => {
           <View className="flex-row items-center">
             <View className="relative">
               <Pressable onPress={pickImage}>
-                <Image
+                {/* <Image
                   source={{ uri: profilePic }}
+                  className="w-24 h-24 rounded-full"
+                /> */}
+                <Image
+                  source={getImageSource(profilePic)}
                   className="w-24 h-24 rounded-full"
                 />
                 <View className="absolute bottom-0 right-0 bg-gray-800 rounded-full p-2">

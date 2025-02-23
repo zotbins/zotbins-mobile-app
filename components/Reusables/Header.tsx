@@ -1,6 +1,6 @@
 import auth from "@react-native-firebase/auth";
 import React from "react";
-import { Image, Text, View } from "react-native";
+import { Image, ImageSourcePropType, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ZotBinsLogo from "../../assets/images/zotbins_logo.png";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -11,6 +11,15 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ streak }) => {
   const user = auth().currentUser;
+
+  const getImageSource = (source: string | ImageSourcePropType) => {
+    if (typeof source === 'string') {
+      return { uri: source };
+    }
+    return source;
+  };
+
+  const profilePicSource = user?.photoURL || require("@/assets/images/default_profile_picture.png");
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -30,9 +39,7 @@ const Header: React.FC<HeaderProps> = ({ streak }) => {
             className="mr-2"
           />
           <Image
-            source={{
-              uri: user?.photoURL || "https://via.placeholder.com/250",
-            }}
+            source={getImageSource(profilePicSource)}
             className="h-12 w-12 rounded-full"
           />
         </View>
