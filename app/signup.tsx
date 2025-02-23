@@ -11,10 +11,14 @@ import {
   Text,
   TextInput,
   View,
-  Platform
+  Platform,
 } from "react-native";
-import * as AppleAuthentication from "expo-apple-authentication";
-import { GoogleSignin, SignInResponse, statusCodes } from "@react-native-google-signin/google-signin";
+// import * as AppleAuthentication from "expo-apple-authentication";
+import {
+  GoogleSignin,
+  SignInResponse,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -71,7 +75,6 @@ const isSecure = (password: string) => {
   return passwordRegex.test(password);
 };
 
-
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -84,7 +87,7 @@ const Signup = () => {
     try {
       await GoogleSignin.hasPlayServices();
       // opens google sign in prompt
-      const userInfo:any = await GoogleSignin.signIn();
+      const userInfo: any = await GoogleSignin.signIn();
       // gets idToken from google sign in
       const idToken = userInfo.data.idToken;
 
@@ -104,51 +107,52 @@ const Signup = () => {
           await createUserDocument(uid, email, "", "", "");
         }
       }
-      
     } catch (e: any) {
       console.error(e);
-    } finally{
+    } finally {
       setLoading(false);
     }
-  }
+  };
 
   // function to handle apple sign in
   const handleAppleSignIn = async () => {
-    setLoading(true);
-    try {
-      // opens apple sign in prompt
-      const credential = await AppleAuthentication.signInAsync({
-        requestedScopes: [
-          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-          AppleAuthentication.AppleAuthenticationScope.EMAIL,
-        ],
-      });
+    // temporarily disabled until apple dev account is created.
+    return;
+    // setLoading(true);
+    // try {
+    //   // opens apple sign in prompt
+    //   const credential = await AppleAuthentication.signInAsync({
+    //     requestedScopes: [
+    //       AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+    //       AppleAuthentication.AppleAuthenticationScope.EMAIL,
+    //     ],
+    //   });
 
-      if (credential) {
-        const { identityToken } = credential;
-        if (!identityToken) {
-          throw new Error("No identity token found");
-        }
-        // creates apple credential
-        const appleCredential = auth.AppleAuthProvider.credential(identityToken);
+    //   if (credential) {
+    //     const { identityToken } = credential;
+    //     if (!identityToken) {
+    //       throw new Error("No identity token found");
+    //     }
+    //     // creates apple credential
+    //     const appleCredential = auth.AppleAuthProvider.credential(identityToken);
 
-        const response = await auth().signInWithCredential(appleCredential);
+    //     const response = await auth().signInWithCredential(appleCredential);
 
-        // if user is new, create user doc in firestore
-        if (response.additionalUserInfo?.isNewUser) {
-          const uid = response.user.uid;
-          const email = response.user.email;
-          if (uid && email) {
-            await createUserDocument(uid, email, "", "", "");
-          }
-        }
-      }
-    } catch (e: any) {
-      console.error(e);
-    } finally{
-      setLoading(false);
-    }
-  }
+    //     // if user is new, create user doc in firestore
+    //     if (response.additionalUserInfo?.isNewUser) {
+    //       const uid = response.user.uid;
+    //       const email = response.user.email;
+    //       if (uid && email) {
+    //         await createUserDocument(uid, email, "", "", "");
+    //       }
+    //     }
+    //   }
+    // } catch (e: any) {
+    //   console.error(e);
+    // } finally{
+    //   setLoading(false);
+    // }
+  };
 
   // should be more robust in the future
   const validatePassword = () => {
@@ -171,7 +175,6 @@ const Signup = () => {
 
   // create user with email and password in firebase auth and create user doc in firestore
   const signUp = async () => {
-
     if (email === "" || password === "" || confirmPassword === "") {
       Alert.alert("Error", "Please fill out all fields");
       return;
@@ -179,7 +182,6 @@ const Signup = () => {
 
     setLoading(true);
     try {
-
       if (validatePassword()) {
         const response = await auth().createUserWithEmailAndPassword(
           email,
@@ -255,19 +257,22 @@ const Signup = () => {
               onPress={handleGoogleSignIn}
             >
               <Ionicons name="logo-google" size={24} color="white" />
-              <Text className="ml-2 text-white text-xl">Sign Up with Google</Text>
+              <Text className="ml-2 text-white text-xl">
+                Sign Up with Google
+              </Text>
             </Pressable>
             {/* Apple sign in is only available on iOS, but currently set to always show for testing purposes */}
-            {(true ||Platform.OS === "ios" ) && (
+            {(true || Platform.OS === "ios") && (
               <Pressable
                 className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50 flex-row"
                 onPress={handleAppleSignIn}
               >
                 <Ionicons name="logo-apple" size={24} color="white" />
-                <Text className="ml-2 text-white text-xl">Sign Up with Apple</Text>
+                <Text className="ml-2 text-white text-xl">
+                  Sign Up with Apple
+                </Text>
               </Pressable>
             )}
-
           </>
         )}
       </KeyboardAvoidingView>

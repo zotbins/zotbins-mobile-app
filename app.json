@@ -15,8 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.zotbins.zotzero",
-      "googleServicesFile": "./GoogleService-Info.plist",
-      "usesAppleSignIn": true
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -48,8 +47,7 @@
         }
       ],
       "@react-native-firebase/app",
-      "@react-native-firebase/auth",
-      "expo-apple-authentication"
+      "@react-native-firebase/auth"
     ],
     "experiments": {
       "typedRoutes": true

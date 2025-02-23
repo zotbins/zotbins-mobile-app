@@ -25,9 +25,6 @@ def getRNVersion() {
 }
 def rnVersion = getRNVersion()
 
-// Define hermesEnabled property for access by other modules
-project.ext.hermesEnabled = (findProperty('expo.jsEngine') ?: "hermes") == "hermes"
-
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -191,7 +188,7 @@ dependencies {
         }
     }
 
-    if (react.hermesEnabled) {
+    if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
