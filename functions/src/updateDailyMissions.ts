@@ -27,3 +27,9 @@ exports.updateDailyMissions = functions.pubsub.schedule("every day 00:00").onRun
     return null;
 }
 );
+
+// HTTP function to test daily missions update
+exports.testUpdateDailyMissions = functions.https.onRequest(async (req: any, res: any) => {
+    await exports.updateDailyMissions();
+    res.send("Daily missions updated");
+});
