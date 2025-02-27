@@ -1,7 +1,8 @@
 
-const admin = require("firebase-admin");
-const updateDailyMissions = require("./updateDailyMissions");
+import * as admin from "firebase-admin";
+import {updateDailyMissions, testUpdateDailyMissions} from "./updateDailyMissions";
 
 admin.initializeApp();
 
 exports.updateDailyMissions = updateDailyMissions;
+exports.testUpdateDailyMissions = testUpdateDailyMissions;

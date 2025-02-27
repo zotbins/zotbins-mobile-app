@@ -17,17 +17,17 @@
   ],
   "emulators": {
     "functions": {
-      "port": 5001
+      "port": 5005
     },
     "firestore": {
-      "port": 8080
+      "port": 8089
     },
     "pubsub": {
-      "port": 8085
+      "port": 8090
     },
     "ui": {
       "enabled": true,
-      "port": 4000
+      "port": 4001
     }
   }
 }
