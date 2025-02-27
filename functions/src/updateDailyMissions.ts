@@ -1,8 +1,6 @@
 import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
 
-admin.initializeApp();
-
 const updateDailyMissionsLogic = async () => {
     const db = admin.firestore();
     // get all missions with type "daily" and status is active
