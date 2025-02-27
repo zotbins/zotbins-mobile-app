@@ -1,10 +1,51 @@
 import BackButton from "@/components/Reusables/BackButton";
 import { Stack } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, SafeAreaView } from "react-native";
+
+import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
+import auth from "@react-native-firebase/auth";
+
+interface Mission{
+    id?:string;
+    description: string;
+    reward: string;
+    status: boolean;
+    title: string;
+    type: string;
+}
 
 const Missions = () => {
     const [activeTab, setActiveTab] = useState<"Dailies" | "Weeklies">("Dailies");
+    
+    const [missions, setMissions] = useState<Mission[]>([]);
+    const getMissions = async () => {
+        try{
+            const querySnapshot = await firestore().collection('missions').get();
+            const allMissions : Mission[] = [];
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                allMissions.push({
+                    id: doc.id,
+                    description: data.description,
+                    reward: data.reward,
+                    status: data.status,
+                    title: data.title,
+                    type: data.type,
+                });
+            });
+
+            setMissions(allMissions);
+
+        } catch (error) {
+            console.error('Error fetching missions: ', error);
+        }
+    };
+
+    useEffect(()=>{
+        getMissions();
+    }, []);
 
     // Mock Data
     const dailyMissions = [
@@ -52,21 +93,22 @@ const Missions = () => {
                 </View>
 
                 {/* Missions List */}
-                <View className="flex-1">
-                    {(activeTab === "Dailies" ? dailyMissions : weeklyMissions).map((mission) => (
-                        <View
-                            key={mission.id}
-                            className="bg-gray-100 p-4 rounded-lg mb-3 border border-gray-300"
-                        >
+                <View className='flex-1'>
+                    {missions.filter(mission => activeTab === "Dailies" 
+                        ? mission.type === "daily" : mission.type === "weekly").map((mission) => (
+                            <View key={mission.id}
+                                className="bg-gray-100 p-4 rounded-lg mb-3 border border-gray-300">
                             <Text className="text-gray-700 text-lg">{mission.title}</Text>
-                            <Text
-                                className={`text-sm font-semibold mt-1 ${mission.completed ? "text-green-600" : "text-red-600"
-                                    }`}
-                            >
-                                {mission.completed ? "Completed" : "Not Completed"}
+                            <Text 
+                                className={`text-sm font-semibold mt-1 ${mission.status ? "text-green-600" : "text-red-600"}`}>
+                                {mission.status ? "Completed" : "Not Completed"}
                             </Text>
+                            <Text>{mission.description}</Text>
+                            <Text>Reward: {mission.reward}</Text>
                         </View>
-                    ))}
+                        ))
+                    }
+
                 </View>
             </View>
         </SafeAreaView>
