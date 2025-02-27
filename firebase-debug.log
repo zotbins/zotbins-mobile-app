@@ -1,0 +1,19 @@
+[debug] [2025-02-27T20:04:30.493Z] ----------------------------------------------------------------------
+[debug] [2025-02-27T20:04:30.495Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\cyrus\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start
+[debug] [2025-02-27T20:04:30.496Z] CLI Version:   13.31.2
+[debug] [2025-02-27T20:04:30.496Z] Platform:      win32
+[debug] [2025-02-27T20:04:30.496Z] Node Version:  v20.11.0
+[debug] [2025-02-27T20:04:30.496Z] Time:          Thu Feb 27 2025 12:04:30 GMT-0800 (Pacific Standard Time)
+[debug] [2025-02-27T20:04:30.496Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-02-27T20:04:30.661Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-02-27T20:04:30.661Z] > authorizing via signed-in user (buffingc@uci.edu)
+[info] i  emulators: Starting emulators: functions, pubsub, extensions {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: functions, pubsub, extensions"}}
+[debug] [2025-02-27T20:04:30.665Z] Checked if tokens are valid: false, expires at: 1740687559483
+[debug] [2025-02-27T20:04:30.665Z] Checked if tokens are valid: false, expires at: 1740687559483
+[debug] [2025-02-27T20:04:30.666Z] > refreshing access token with scopes: []
+[debug] [2025-02-27T20:04:30.667Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-02-27T20:04:30.667Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-02-27T20:04:30.812Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-02-27T20:04:30.812Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-02-27T20:04:30.818Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/zbuddy-3a716 [none]
