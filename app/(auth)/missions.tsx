@@ -17,8 +17,11 @@ interface Mission{
 
 const Missions = () => {
     const [activeTab, setActiveTab] = useState<"Dailies" | "Weeklies">("Dailies");
-    
-    const [missions, setMissions] = useState<Mission[]>([]);
+
+    // const [missions, setMissions] = useState<Mission[]>([]);
+    const [dailyMissions, setDailyMissions] = useState<Mission[]>([]);
+    const [weeklyMissions, setWeeklyMissions] = useState<Mission[]>([]);
+
     const getMissions = async () => {
         try{
             const querySnapshot = await firestore().collection('missions').get();
@@ -36,7 +39,15 @@ const Missions = () => {
                 });
             });
 
-            setMissions(allMissions);
+            const allDailyMissions = allMissions.filter(mission => mission.type === "daily");
+            const allWeeklyMissions = allMissions.filter(mission => mission.type === "weekly");
+
+            // random shuffle and select 3 random dailies and weeklies
+            const randomDailyMissions = allDailyMissions.sort(() => Math.random() - 0.5).slice(0, 3);
+            const randomWeeklyMissions = allWeeklyMissions.sort(() => Math.random() - 0.5).slice(0, 3); 
+
+            setDailyMissions(randomDailyMissions);
+            setWeeklyMissions(randomWeeklyMissions);
 
         } catch (error) {
             console.error('Error fetching missions: ', error);
@@ -48,17 +59,17 @@ const Missions = () => {
     }, []);
 
     // Mock Data
-    const dailyMissions = [
-        { id: 1, title: "Recycle a water bottle", completed: true },
-        { id: 2, title: "Pick up 3 pieces of litter", completed: false },
-        { id: 3, title: "Use a reusable cup for coffee", completed: false },
-    ];
+    // const dailyMissions = [
+    //     { id: 1, title: "Recycle a water bottle", completed: true },
+    //     { id: 2, title: "Pick up 3 pieces of litter", completed: false },
+    //     { id: 3, title: "Use a reusable cup for coffee", completed: false },
+    // ];
 
-    const weeklyMissions = [
-        { id: 4, title: "Attend a community cleanup event", completed: false },
-        { id: 5, title: "Use public transport or carpool at least once", completed: false },
-        { id: 6, title: "Educate a friend about sustainable practices", completed: false },
-    ];
+    // const weeklyMissions = [
+    //     { id: 4, title: "Attend a community cleanup event", completed: false },
+    //     { id: 5, title: "Use public transport or carpool at least once", completed: false },
+    //     { id: 6, title: "Educate a friend about sustainable practices", completed: false },
+    // ];
 
     return (
         <SafeAreaView className="flex-1 bg-white">
@@ -94,8 +105,8 @@ const Missions = () => {
 
                 {/* Missions List */}
                 <View className='flex-1'>
-                    {missions.filter(mission => activeTab === "Dailies" 
-                        ? mission.type === "daily" : mission.type === "weekly").map((mission) => (
+                    {(activeTab === "Dailies" 
+                        ? dailyMissions : weeklyMissions).map((mission) => (
                             <View key={mission.id}
                                 className="bg-gray-100 p-4 rounded-lg mb-3 border border-gray-300">
                             <Text className="text-gray-700 text-lg">{mission.title}</Text>
