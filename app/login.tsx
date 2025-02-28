@@ -104,7 +104,7 @@ const Login = () => {
       setLoading(false);
     }
   };
-  
+
   async function populateMissions(uid: string) {
     const missionsRef = firestore().collection("missions");
     const userMissionsRef = firestore().collection("users").doc(uid).collection("missions");
@@ -176,6 +176,8 @@ const Login = () => {
     //       const email = response.user.email;
     //       if (uid && email) {
     //         await createUserDocument(uid, email, "", "", "");
+    //         await populateMissions(uid);
+    //         await populateAchievements(uid);
     //       }
     //     }
     //   }
