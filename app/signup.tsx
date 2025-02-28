@@ -46,8 +46,6 @@ const createUserDocument = async (
   const lastStreakUpdate: number = Date.now();
   const footprint: number = 0;
   const spiritTrash: string = "";
-  const missionsRef = firestore().collection("users").doc(uid).collection("missions");
-  const achievementsRef = firestore().collection("users").doc(uid).collection("achievements");
   await firestore().collection("users").doc(uid).set({
     email,
     uid,
