@@ -19,13 +19,16 @@ const updateDailyMissionsLogic = async () => {
         });
 
         // choose 3 random daily missions to make active
+        const missionNames: string[] = [];
         const randomMissions = missions.docs.sort(() => Math.random() - 0.5).slice(0, 3);
         randomMissions.forEach((mission: any) => {
             batch.update(mission.ref, { status: true });
+            missionNames.push(mission.data().title);
         });
         await batch.commit();
         
         console.log("Daily missions updated");
+        console.log("Active daily missions: ", missionNames);
     } catch (error) {
         console.error("Error updating daily missions: ", error);
     }
