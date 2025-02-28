@@ -5,6 +5,27 @@ import Header from "@/components/Reusables/Header";
 import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 
+async function populateMissions(uid: string) {
+  const missionsRef = firestore().collection("missions");
+  const userMissionsRef = firestore().collection("users").doc(uid).collection("missions");
+
+  const missionsSnapshot = await missionsRef.where("status", "==", true).get();
+
+  const batch = firestore().batch();
+  missionsSnapshot.forEach((doc) => {
+    const userMissionRef = userMissionsRef.doc(doc.id);
+    batch.set(userMissionRef, {
+      ...doc.data(),
+      id: doc.id,
+      progress: 0,
+      userStatus: false,
+      assignedAt: firestore.FieldValue.serverTimestamp(),
+    });
+  });
+
+  await batch.commit();
+}
+
 const Home = () => {
   const user = auth().currentUser;
 
@@ -28,7 +49,8 @@ const Home = () => {
     const hoursDiff = timeDiff / (1000 * 3600);
 
     if (hoursDiff >= 24 && hoursDiff < 48) {
-      // Update data
+      // Update data including new missions
+      await populateMissions(uid);
       const updatePayload: any = {
         dailyScans: 0,
         lastLoginUpdate: now.getTime(),
@@ -40,6 +62,8 @@ const Home = () => {
 
       console.log("increment streak");
     } else if (hoursDiff >= 48) {
+      // adds new missions
+      await populateMissions(uid);
       // reset dailystreak
       await userDoc.update({
         dailyStreak: 0,

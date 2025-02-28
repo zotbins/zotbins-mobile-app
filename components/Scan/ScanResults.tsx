@@ -45,9 +45,8 @@ const ScanResults: React.FC<ScanResultsProps> = ({
             const lastScanDate = docSnapshot.data()?.lastScanDate;
             const todayDateString = new Date().toISOString().split("T")[0];
             
-            // Increment dailyScans counter
             userRef.update({dailyScans: firestore.FieldValue.increment(1)});
-             
+            userRef.update({totalScans: firestore.FieldValue.increment(1)});
             // Only award points if user hasn't scanned today
             // Update dailyStreak for scanning
             if (lastScanDate !== todayDateString) {

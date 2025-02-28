@@ -4,15 +4,17 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, SafeAreaView } from "react-native";
 
 import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
-import auth from "@react-native-firebase/auth";
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 interface Mission{
     id?:string;
     description: string;
     reward: string;
     status: boolean;
+    progress: number;
     title: string;
     type: string;
+    userStatus: boolean;
 }
 
 const Missions = () => {
@@ -21,10 +23,10 @@ const Missions = () => {
     // const [missions, setMissions] = useState<Mission[]>([]);
     const [dailyMissions, setDailyMissions] = useState<Mission[]>([]);
     const [weeklyMissions, setWeeklyMissions] = useState<Mission[]>([]);
-
-    const getMissions = async () => {
+    const user = auth().currentUser;
+    const getMissions = async (user: FirebaseAuthTypes.User) => {
         try{
-            const querySnapshot = await firestore().collection('missions').get();
+            const querySnapshot = await firestore().collection("users").doc(user.uid).collection('missions').get();
             const allMissions : Mission[] = [];
 
             querySnapshot.forEach((doc) => {
@@ -34,8 +36,10 @@ const Missions = () => {
                     description: data.description,
                     reward: data.reward,
                     status: data.status,
+                    progress: data.progress,
                     title: data.title,
                     type: data.type,
+                    userStatus: data.userStatus,
                 });
             });
 
@@ -55,20 +59,21 @@ const Missions = () => {
     };
 
     useEffect(()=>{
-        getMissions();
+        if (user) getMissions(user);
+        else console.error("User is not logged in");
     }, []);
 
     // Mock Data
     // const dailyMissions = [
-    //     { id: 1, title: "Recycle a water bottle", completed: true },
-    //     { id: 2, title: "Pick up 3 pieces of litter", completed: false },
-    //     { id: 3, title: "Use a reusable cup for coffee", completed: false },
+    //     { id: 1, title: "Recycle a water bottle", userStatus: true },
+    //     { id: 2, title: "Pick up 3 pieces of litter", userStatus: false },
+    //     { id: 3, title: "Use a reusable cup for coffee", userStatus: false },
     // ];
 
     // const weeklyMissions = [
-    //     { id: 4, title: "Attend a community cleanup event", completed: false },
-    //     { id: 5, title: "Use public transport or carpool at least once", completed: false },
-    //     { id: 6, title: "Educate a friend about sustainable practices", completed: false },
+    //     { id: 4, title: "Attend a community cleanup event", userStatus: false },
+    //     { id: 5, title: "Use public transport or carpool at least once", userStatus: false },
+    //     { id: 6, title: "Educate a friend about sustainable practices", userStatus: false },
     // ];
 
     return (
@@ -111,8 +116,8 @@ const Missions = () => {
                                 className="bg-gray-100 p-4 rounded-lg mb-3 border border-gray-300">
                             <Text className="text-gray-700 text-lg">{mission.title}</Text>
                             <Text 
-                                className={`text-sm font-semibold mt-1 ${mission.status ? "text-green-600" : "text-red-600"}`}>
-                                {mission.status ? "Completed" : "Not Completed"}
+                                className={`text-sm font-semibold mt-1 ${mission.userStatus ? "text-green-600" : "text-red-600"}`}>
+                                {mission.userStatus ? "Completed" : "Not Completed"}
                             </Text>
                             <Text>{mission.description}</Text>
                             <Text>Reward: {mission.reward}</Text>

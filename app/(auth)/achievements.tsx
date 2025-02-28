@@ -3,6 +3,7 @@ import { Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, Text, SafeAreaView } from "react-native";
 import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 interface Achievement {
     id: number;
@@ -11,31 +12,36 @@ interface Achievement {
     numRequired: number;
 }
 
+
 const Achievements = () => {
     const [achievements, setAchievements] = useState<Achievement[]>([]);
-
+    const user = auth().currentUser;
     useEffect(() => {
-        const fetchAchievements = async () => {
-            try {
-                const querySnapshot = await firestore().collection("achievements").get();
-                const achievementsData: Achievement[] = querySnapshot.docs.map((doc) => {
-                    const data = doc.data();
-                    return {
-                        id: data.id,
-                        info: data.info,
-                        reward: data.reward,
-                        numRequired: data.numRequired,
-                    };
-                });
+        if (user) {
+            const fetchAchievements = async (user: FirebaseAuthTypes.User) => {
+                try {
+                    const querySnapshot = await firestore().collection("users").doc(user.uid).collection("achievements").get();
+                    const achievementsData: Achievement[] = querySnapshot.docs.map((doc) => {
+                        const data = doc.data();
+                        return {
+                            id: data.id,
+                            info: data.info,
+                            reward: data.reward,
+                            numRequired: data.numRequired,
 
-                setAchievements(achievementsData);
+                        };
+                    });
 
-            } catch (error) {
-                console.error("Error fetching achievements:", error);
+                    setAchievements(achievementsData);
+
+                } catch (error) {
+                    console.error("Error fetching achievements:", error);
+                }
             }
-        };
-
-        fetchAchievements();
+            fetchAchievements(user);
+        } else {
+            console.error("User is not logged in");
+        }
     }, []);
 
     return (
