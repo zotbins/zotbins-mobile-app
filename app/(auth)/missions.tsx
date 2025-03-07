@@ -12,7 +12,7 @@ interface Mission{
     reward: string;
     status: boolean;
     progress: number;
-    title: string;
+    name: string;
     type: string;
     userStatus: boolean;
 }
@@ -37,7 +37,7 @@ const Missions = () => {
                     reward: data.reward,
                     status: data.status,
                     progress: data.progress,
-                    title: data.title,
+                    name: data.name,
                     type: data.type,
                     userStatus: data.userStatus,
                 });
@@ -114,7 +114,7 @@ const Missions = () => {
                         ? dailyMissions : weeklyMissions).map((mission) => (
                             <View key={mission.id}
                                 className="bg-gray-100 p-4 rounded-lg mb-3 border border-gray-300">
-                            <Text className="text-gray-700 text-lg">{mission.title}</Text>
+                            <Text className="text-gray-700 text-lg">{mission.name}</Text>
                             <Text 
                                 className={`text-sm font-semibold mt-1 ${mission.userStatus ? "text-green-600" : "text-red-600"}`}>
                                 {mission.userStatus ? "Completed" : "Not Completed"}

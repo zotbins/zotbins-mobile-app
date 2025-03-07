@@ -1,31 +1,31 @@
-// Takes in an action type ie. mission, scan, points, level, quiz
+// Takes in an action type ie. scan, quiz
 // Increments by the value passed in
 // Checks if the user has completed the enough actions to mark achievement as complete through userStatus
 import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
-import { updateMissionProgress } from "./updateMissionProgress";
+import { updateAchievementProgress } from "./updateAchievementProgress";
 
-export const updateAchievementProgress = async (actionType: string, increment: number) => {
+export const updateMissionProgress = async (actionType: string, increment: number) => {
     const user = auth().currentUser;
     if (user) {
-        const userAchievementsRef = firestore().collection("users").doc(user.uid).collection("achievements");
-        const achievementsSnapshot = await userAchievementsRef.get();
+        const userMissionsRef = firestore().collection("users").doc(user.uid).collection("missions");
+        const missionsSnapshot = await userMissionsRef.get();
 
         const batch = firestore().batch();
-        achievementsSnapshot.forEach(async (doc) => {
+        missionsSnapshot.forEach(async (doc) => {
             const data = doc.data();
-            const userAchievementRef = userAchievementsRef.doc(doc.id);
+            const userMissionRef = userMissionsRef.doc(doc.id);
             const actionAmount = data.actionAmount;
-            const progress = data.progress;
+            const progress: number = data.progress;
             const userStatus = data.userStatus;
 
             if (actionType === data.actionType && !userStatus) {
                 const newProgress = progress + increment;
-                if (newProgress >= actionAmount) {
-                    batch.update(userAchievementRef, { progress: actionAmount, userStatus: true });
+                if (newProgress >= actionAmount && !userStatus) {
+                    batch.update(userMissionRef, { progress: actionAmount, userStatus: true });
                     await handleRewards(user.uid, data.rewardAmount, data.rewardType);
-                } else{
-                    batch.update(userAchievementRef, { progress: newProgress });
+                } else {
+                    batch.update(userMissionRef, { progress: newProgress });
                 }
             }
         })
