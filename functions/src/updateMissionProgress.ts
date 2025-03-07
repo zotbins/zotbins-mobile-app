@@ -24,6 +24,7 @@ export const updateMissionProgress = async (actionType: string, increment: numbe
                 if (newProgress >= actionAmount && !userStatus) {
                     batch.update(userMissionRef, { progress: actionAmount, userStatus: true });
                     await handleRewards(user.uid, data.rewardAmount, data.rewardType);
+                    await updateAchievementProgress("mission", 1);
                 } else {
                     batch.update(userMissionRef, { progress: newProgress });
                 }
