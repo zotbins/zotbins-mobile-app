@@ -5,6 +5,7 @@ import { Animated, Pressable, Text, View } from "react-native";
 import data from "../../data/QuizData.js";
 import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
+import { updateAchievementProgress } from "@/functions/src/updateAchievementProgress";
 
 interface Question {
   id?: string;
@@ -142,6 +143,7 @@ const Quiz = () => {
           await firestore().collection("users").doc(user.uid).update({
             totalPoints: firestore.FieldValue.increment(1),
           });
+          updateAchievementProgress("points", 1);
           console.log("Added points to totalPoints.");
         } catch (error) {
           console.error("Error updating totalPoints:", error);
@@ -190,6 +192,7 @@ const Quiz = () => {
   useEffect(() => {
     const user = auth().currentUser;
     if (showResults && user) {
+      updateAchievementProgress("quiz", 1);
       const userRef = firestore().collection("users").doc(user.uid);
       userRef.get().then((docSnapshot) => {
         if (docSnapshot.exists) {
@@ -203,6 +206,7 @@ const Quiz = () => {
               xp: updateXP,
               level: firestore.FieldValue.increment(1),
             });
+            updateAchievementProgress("level", 1);
           } else {
             userRef.update({
               xp: firestore.FieldValue.increment(5)

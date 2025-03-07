@@ -9,7 +9,7 @@ export const handleRewards = async (uid: string, rewardAmount: number, rewardTyp
     if (!userData) return;
     const { xp, totalPoints, level } = userData;
     switch (rewardType) {
-        case "xp":
+        case "XP":
             const currentXP = xp || 0;
             const currentLevel = level || 1;
             const requiredXPforNextLevel = 50 * (currentLevel);
