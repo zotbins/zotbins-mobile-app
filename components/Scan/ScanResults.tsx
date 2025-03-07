@@ -4,6 +4,7 @@ import { Image, Text, View, TouchableOpacity } from "react-native";
 import ImageEditor from "@react-native-community/image-editor";
 import firestore, { FieldValue } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
+import { updateAchievementProgress } from "@/functions/src/updateAchievementProgress";
 
 interface ScanResultsProps {
   image: string | null;
@@ -37,6 +38,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({
               xp: updateXP,
               level: firestore.FieldValue.increment(1),
             });
+            updateAchievementProgress("level", 1);
           } else {
             userRef.update({
               xp: firestore.FieldValue.increment(10)
@@ -47,6 +49,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({
             
             userRef.update({dailyScans: firestore.FieldValue.increment(1)});
             userRef.update({totalScans: firestore.FieldValue.increment(1)});
+            updateAchievementProgress("scan", 1);
             // Only award points if user hasn't scanned today
             // Update dailyStreak for scanning
             if (lastScanDate !== todayDateString) {
@@ -63,6 +66,9 @@ const ScanResults: React.FC<ScanResultsProps> = ({
                 userRef.update({
                   totalPoints: firestore.FieldValue.increment(2),
                 });
+                updateAchievementProgress("points", 12);
+              } else {
+                updateAchievementProgress("points", 10);
               }
             }
           }

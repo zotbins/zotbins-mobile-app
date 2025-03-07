@@ -7,9 +7,11 @@ import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 interface Achievement {
     id: number;
-    info: string;
+    name: string;
+    description: string;
     reward: string;
-    numRequired: number;
+    actionAmount: number;
+    progress: number;
 }
 
 
@@ -25,10 +27,11 @@ const Achievements = () => {
                         const data = doc.data();
                         return {
                             id: data.id,
-                            info: data.info,
+                            name: data.name,
+                            description: data.description,
                             reward: data.reward,
-                            numRequired: data.numRequired,
-
+                            actionAmount: data.actionAmount,
+                            progress: data.progress,
                         };
                     });
 
@@ -61,19 +64,15 @@ const Achievements = () => {
 
                 {/* Achievements List */}
                 {achievements.map((achievement) => {
-                    let currentCount = 0;
-                    if (achievement.id === 1) currentCount = 1;
-                    if (achievement.id === 2) currentCount = 7;
-                    if (achievement.id === 3) currentCount = 2;
-                    const fraction = `${currentCount}/${achievement.numRequired}`;
-                    const progressPercent = (currentCount / achievement.numRequired) * 100;
+                    const fraction = `${achievement.progress}/${achievement.actionAmount}`;
+                    const progressPercent = (achievement.progress / achievement.actionAmount) * 100;
 
                     return (
                         <View
                             key={achievement.id}
                             className="bg-gray-100 p-4 rounded-lg mb-3 border border-gray-300"
                         >
-                            <Text className="text-lg font-bold text-gray-700">{achievement.info}</Text>
+                            <Text className="text-lg font-bold text-gray-700">{achievement.name}</Text>
                             <Text className="text-gray-600">{achievement.reward}</Text>
                             <View className="mt-3">
                                 <View className="relative w-full h-5 bg-gray-700 rounded">
