@@ -4,8 +4,7 @@ import { Image, Text, View, TouchableOpacity } from "react-native";
 import ImageEditor from "@react-native-community/image-editor";
 import firestore, { FieldValue } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
-import { updateAchievementProgress } from "@/functions/src/updateAchievementProgress";
-import { updateMissionProgress } from "@/functions/src/updateMissionProgress";
+import { updateAchievementProgress, updateMissionProgress } from "@/functions/src/updateProgress";
 
 interface ScanResultsProps {
   image: string | null;

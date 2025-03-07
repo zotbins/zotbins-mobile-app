@@ -5,8 +5,7 @@ import { Animated, Pressable, Text, View } from "react-native";
 import data from "../../data/QuizData.js";
 import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
-import { updateAchievementProgress } from "@/functions/src/updateAchievementProgress";
-import { updateMissionProgress } from "@/functions/src/updateMissionProgress";
+import { updateAchievementProgress, updateMissionProgress } from "@/functions/src/updateProgress";
 
 interface Question {
   id?: string;

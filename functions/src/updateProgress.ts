@@ -3,7 +3,6 @@
 // Checks if the user has completed the enough actions to mark achievement as complete through userStatus
 import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
-import { updateMissionProgress } from "./updateMissionProgress";
 
 export const updateAchievementProgress = async (actionType: string, increment: number) => {
     const user = auth().currentUser;
@@ -26,6 +25,35 @@ export const updateAchievementProgress = async (actionType: string, increment: n
                     await handleRewards(user.uid, data.rewardAmount, data.rewardType);
                 } else{
                     batch.update(userAchievementRef, { progress: newProgress });
+                }
+            }
+        })
+        await batch.commit();
+    };
+}
+
+export const updateMissionProgress = async (actionType: string, increment: number) => {
+    const user = auth().currentUser;
+    if (user) {
+        const userMissionsRef = firestore().collection("users").doc(user.uid).collection("missions");
+        const missionsSnapshot = await userMissionsRef.get();
+
+        const batch = firestore().batch();
+        missionsSnapshot.forEach(async (doc) => {
+            const data = doc.data();
+            const userMissionRef = userMissionsRef.doc(doc.id);
+            const actionAmount = data.actionAmount;
+            const progress: number = data.progress;
+            const userStatus = data.userStatus;
+
+            if (actionType === data.actionType && !userStatus) {
+                const newProgress = progress + increment;
+                if (newProgress >= actionAmount && !userStatus) {
+                    batch.update(userMissionRef, { progress: actionAmount, userStatus: true });
+                    await handleRewards(user.uid, data.rewardAmount, data.rewardType);
+                    await updateAchievementProgress("mission", 1);
+                } else {
+                    batch.update(userMissionRef, { progress: newProgress });
                 }
             }
         })

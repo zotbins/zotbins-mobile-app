@@ -4,7 +4,7 @@ import { Link, Stack } from "expo-router";
 import Header from "@/components/Reusables/Header";
 import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
-import { updateAchievementProgress } from "@/functions/src/updateAchievementProgress";
+import { updateAchievementProgress } from "@/functions/src/updateProgress";
 
 async function populateMissions(uid: string) {
   const missionsRef = firestore().collection("missions");
