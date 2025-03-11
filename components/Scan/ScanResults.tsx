@@ -4,6 +4,7 @@ import { Image, Text, View, TouchableOpacity } from "react-native";
 import ImageEditor from "@react-native-community/image-editor";
 import firestore, { FieldValue } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
+import { updateAchievementProgress, updateMissionProgress } from "@/functions/src/updateProgress";
 
 interface ScanResultsProps {
   image: string | null;
@@ -25,7 +26,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({
     const user = auth().currentUser;
     if (user) {
       const userRef = firestore().collection("users").doc(user.uid);
-      userRef.get().then((docSnapshot) => {
+      userRef.get().then(async (docSnapshot) => {
         if (docSnapshot.exists) {
           const currentXP = docSnapshot.data()?.xp || 0;
           const currentLevel = docSnapshot.data()?.level || 1;
@@ -37,6 +38,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({
               xp: updateXP,
               level: firestore.FieldValue.increment(1),
             });
+            await updateAchievementProgress("level", 1);
           } else {
             userRef.update({
               xp: firestore.FieldValue.increment(10)
@@ -45,9 +47,10 @@ const ScanResults: React.FC<ScanResultsProps> = ({
             const lastScanDate = docSnapshot.data()?.lastScanDate;
             const todayDateString = new Date().toISOString().split("T")[0];
             
-            // Increment dailyScans counter
             userRef.update({dailyScans: firestore.FieldValue.increment(1)});
-             
+            userRef.update({totalScans: firestore.FieldValue.increment(1)});
+            await updateAchievementProgress("scan", 1);
+            await updateMissionProgress("scan", 1);
             // Only award points if user hasn't scanned today
             // Update dailyStreak for scanning
             if (lastScanDate !== todayDateString) {
@@ -64,6 +67,11 @@ const ScanResults: React.FC<ScanResultsProps> = ({
                 userRef.update({
                   totalPoints: firestore.FieldValue.increment(2),
                 });
+                updateAchievementProgress("points", 12);
+                updateMissionProgress("points", 12);
+              } else {
+                updateAchievementProgress("points", 10);
+                updateMissionProgress("points", 10);
               }
             }
           }

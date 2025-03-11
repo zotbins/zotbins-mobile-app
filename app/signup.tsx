@@ -41,6 +41,7 @@ const createUserDocument = async (
   const totalPoints: number = 0;
   const dailyStreak: number = 0;
   const dailyScans: number = 0;
+  const totalScans: number = 0;
   const lastLoginUpdate: number = Date.now();
   const lastStreakUpdate: number = Date.now();
   const footprint: number = 0;
@@ -55,6 +56,7 @@ const createUserDocument = async (
     totalPoints,
     dailyStreak,
     dailyScans,
+    totalScans,
     lastLoginUpdate,
     lastStreakUpdate,
     footprint,
@@ -105,6 +107,8 @@ const Signup = () => {
         const email = response.user.email;
         if (uid && email) {
           await createUserDocument(uid, email, "", "", "");
+          await populateMissions(uid);
+          await populateAchievements(uid);
         }
       }
     } catch (e: any) {
@@ -173,6 +177,47 @@ const Signup = () => {
     }
   };
 
+  async function populateMissions(uid: string) {
+    const missionsRef = firestore().collection("missions");
+    const userMissionsRef = firestore().collection("users").doc(uid).collection("missions");
+
+    const missionsSnapshot = await missionsRef.where("status", "==", true).get();
+
+    const batch = firestore().batch();
+    missionsSnapshot.forEach((doc) => {
+        const userMissionRef = userMissionsRef.doc(doc.id);
+        batch.set(userMissionRef, {
+            ...doc.data(),
+            id: doc.id,
+            progress: 0,
+            userStatus: false,
+            assignedAt: firestore.FieldValue.serverTimestamp(),
+        });
+    });
+
+    await batch.commit();
+  }
+
+  async function populateAchievements(uid: string) { 
+    const achievementsRef = firestore().collection("achievements");
+    const userAchievementsRef = firestore().collection("users").doc(uid).collection("achievements");
+
+    const achievementsSnapshot = await achievementsRef.get();
+
+    const batch = firestore().batch();
+    achievementsSnapshot.forEach((doc) => {
+        const userAchievementRef = userAchievementsRef.doc(doc.id);
+        batch.set(userAchievementRef, {
+            ...doc.data(),
+            id: doc.id,
+            progress: 0,
+            userStatus: false,
+        });
+    });
+
+    await batch.commit();
+  }
+
   // create user with email and password in firebase auth and create user doc in firestore
   const signUp = async () => {
     if (email === "" || password === "" || confirmPassword === "") {
@@ -193,6 +238,8 @@ const Signup = () => {
           const email = response.user.email;
           if (uid && email) {
             await createUserDocument(uid, email, "", "", "");
+            await populateMissions(uid);
+            await populateAchievements(uid);
           }
         } else {
           Alert.alert("Info", "This account already exists.");

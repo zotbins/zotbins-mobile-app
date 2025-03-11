@@ -5,6 +5,7 @@ import { Animated, Pressable, Text, View } from "react-native";
 import data from "../../data/QuizData.js";
 import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
+import { updateAchievementProgress, updateMissionProgress } from "@/functions/src/updateProgress";
 
 interface Question {
   id?: string;
@@ -142,6 +143,8 @@ const Quiz = () => {
           await firestore().collection("users").doc(user.uid).update({
             totalPoints: firestore.FieldValue.increment(1),
           });
+          await updateAchievementProgress("points", 1);
+          await updateMissionProgress("points", 1);
           console.log("Added points to totalPoints.");
         } catch (error) {
           console.error("Error updating totalPoints:", error);
@@ -156,19 +159,19 @@ const Quiz = () => {
       return (
         <View className="flex justify-center items-center">
           <Pressable
-          onPress={handleNext}
-          className="w-11/12 border-2 border-grey bg-white my-2.5 h-16 rounded-[10px] 
+            onPress={handleNext}
+            className="w-11/12 border-2 border-grey bg-white my-2.5 h-16 rounded-[10px] 
             flex justify-center active:opacity-50"
-        >
-          <Text className="text-2xl text-black text-center">
-            {currentQuestionIndex == questions.length - 1
-              ? "Show Results"
-              : "Next Question"}
-          </Text>
-        </Pressable>
+          >
+            <Text className="text-2xl text-black text-center">
+              {currentQuestionIndex == questions.length - 1
+                ? "Show Results"
+                : "Next Question"}
+            </Text>
+          </Pressable>
         </View>
-        
-        
+
+
       );
     } else {
       return null;
@@ -188,31 +191,37 @@ const Quiz = () => {
   };
 
   useEffect(() => {
-    const user = auth().currentUser;
-    if (showResults && user) {
-      const userRef = firestore().collection("users").doc(user.uid);
-      userRef.get().then((docSnapshot) => {
-        if (docSnapshot.exists) {
-          const currentXP = docSnapshot.data()?.xp || 0;
-          const currentLevel = docSnapshot.data()?.level || 1;
-          const requiredXPforNextLevel = 50 * (currentLevel);
-          const newXP = currentXP + 5;
-          if (newXP >= requiredXPforNextLevel) {
-            const updateXP = newXP - requiredXPforNextLevel;
-            userRef.update({
-              xp: updateXP,
-              level: firestore.FieldValue.increment(1),
-            });
-          } else {
-            userRef.update({
-              xp: firestore.FieldValue.increment(5)
-            });
+    const updateUserData = async () => {
+      const user = auth().currentUser;
+      if (showResults && user) {
+        await updateAchievementProgress("quiz", 1);
+        await updateMissionProgress("quiz", 1);
+        const userRef = firestore().collection("users").doc(user.uid);
+        userRef.get().then(async (docSnapshot) => {
+          if (docSnapshot.exists) {
+            const currentXP = docSnapshot.data()?.xp || 0;
+            const currentLevel = docSnapshot.data()?.level || 1;
+            const requiredXPforNextLevel = 50 * (currentLevel);
+            const newXP = currentXP + 5;
+            if (newXP >= requiredXPforNextLevel) {
+              const updateXP = newXP - requiredXPforNextLevel;
+              userRef.update({
+                xp: updateXP,
+                level: firestore.FieldValue.increment(1),
+              });
+              await updateAchievementProgress("level", 1);
+            } else {
+              userRef.update({
+                xp: firestore.FieldValue.increment(5)
+              });
+            }
           }
-        }
-      }).catch((error) => {
-        console.error("Error getting user data: ", error);
-      });
+        }).catch((error) => {
+          console.error("Error getting user data: ", error);
+        });
+      }
     }
+    updateUserData();
   }, [showResults]);
 
   return (
