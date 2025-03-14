@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ZotZero-Mobile",
-    "slug": "ZotZero-Mobile",
+    "slug": "zotzero-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,7 +15,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.zotbins.zotzero",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +26,11 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.zotbins.zotzero",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -54,8 +61,12 @@
     },
     "extra": {
       "eas": {
-        "projectId": "fdee64ad-4548-4a5a-94cf-72671c88da23"
+        "projectId": "77dff7b2-1586-49a4-a0c3-417627e692d7"
+      },
+      "router": {
+        "origin": false
       }
-    }
+    },
+    "owner": "heatwave"
   }
 }

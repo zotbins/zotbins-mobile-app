@@ -12,7 +12,10 @@
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_USE_LEGACY_PEER_DEPS": "true"
+      }
     }
   },
   "submit": {
