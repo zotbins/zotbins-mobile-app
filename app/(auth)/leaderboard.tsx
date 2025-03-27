@@ -1,12 +1,12 @@
 import BackButton from "@/components/Reusables/BackButton";
-import firestore from "@react-native-firebase/firestore";
+import { collection, query, orderBy, getDocs, getFirestore } from '@react-native-firebase/firestore';
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState, useRef } from "react";
-import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { Image, ScrollView, Text, View, TouchableOpacity } from "react-native";
 import { currentUserUid } from "../_layout";
 import auth from "@react-native-firebase/auth";
-import storage from "@react-native-firebase/storage";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
 interface LeaderboardUser {
   pfp: string;
@@ -27,8 +27,9 @@ const Leaderboard = () => {
   const [friendList, setFriendList] = useState<string[]>([]);
   const getProfilePicUrl = async (uid: string) => {
     try {
-      const imageRef = storage().ref(`zotzero-user-profile-pics/${uid}`);
-      const url = await imageRef.getDownloadURL();
+      const storage = getStorage();
+      const imageRef = ref(storage, `zotzero-user-profile-pics/${uid}`);
+      const url = await getDownloadURL(imageRef);
       return url;
     } catch (error) {
       return "https://placehold.co/250";
@@ -45,11 +46,14 @@ const Leaderboard = () => {
     if (dataLoaded.current) return;
     const fetchLeaderboard = async () => {
       try {
-        const leaderboardQuery = firestore()
-          .collection("users")
-          .orderBy("totalPoints", "desc");
+        const db = getFirestore();
 
-        const querySnapshot = await leaderboardQuery.get();
+        const leaderboardQuery = query(
+          collection(db, "users"),
+          orderBy("totalPoints", "desc")
+        );
+
+        const querySnapshot = await getDocs(leaderboardQuery);
         const leaderboard: LeaderboardUser[] = [];
 
         for (let doc of querySnapshot.docs) {
@@ -125,67 +129,67 @@ const Leaderboard = () => {
         </View>
         <Text className="text-xl w-1/4 text-center text-black">{user.points}</Text>
       </View>
-        <View className="w-full mb-4 w-full px-4 border-b border-gray-300 py-2" />
+      <View className="w-full mb-4 w-full px-4 border-b border-gray-300 py-2" />
     </React.Fragment>
   );
 
   return (
     <SafeAreaProvider >
       <SafeAreaView className="bg-white flex-1">
-      <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      className="bg-white"
-      automaticallyAdjustsScrollIndicatorInsets={true}
-    >
-      <Stack.Screen
-        options={{
-          headerShadowVisible: false,
-          headerBackVisible: false,
-          headerTransparent: true,
-          headerLeft: () => <BackButton />,
-          headerTitle: "",
-        }}
-      />
-      <View className="flex flex-col items-center px-8">
-      <Image
-        source={trophy}
-        style={{
-          width: 100,
-          height: 100,
-        }}
-      />
-      <Text className="text-4xl text-black font-semibold my-2">Leaderboard</Text>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          className="bg-white"
+          automaticallyAdjustsScrollIndicatorInsets={true}
+        >
+          <Stack.Screen
+            options={{
+              headerShadowVisible: false,
+              headerBackVisible: false,
+              headerTransparent: true,
+              headerLeft: () => <BackButton />,
+              headerTitle: "",
+            }}
+          />
+          <View className="flex flex-col items-center px-8">
+            <Image
+              source={trophy}
+              style={{
+                width: 100,
+                height: 100,
+              }}
+            />
+            <Text className="text-4xl text-black font-semibold my-2">Leaderboard</Text>
 
-        <View className="flex flex-row mb-6 mt-2">
-          <TouchableOpacity 
-            onPress={() => setActiveTab('all-rankings')}
-            className={`flex-1 mx-2 rounded ${activeTab === 'all-rankings' ? 'border-b-4 border-tintColor' : 'text-black border-b-4 border-gray-200'}`}
-          >
-            <Text className={`text-xl text-center ${activeTab === 'all-rankings' ? 'font-semibold text-darkTintColor' : 'text-black'}`}>All</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            onPress={() => setActiveTab('weekly')}
-            className={`flex-1 mx-2 rounded ${activeTab === 'weekly' ? 'border-b-4 border-tintColor' : 'text-black border-b-4 border-gray-200'}`}
-          >
-            <Text className={`text-xl text-center ${activeTab === 'weekly' ? 'text-darkTintColor font-semibold' : 'text-black'}`}>Weekly</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            onPress={() => setActiveTab('friends')}
-            className={`flex-1 mx-2 rounded ${activeTab === 'friends' ? 'border-b-4 border-tintColor' : 'text-black border-b-4 border-gray-200'}`}
-          >
-            <Text className={`text-xl text-center ${activeTab === 'friends' ? 'font-semibold text-darkTintColor' : 'text-black'}`}>Friends</Text>
-          </TouchableOpacity>
-        </View>
+            <View className="flex flex-row mb-6 mt-2">
+              <TouchableOpacity
+                onPress={() => setActiveTab('all-rankings')}
+                className={`flex-1 mx-2 rounded ${activeTab === 'all-rankings' ? 'border-b-4 border-tintColor' : 'text-black border-b-4 border-gray-200'}`}
+              >
+                <Text className={`text-xl text-center ${activeTab === 'all-rankings' ? 'font-semibold text-darkTintColor' : 'text-black'}`}>All</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setActiveTab('weekly')}
+                className={`flex-1 mx-2 rounded ${activeTab === 'weekly' ? 'border-b-4 border-tintColor' : 'text-black border-b-4 border-gray-200'}`}
+              >
+                <Text className={`text-xl text-center ${activeTab === 'weekly' ? 'text-darkTintColor font-semibold' : 'text-black'}`}>Weekly</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setActiveTab('friends')}
+                className={`flex-1 mx-2 rounded ${activeTab === 'friends' ? 'border-b-4 border-tintColor' : 'text-black border-b-4 border-gray-200'}`}
+              >
+                <Text className={`text-xl text-center ${activeTab === 'friends' ? 'font-semibold text-darkTintColor' : 'text-black'}`}>Friends</Text>
+              </TouchableOpacity>
+            </View>
 
-        <View className="flex flex-row items-center mb-4 w-full px-4 border-b border-gray-300 py-2">
-          <Text className="text-xl text-black font-semibold w-1/4 text-left">Rank</Text>
-          <Text className="text-xl text-black font-semibold w-1/2 text-left pl-14">User</Text>
-          <Text className="text-xl text-black font-semibold w-1/4 text-right pr-3">Points</Text>
-        </View>
+            <View className="flex flex-row items-center mb-4 w-full px-4 border-b border-gray-300 py-2">
+              <Text className="text-xl text-black font-semibold w-1/4 text-left">Rank</Text>
+              <Text className="text-xl text-black font-semibold w-1/2 text-left pl-14">User</Text>
+              <Text className="text-xl text-black font-semibold w-1/4 text-right pr-3">Points</Text>
+            </View>
 
-        {renderLeaderboard()}
-      </View>
-    </ScrollView>
+            {renderLeaderboard()}
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
