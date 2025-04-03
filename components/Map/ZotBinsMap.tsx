@@ -265,6 +265,7 @@ const ZotBinsMap = () => {
                 id={marker.name}
                 coordinate={[marker.longitude, marker.latitude]}
                 onSelected={() => {
+                  // only open modal if user location is available
                   if (userLocation.length === 2) {
                     openModal(marker)
                   }
