@@ -6,7 +6,7 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { Image, ScrollView, Text, View, TouchableOpacity } from "react-native";
 import { currentUserUid } from "../_layout";
 import auth from "@react-native-firebase/auth";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, getDownloadURL } from '@react-native-firebase/storage';
 
 interface LeaderboardUser {
   pfp: string;
