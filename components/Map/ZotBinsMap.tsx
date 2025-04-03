@@ -27,6 +27,7 @@ import Mapbox, {
   MapView,
   PointAnnotation,
   ShapeSource,
+  UserLocation,
 } from "@rnmapbox/maps";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
@@ -37,30 +38,22 @@ import React, { useEffect, useRef, useState } from "react";
 import { Image, View, ActivityIndicator, Pressable, Text, Alert } from "react-native";
 import ZotBinsLogo from "../../assets/images/zotbins_logo.png";
 import { markers } from "../../assets/markers.js";
-import mapboxSdk from "@mapbox/mapbox-sdk";
-import mapboxDirections from "@mapbox/mapbox-sdk/services/directions";
+
 import * as Location from "expo-location";
 import BinStatusBottomSheet from "./BinStatusBottomSheet";
 import { router } from "expo-router";
+import { useMapboxContext} from "../../context/MapboxProvider";
 
-// Mapbox Configuration
-Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOXACCESSTOKEN as string);
-Mapbox.setTelemetryEnabled(false);
-
-const directionsClient = mapboxDirections(
-  mapboxSdk({ 
-    accessToken: process.env.EXPO_PUBLIC_MAPBOXACCESSTOKEN as string 
-  })
-);
 
 const ZotBinsMap = () => {
+  // get mapbox directions client from context
+  const { directionsClient } = useMapboxContext();
   // flag to check if bottom sheet is open
   const [displayModal, setDisplayModal] = useState(false);
   // state to store active bin data
   const [activeBin, setActiveBin] = useState<BinData | null>(null);
   // state to store active route data
   const [activeRoute, setActiveRoute] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   // state to store user location
   const [userLocation, setUserLocation] = useState<number[]>([]);
 
@@ -224,19 +217,10 @@ const ZotBinsMap = () => {
       });
 
       setUserLocation([coords.longitude, coords.latitude]);
-      setIsLoading(false);
+
     };
     initializeLocation();
   }, []);
-
-  // render loading spinner while fetching user location
-  if (isLoading) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
 
   return (
     <View className="w-full h-full">
@@ -252,6 +236,7 @@ const ZotBinsMap = () => {
             eta={activeBin?.eta || null}
             activeRoute={activeRoute}
             setActiveRoute={setActiveRoute}
+            userLocation={userLocation}
           />
           <MapView
             styleURL="mapbox://styles/mapbox/streets-v12"
@@ -279,7 +264,11 @@ const ZotBinsMap = () => {
                 key={marker.name}
                 id={marker.name}
                 coordinate={[marker.longitude, marker.latitude]}
-                onSelected={() => openModal(marker)}
+                onSelected={() => {
+                  if (userLocation.length === 2) {
+                    openModal(marker)
+                  }
+                }}
               >
                 <Image
                   source={ZotBinsLogo}

@@ -14,6 +14,7 @@ interface BinStatusBottomSheetProps {
   eta: number | null;
   activeRoute: any;
   setActiveRoute: any;
+  userLocation:number[];
 }
 // string format for distance and eta
 const metersToMilesOrFeetString = (meters: number | null) => {
@@ -43,6 +44,7 @@ const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> =
       eta,
       activeRoute,
       setActiveRoute,
+      userLocation
   }) => {
 
 
@@ -75,6 +77,7 @@ const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> =
             ) : (
             <Pressable
               onPress={activateRouting}
+              disabled={!userLocation}
               className="px-6 py-2 bg-tintColor rounded-full flex-row items-center justify-center active:opacity-50">
                 <Ionicons name="walk"   size={16} color="white" />
                 <Text className="text-white ">Go</Text>
