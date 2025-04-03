@@ -125,7 +125,7 @@ const SentRequests = () => {
             autoCapitalize="none"
           />
           <Pressable
-            className="bg-tealMed px-4 py-2 rounded"
+            className="bg-blue px-4 py-2 rounded"
             onPress={handleAddFriend}
           >
             <Text className="text-white font-bold">Add Friend</Text>
