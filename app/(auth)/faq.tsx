@@ -1,7 +1,8 @@
 import BackButton from "@/components/Reusables/BackButton";
 import { Stack } from "expo-router";
 import React, { useState } from "react";
-import { View, Text, SafeAreaView, ScrollView } from "react-native";
+import { View, Text, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Accordion from "@/components/Reusables/Accordion";
 const FAQ = () => {
   // list of FAQ

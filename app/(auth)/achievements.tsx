@@ -1,8 +1,9 @@
 import BackButton from "@/components/Reusables/BackButton";
 import { Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { View, Text, SafeAreaView } from "react-native";
-import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
+import { View, Text} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import firestore from "@react-native-firebase/firestore";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 interface Achievement {
@@ -60,7 +61,7 @@ const Achievements = () => {
             />
 
             <View className="flex-1 px-4">
-                <Text className="text-2xl font-bold text-gray-800 mb-4">Achievements</Text>
+                <Text className="text-2xl font-bold text-gray-800 mb-4 text-center">Achievements</Text>
 
                 {/* Achievements List */}
                 {achievements.map((achievement) => {
