@@ -45,12 +45,11 @@ const Profile = () => {
         setUserDoc(userDocSnap.data());
       } catch (error) {
         console.error("Error fetching user document: ", error);
-        Alert.alert("Error", "Failed to fetch user document");
       }
     };
 
     fetchUserDoc();
-  });
+  }, []);
 
   // request permission to access camera roll
   const requestPermission = async () => {

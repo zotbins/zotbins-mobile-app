@@ -2,18 +2,22 @@ import { Pressable, StyleSheet, Text, SafeAreaView, View, TouchableOpacity } fro
 import React, { useEffect } from 'react'
 import { router, Stack } from 'expo-router'
 import { useState } from 'react'
-import firestore from '@react-native-firebase/firestore'
-import auth from '@react-native-firebase/auth'
+import { getFirestore, doc, getDoc, updateDoc } from '@react-native-firebase/firestore'
+import { getAuth } from '@react-native-firebase/auth'
 
 // update spiritTrash in firestore
 const updateSpiritTrash = async (spiritTrash: string) => {
-  const uid = auth().currentUser?.uid;
+  const uid = getAuth().currentUser?.uid;
   if (!uid) return;
 
-  await firestore()
-    .collection("users")
-    .doc(uid)
-    .update({ spiritTrash });
+  const db = getFirestore();
+  const userRef = doc(db, "users", uid);
+  const userSnapshot = await getDoc(userRef);
+  if (!userSnapshot.exists) {
+    console.error("User document does not exist");
+  } else {
+    updateDoc(userRef, {spiritTrash})
+  }
 }
 
 const SpiritTrash = () => {

@@ -1,9 +1,9 @@
 import BackButton from "@/components/Reusables/BackButton";
 import { Stack } from "expo-router";
-import firestore from "@react-native-firebase/firestore";
+import { getFirestore, doc, getDoc, getDocs, where, query, collection, arrayRemove, arrayUnion } from "@react-native-firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, Alert } from "react-native";
-import auth from "@react-native-firebase/auth";
+import { getAuth } from "@react-native-firebase/auth";
 
 // If a request was sent successfully, the sender's username should be appended
 // to the recipient's friendRequestsReceived array, and the recipient's username
@@ -15,18 +15,17 @@ const FriendRequests = () => {
   const [friendRequestsReceived, setFriendRequestsReceived] = useState<
     string[]
   >([]);
-  const user = auth().currentUser;
+  const user = getAuth().currentUser;
 
   // get username of current user
   useEffect(() => {
     const findCurrentUser = async () => {
-      const querySnapshot = await firestore()
-        .collection("users")
-        .doc(user?.uid)
-        .get();
-      setCurrentUsername(querySnapshot.data()?.username);
+      const db = getFirestore();
+      const userRef = doc(db, "users", user?.uid || "");
+      const userSnapshot = await getDoc(userRef);
+      setCurrentUsername(userSnapshot.data()?.username);
       setFriendRequestsReceived(
-        querySnapshot.data()?.friendRequestsReceived || friendRequestsReceived
+        userSnapshot.data()?.friendRequestsReceived || friendRequestsReceived
       );
     };
 
@@ -37,10 +36,10 @@ const FriendRequests = () => {
 
   // finds and returns a (receiving) user if it exists
   async function findReceivingUser(username: string) {
-    const querySnapshot = await firestore()
-      .collection("users")
-      .where("username", "==", username)
-      .get();
+    const db = getFirestore();
+    const userRef = collection(db, "users", user?.uid || "");
+    const q = query(userRef, where ("username", "==", username));
+    const querySnapshot = await getDocs(q);
 
     // check if username exists and is not the user's own
     if (
