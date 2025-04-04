@@ -3,8 +3,8 @@ import { Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, SafeAreaView } from "react-native";
 
-import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { getFirestore, collection, getDocs } from "@react-native-firebase/firestore";
+import { getAuth, FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 interface Mission{
     id?:string;
@@ -23,11 +23,14 @@ const Missions = () => {
     // const [missions, setMissions] = useState<Mission[]>([]);
     const [dailyMissions, setDailyMissions] = useState<Mission[]>([]);
     const [weeklyMissions, setWeeklyMissions] = useState<Mission[]>([]);
-    const user = auth().currentUser;
+    const user = getAuth().currentUser;
     const getMissions = async (user: FirebaseAuthTypes.User) => {
         try{
-            const querySnapshot = await firestore().collection("users").doc(user.uid).collection('missions').get();
-            const allMissions : Mission[] = [];
+            const db = getFirestore();
+            const missionsCollectionRef = collection(db, "users", user.uid, "missions");
+            const querySnapshot = await getDocs(missionsCollectionRef);
+
+            const allMissions: Mission[] = [];
 
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
