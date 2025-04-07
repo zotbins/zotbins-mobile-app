@@ -1,10 +1,10 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import React, { useEffect, useState } from "react";
 import "react-native-reanimated";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { getAuth, FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { View } from "react-native";
 import { ActivityIndicator } from "react-native";
-import firestore from "@react-native-firebase/firestore";
+import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
 
 export let currentUser: FirebaseAuthTypes.User | null = null;
 export let currentUserUid: string | null = null;
@@ -17,11 +17,11 @@ export default function RootLayout() {
 
   // checks if user has spiritTrash set and/or account details set
   const getSpiritTrashAndAccountDetails = async (uid: string) => {
-    const snapshot = await firestore()
-      .collection("users")
-      .doc(uid);
-    
-    const data = (await snapshot.get()).data();
+    const db = getFirestore();
+    const snapshot = await getDoc(doc(db, "users", uid))
+
+
+    const data = snapshot.data();    
     const spiritTrash = data ? data.spiritTrash : "";
     const username = data ? data.username : "";
   
@@ -39,7 +39,7 @@ export default function RootLayout() {
   };
 
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    const subscriber = getAuth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
   }, []);
 

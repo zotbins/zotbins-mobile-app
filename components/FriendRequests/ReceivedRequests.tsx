@@ -1,9 +1,9 @@
 import BackButton from "@/components/Reusables/BackButton";
 import { Stack } from "expo-router";
-import firestore from "@react-native-firebase/firestore";
+import { getFirestore, doc, getDoc, getDocs, where, query, collection, arrayRemove, arrayUnion, updateDoc } from "@react-native-firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, Alert } from "react-native";
-import auth from "@react-native-firebase/auth";
+import { getAuth } from "@react-native-firebase/auth";
 
 // If a request was sent successfully, the sender's username should be appended
 // to the recipient's friendRequestsReceived array, and the recipient's username
@@ -15,18 +15,17 @@ const FriendRequests = () => {
   const [friendRequestsReceived, setFriendRequestsReceived] = useState<
     string[]
   >([]);
-  const user = auth().currentUser;
+  const user = getAuth().currentUser;
 
   // get username of current user
   useEffect(() => {
     const findCurrentUser = async () => {
-      const querySnapshot = await firestore()
-        .collection("users")
-        .doc(user?.uid)
-        .get();
-      setCurrentUsername(querySnapshot.data()?.username);
+      const db = getFirestore();
+      const userRef = doc(db, "users", user?.uid || "");
+      const userSnapshot = await getDoc(userRef);
+      setCurrentUsername(userSnapshot.data()?.username);
       setFriendRequestsReceived(
-        querySnapshot.data()?.friendRequestsReceived || friendRequestsReceived
+        userSnapshot.data()?.friendRequestsReceived || friendRequestsReceived
       );
     };
 
@@ -37,10 +36,10 @@ const FriendRequests = () => {
 
   // finds and returns a (receiving) user if it exists
   async function findReceivingUser(username: string) {
-    const querySnapshot = await firestore()
-      .collection("users")
-      .where("username", "==", username)
-      .get();
+    const db = getFirestore();
+    const receivingUserRef = collection(db, "users");
+    const q = query(receivingUserRef, where("username", "==", username));
+    const querySnapshot = await getDocs(q);
 
     // check if username exists and is not the user's own
     if (
@@ -56,22 +55,20 @@ const FriendRequests = () => {
   // clears a friend request for both sender and recipient
   const clearFriendRequest = async (requestedUser: any) => {
     // remove requested user from current user's friendRequestsReceived
-    await firestore()
-      .collection("users")
-      .doc(user?.uid)
-      .update({
-        friendRequestsReceived: firestore.FieldValue.arrayRemove(
-          requestedUser.username
-        ),
-      });
+    const db = getFirestore();
+    const userRef = doc(db, "users", user?.uid || "");
+    await updateDoc(userRef, {
+      friendRequestsReceived: arrayRemove(
+        requestedUser.username
+      ),
+    });
 
     // remove current user from requested user's friendRequestsSent
-    await firestore()
-      .collection("users")
-      .doc(requestedUser.uid)
-      .update({
-        friendRequestsSent: firestore.FieldValue.arrayRemove(currentUsername),
-      });
+    const requestedUserRef = doc(db, "users", requestedUser.uid || "");
+    await updateDoc(requestedUserRef, {
+      friendRequestsSent: arrayRemove(currentUsername),
+    }
+    );
   };
 
   const handleAccept = async (requestedUser: string) => {
@@ -79,24 +76,20 @@ const FriendRequests = () => {
     const foundRequestedUser = await findReceivingUser(requestedUser);
 
     // add requested user to current user's friends list
-    firestore()
-      .collection("users")
-      .doc(user?.uid)
-      .update({
-        // no need to check for duplicates since arrayUnion handles that
-        friendsList: firestore.FieldValue.arrayUnion(
-          foundRequestedUser?.username
-        ),
-      });
+    const db = getFirestore();
+    const userRef = doc(db, "users", user?.uid || "");
+    await updateDoc(userRef, {
+      friendsList: arrayUnion(
+        foundRequestedUser?.username
+      ),
+    });
 
     // add current user to requested user's friends list
-    firestore()
-      .collection("users")
-      .doc(foundRequestedUser?.uid)
-      .update({
-        // no need to check for duplicates since arrayUnion handles that
-        friendsList: firestore.FieldValue.arrayUnion(currentUsername),
-      });
+    const requestedUserRef = doc(db, "users", foundRequestedUser?.uid || "");
+    await updateDoc(requestedUserRef, {
+      friendsList: arrayUnion(currentUsername),
+    }
+    );
 
     clearFriendRequest(foundRequestedUser);
 
@@ -120,15 +113,13 @@ const FriendRequests = () => {
     const foundRequestedUser = await findReceivingUser(requestedUser);
 
     // add requested user to current user's blocked list
-    firestore()
-      .collection("users")
-      .doc(user?.uid)
-      .update({
-        // no need to check for duplicates since arrayUnion handles that
-        blockedUsers: firestore.FieldValue.arrayUnion(
-          foundRequestedUser?.username
-        ),
-      });
+    const db = getFirestore();
+    const userRef = doc(db, "users", user?.uid || "");
+    await updateDoc(userRef, {
+      blockedUsers: arrayUnion(
+        foundRequestedUser?.username
+      ),
+    });
 
     clearFriendRequest(foundRequestedUser);
 

@@ -2,8 +2,8 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Image, Text, View, TouchableOpacity } from "react-native";
 import ImageEditor from "@react-native-community/image-editor";
-import firestore, { FieldValue } from "@react-native-firebase/firestore";
-import auth from "@react-native-firebase/auth";
+import { getFirestore, getDoc, doc, increment, updateDoc } from "@react-native-firebase/firestore";
+import { getAuth } from "@react-native-firebase/auth";
 import { updateAchievementProgress, updateMissionProgress } from "@/functions/src/updateProgress";
 
 interface ScanResultsProps {
@@ -22,11 +22,14 @@ const ScanResults: React.FC<ScanResultsProps> = ({
   const [wasteObject, setWasteObject] = useState<string>("");
   const [wasteCategory, setWasteCategory] = useState<string>("");
 
-  useEffect(() => {
-    const user = auth().currentUser;
+  useEffect(() => { 
+    const fetchData = async () => {
+    const user = getAuth().currentUser;
     if (user) {
-      const userRef = firestore().collection("users").doc(user.uid);
-      userRef.get().then(async (docSnapshot) => {
+      const db = getFirestore();
+      const userRef = doc(db, "users", user.uid);
+      try {
+        const docSnapshot = await getDoc(userRef);
         if (docSnapshot.exists) {
           const currentXP = docSnapshot.data()?.xp || 0;
           const currentLevel = docSnapshot.data()?.level || 1;
@@ -34,38 +37,38 @@ const ScanResults: React.FC<ScanResultsProps> = ({
           const newXP = currentXP + 10;
           if (newXP >= requiredXPforNextLevel) {
             const updateXP = newXP - requiredXPforNextLevel;
-            userRef.update({
+            await updateDoc(userRef, {
               xp: updateXP,
-              level: firestore.FieldValue.increment(1),
+              level: increment(1),
             });
             await updateAchievementProgress("level", 1);
           } else {
-            userRef.update({
-              xp: firestore.FieldValue.increment(10)
+            await updateDoc(userRef, {
+              xp: increment(10)
             });
             // Gets the last scan date from firebase
             const lastScanDate = docSnapshot.data()?.lastScanDate;
             const todayDateString = new Date().toISOString().split("T")[0];
             
-            userRef.update({dailyScans: firestore.FieldValue.increment(1)});
-            userRef.update({totalScans: firestore.FieldValue.increment(1)});
+            await updateDoc(userRef, {dailyScans: increment(1)});
+            await updateDoc(userRef, {totalScans: increment(1)});
             await updateAchievementProgress("scan", 1);
             await updateMissionProgress("scan", 1);
             // Only award points if user hasn't scanned today
             // Update dailyStreak for scanning
             if (lastScanDate !== todayDateString) {
-              userRef.update({
+              await updateDoc(userRef, {
                 lastScanDate: todayDateString,
-                totalPoints: firestore.FieldValue.increment(10),
-                dailyStreak: firestore.FieldValue.increment(1),
+                totalPoints: increment(10),
+                dailyStreak: increment(1),
                 lastStreakUpdate: Date.now(),
               });
               
               // Check if dailyStreak is greater than 1 to award extra points for daily streak
               const dailyStreak = docSnapshot.data()?.dailyStreak || 0;
               if (dailyStreak > 1) {
-                userRef.update({
-                  totalPoints: firestore.FieldValue.increment(2),
+                updateDoc(userRef, {
+                  totalPoints: increment(2),
                 });
                 updateAchievementProgress("points", 12);
                 updateMissionProgress("points", 12);
@@ -76,10 +79,12 @@ const ScanResults: React.FC<ScanResultsProps> = ({
             }
           }
         }
-      }).catch((error) => {
+      } catch (error) {
         console.error("Error getting user data: ", error);
-      });
-    }
+      }
+     }
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {

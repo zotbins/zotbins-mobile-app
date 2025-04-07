@@ -1,12 +1,11 @@
 import BackButton from "@/components/Reusables/BackButton";
-import firestore from "@react-native-firebase/firestore";
+import { collection, query, orderBy, getDocs, getFirestore } from '@react-native-firebase/firestore';
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState, useRef } from "react";
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import { Image, ScrollView, Text, View, TouchableOpacity } from "react-native";
 import { currentUserUid } from "../_layout";
-import auth from "@react-native-firebase/auth";
-import storage from "@react-native-firebase/storage";
+import { getStorage, ref, getDownloadURL } from '@react-native-firebase/storage';
 
 interface LeaderboardUser {
   pfp: string;
@@ -27,8 +26,9 @@ const Leaderboard = () => {
   const [friendList, setFriendList] = useState<string[]>([]);
   const getProfilePicUrl = async (uid: string) => {
     try {
-      const imageRef = storage().ref(`zotzero-user-profile-pics/${uid}`);
-      const url = await imageRef.getDownloadURL();
+      const storage = getStorage();
+      const imageRef = ref(storage, `zotzero-user-profile-pics/${uid}`);
+      const url = await getDownloadURL(imageRef);
       return url;
     } catch (error) {
       return "https://placehold.co/250";
@@ -45,11 +45,14 @@ const Leaderboard = () => {
     if (dataLoaded.current) return;
     const fetchLeaderboard = async () => {
       try {
-        const leaderboardQuery = firestore()
-          .collection("users")
-          .orderBy("totalPoints", "desc");
+        const db = getFirestore();
 
-        const querySnapshot = await leaderboardQuery.get();
+        const leaderboardQuery = query(
+          collection(db, "users"),
+          orderBy("totalPoints", "desc")
+        );
+
+        const querySnapshot = await getDocs(leaderboardQuery);
         const leaderboard: LeaderboardUser[] = [];
 
         for (let doc of querySnapshot.docs) {

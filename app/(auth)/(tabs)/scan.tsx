@@ -4,22 +4,24 @@ import { Pressable, SafeAreaView, Text } from "react-native";
 import ScanResults from "@/components/Scan/ScanResults";
 import TestImage from "@/assets/images/test-image"
 import ScanLimitModal from "@/components/Scan/ScanLimitModal";
-import firestore from "@react-native-firebase/firestore";
-import auth from "@react-native-firebase/auth";
+import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
+import { getAuth, FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 const Scan = () => {
   const [image, setImage] = useState<string | null>(TestImage);
 
   const [showScanResults, setShowScanResults] = useState<boolean>(false);
   const [showScanLimitModal, setShowScanLimitModal] = useState<boolean>(false);
-  const user = auth().currentUser;
-  
-  const getDailyScanCount = async (user) => {
-    try {
-      const userDoc = await firestore().collection("users").doc(user.uid).get();
+  const user = getAuth().currentUser;
 
-      if (userDoc.exists) {
-        const userData = userDoc.data();
+  const getDailyScanCount = async (user:FirebaseAuthTypes.User) => {
+    try {
+      const db = getFirestore();
+      const userRef = doc(db, "users", user.uid);
+      const docSnapshot = await getDoc(userRef);
+
+      if (docSnapshot.exists) {
+        const userData = docSnapshot.data();
         return userData?.dailyScans || 0;
       } else {
         return 0;
