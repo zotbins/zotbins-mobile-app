@@ -1,4 +1,4 @@
-import auth from "@react-native-firebase/auth";
+import { getAuth } from "@react-native-firebase/auth";
 import React from "react";
 import { Image, ImageSourcePropType, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,7 +10,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ streak }) => {
-  const user = auth().currentUser;
+  const user = getAuth().currentUser;
 
   const getImageSource = (source: string | ImageSourcePropType) => {
     if (typeof source === 'string') {

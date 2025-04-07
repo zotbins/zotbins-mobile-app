@@ -1,9 +1,9 @@
 import BackButton from "@/components/Reusables/BackButton";
 import { Stack } from "expo-router";
-import firestore from "@react-native-firebase/firestore";
+import { getFirestore, doc, getDoc, getDocs, query, collection, where, arrayUnion, updateDoc } from "@react-native-firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, Pressable, Alert } from "react-native";
-import auth from "@react-native-firebase/auth";
+import { getAuth } from "@react-native-firebase/auth";
 
 const SentRequests = () => {
   const [usernameInput, setUsernameInput] = useState("");
@@ -11,18 +11,23 @@ const SentRequests = () => {
   const [currentUsername, setCurrentUsername] = useState<any>();
   const [friendRequestsSent, setFriendRequestsSent] = useState<string[]>([]);
 
-  const user = auth().currentUser;
+  const user = getAuth().currentUser;
 
   // get username of current user
   useEffect(() => {
     const findCurrentUser = async () => {
-      const querySnapshot = await firestore()
-        .collection("users")
-        .doc(user?.uid)
-        .get();
-      setCurrentUsername(querySnapshot.data()?.username);
+      const db = getFirestore();
+      const userRef = doc(db, "users", user?.uid || "");
+      const userDocSnap = await getDoc(userRef);
+      if (!userDocSnap.exists) {
+        console.error("Error fetching user document: User does not exist");
+        Alert.alert("Error", "Failed to fetch user document");
+        setLoading(false);
+        return;
+      }
+      setCurrentUsername(userDocSnap.data()?.username);
       setFriendRequestsSent(
-        querySnapshot.data()?.friendRequestsSent || friendRequestsSent
+        userDocSnap.data()?.friendRequestsSent || friendRequestsSent
       );
     };
 
@@ -33,10 +38,10 @@ const SentRequests = () => {
 
   // finds and returns a (receiving) user if it exists
   async function findReceivingUser(username: string) {
-    const querySnapshot = await firestore()
-      .collection("users")
-      .where("username", "==", username.toLowerCase())
-      .get();
+    const db = getFirestore();
+    const userRef = collection(db, "users");
+    const q = query(userRef, where ("username", "==", username.toLowerCase()));
+    const querySnapshot = await getDocs(q);
 
     // check if username exists and is not the user's own
     if (
@@ -73,25 +78,27 @@ const SentRequests = () => {
       return;
     }
     // add receiving user to current user's sentFriendRequests
-    firestore()
-      .collection("users")
-      .doc(user?.uid)
-      .update({
-        // no need to check for duplicates since arrayUnion handles that
-        friendRequestsSent: firestore.FieldValue.arrayUnion(
-          receivingUser.username
-        ),
-      });
+    const db = getFirestore();
+    const userRef = doc(db, "users", user?.uid || "");
+    const userDocSnap = await getDoc(userRef);
+    if (!userDocSnap.exists) { 
+      console.error("Error fetching user document: User does not exist");
+      return;
+    }
+
+    // update current user's friendRequestsSent
+    await updateDoc(userRef, {friendRequestsSent: arrayUnion(
+      receivingUser.username)});
 
     // add current user to receiving user's receivedFriendRequests
-    firestore()
-      .collection("users")
-      .doc(receivingUser.uid)
-      .update({
-        // no need to check for duplicates since arrayUnion handles that
-        friendRequestsReceived:
-          firestore.FieldValue.arrayUnion(currentUsername),
-      });
+    const receivingRef = doc(db, "users", receivingUser.uid);
+    const receivingDocSnap = await getDoc(receivingRef);
+    if (!userDocSnap.exists) { 
+      console.error("Error fetching user document: User does not exist");
+      return;
+    }
+    await updateDoc(receivingRef, {friendRequestsReceived:
+      arrayUnion(currentUsername)})
     Alert.alert("Success!", `Friend request sent to ${usernameInput}`);
     setUsernameInput("");
     setFriendRequestsSent((prev) => [...prev, usernameInput]);

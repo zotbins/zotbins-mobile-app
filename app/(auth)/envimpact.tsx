@@ -2,13 +2,13 @@ import BackButton from "@/components/Reusables/BackButton";
 import { Stack } from "expo-router";
 import React, { useState, useEffect} from "react";
 import { Alert, SafeAreaView, View, Text, Pressable } from "react-native";
-import auth from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
+import { getAuth } from "@react-native-firebase/auth";
+import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const envimpact = () => {
-    const user = auth().currentUser;
+    const user = getAuth().currentUser;
     const [userDoc, setUserDoc] = useState<any>(null);
 
     // on user change, fetch user document from firestore
@@ -20,8 +20,9 @@ const envimpact = () => {
         }
 
         try {
-            const userDocRef = firestore().collection("users").doc(uid);
-            const userDocSnap = await userDocRef.get();
+            const db = getFirestore()
+            const userDocRef = doc(db, "users", uid);
+            const userDocSnap = await getDoc(userDocRef);
             if (!userDocSnap.exists) {
             throw new Error("User document does not exist");
             }

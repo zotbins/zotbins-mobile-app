@@ -1,7 +1,7 @@
 import { Alert, KeyboardAvoidingView, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, {useState} from 'react'
-import firestore from '@react-native-firebase/firestore'
-import auth from '@react-native-firebase/auth'
+import { getFirestore, doc, updateDoc, where, query, collection, getDocs } from '@react-native-firebase/firestore'
+import { getAuth } from '@react-native-firebase/auth'
 import { router, Stack } from 'expo-router'
 
 const AccountSetup = () => {
@@ -10,10 +10,9 @@ const AccountSetup = () => {
     const [lastName, setLastName] = useState("");
 
     const isUsernameAvailable = async (username: string) =>{
-        const querySnapshot = await firestore()
-          .collection("users")
-          .where("username", "==", username)
-          .get();
+        const db = getFirestore();
+        const q = query(collection(db, "users"), where("username", "==", username));
+        const querySnapshot = await getDocs(q);
         return querySnapshot.empty;
     }
 
@@ -28,16 +27,15 @@ const AccountSetup = () => {
             Alert.alert("Error", "Username is already taken");
             return;
         }
-        const user = auth().currentUser;
+        const db = getFirestore();
+        const user = getAuth().currentUser;
         if (user) {
-            await firestore()
-              .collection("users")
-              .doc(user.uid)
-              .update({
+            const userRef = doc(db, "users", user.uid);
+            updateDoc(userRef, {
                 username: username,
                 firstName: firstName,
                 lastName: lastName,
-              });
+            });
         }
         // navigate to spirittrash page
         router.replace("/spirittrash");

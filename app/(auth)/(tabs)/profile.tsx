@@ -1,6 +1,6 @@
-import auth from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
-import storage from "@react-native-firebase/storage";
+import { getAuth } from "@react-native-firebase/auth";
+import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
+import { getStorage, ref, getDownloadURL } from '@react-native-firebase/storage';
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -11,7 +11,7 @@ import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 const Profile = () => {
   const router = useRouter();
 
-  const user = auth().currentUser;
+  const user = getAuth().currentUser;
   // set profile picture to user's photoURL or placeholder image
   const [profilePic, setProfilePic] = useState<string | ImageSourcePropType>(
     user?.photoURL || require("@/assets/images/default_profile_picture.png")
@@ -36,8 +36,9 @@ const Profile = () => {
       }
 
       try {
-        const userDocRef = firestore().collection("users").doc(uid);
-        const userDocSnap = await userDocRef.get();
+        const db = getFirestore();
+        const userDocRef = doc(db, "users", uid);
+        const userDocSnap = await getDoc(userDocRef);
         if (!userDocSnap.exists) {
           throw new Error("User document does not exist");
         }
@@ -80,17 +81,18 @@ const Profile = () => {
         return;
       }
 
-      const storageRef = storage().ref(`zotzero-user-profile-pics/${uid}`);
+      const storage = getStorage();
+      const storageRef = ref(storage, `zotzero-user-profile-pics/${uid}`);
       const uploadTask = storageRef.putFile(selectedImageUri);
 
       uploadTask.on(
         "state_changed",
-        () => {},
+        () => { },
         (error) => {
           console.error(error);
         },
         async () => {
-          const downloadURL = await storageRef.getDownloadURL();
+          const downloadURL = await getDownloadURL(storageRef);
           user?.updateProfile({ photoURL: downloadURL });
           setProfilePic(downloadURL);
         }
@@ -211,7 +213,7 @@ const Profile = () => {
           </Pressable>
 
           <Pressable
-            onPress={() => auth().signOut()}
+            onPress={() => getAuth().signOut()}
             className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
           >
             <Text className="text-white text-center">Sign Out</Text>

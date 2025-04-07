@@ -3,8 +3,8 @@ import { Link, Stack, useRouter } from "expo-router";
 import React, { useState, useEffect } from "react";
 import { Animated, Pressable, Text, View } from "react-native";
 import data from "../../data/QuizData.js";
-import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
-import auth from "@react-native-firebase/auth";
+import { getFirestore, doc, getDoc, updateDoc, increment, collection, getDocs } from "@react-native-firebase/firestore";
+import { getAuth } from "@react-native-firebase/auth";
 import { updateAchievementProgress, updateMissionProgress } from "@/functions/src/updateProgress";
 
 interface Question {
@@ -34,7 +34,8 @@ const Quiz = () => {
 
   const getQuestions = async () => {
     try {
-      const querySnapshot = await firestore().collection('questions').get();
+      const db = getFirestore();
+      const querySnapshot = await getDocs(collection(db, 'questions'));
       const allQuestions: Question[] = [];
 
       querySnapshot.forEach((doc) => {
@@ -137,11 +138,14 @@ const Quiz = () => {
       setScore(score + 1);
 
       // award points for correct answers
-      const user = auth().currentUser;
+      const user = getAuth().currentUser;
       if (user) {
         try {
-          await firestore().collection("users").doc(user.uid).update({
-            totalPoints: firestore.FieldValue.increment(1),
+          const db = getFirestore();
+          const userRef = doc(db, 'users', user.uid);
+
+          await updateDoc(userRef, {
+            totalPoints: increment(1),
           });
           await updateAchievementProgress("points", 1);
           await updateMissionProgress("points", 1);
@@ -192,35 +196,39 @@ const Quiz = () => {
 
   useEffect(() => {
     const updateUserData = async () => {
-      const user = auth().currentUser;
+      const user = getAuth().currentUser;
       if (showResults && user) {
         await updateAchievementProgress("quiz", 1);
         await updateMissionProgress("quiz", 1);
-        const userRef = firestore().collection("users").doc(user.uid);
-        userRef.get().then(async (docSnapshot) => {
+        const db = getFirestore();
+        const userRef = doc(db, 'users', user.uid);
+
+        try {
+          const docSnapshot = await getDoc(userRef);
           if (docSnapshot.exists) {
-            const currentXP = docSnapshot.data()?.xp || 0;
-            const currentLevel = docSnapshot.data()?.level || 1;
-            const requiredXPforNextLevel = 50 * (currentLevel);
+            const data = docSnapshot.data();
+            const currentXP = data?.xp || 0;
+            const currentLevel = data?.level || 1;
+            const requiredXPforNextLevel = 50 * currentLevel;
             const newXP = currentXP + 5;
             if (newXP >= requiredXPforNextLevel) {
               const updateXP = newXP - requiredXPforNextLevel;
-              userRef.update({
+              await updateDoc(userRef, {
                 xp: updateXP,
-                level: firestore.FieldValue.increment(1),
+                level: increment(1),
               });
               await updateAchievementProgress("level", 1);
             } else {
-              userRef.update({
-                xp: firestore.FieldValue.increment(5)
+              await updateDoc(userRef, {
+                xp: increment(5)
               });
             }
           }
-        }).catch((error) => {
+        } catch (error) {
           console.error("Error getting user data: ", error);
-        });
+        };
       }
-    }
+    };
     updateUserData();
   }, [showResults]);
 
