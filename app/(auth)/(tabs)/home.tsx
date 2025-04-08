@@ -111,16 +111,17 @@ const Home = () => {
     <>
       <Stack.Screen
         options={{
-          header: () => <Header streak={streak} />,
+          headerShown: false,
         }}
-      />
+       />
 
       <LinearGradient
         colors={["#F5FFF5", "#DBFFD8"]}
         style={{ flex: 1 }}
       >
-        <SafeAreaView style={{ flex: 1 }}>
-          <View className="flex-1 px-5 py-12">
+        <SafeAreaView className="flex-1">
+          <Header streak={streak} />
+          <View className="flex-1 px-5">
             <Link href="/quiz" asChild>
               <Pressable className="items-center justify-center py-6 px-8 rounded-md bg-tintColor mb-2 active:opacity-50">
                 <Text className="text-white">Daily Quiz</Text>
