@@ -10,10 +10,8 @@ import TrophyIcon from "@/assets/icons/trophy-icon.svg";
 import ProfileIcon from "@/assets/icons/profile-icon.svg";
 
 const ICON_SIZE = 28;
-const ACTIVE_BG = "#C6F6D5";      // light green background for active tab
-const ACTIVE_BORDER = "#009838";  // border around active tab
-const ACTIVE_ICON = "#48BB78";    // fill color for active icons
-const TAB_BG = "#48BB78";         // entire tab bar background
+const ACTIVE_ICON = "#48BB78"; //fill color for active icons
+const TAB_BG = "#48BB78"; // entire tab bar background
 
 const TabIcon = ({
   Icon,
@@ -23,16 +21,8 @@ const TabIcon = ({
   focused: boolean;
 }) => (
   <View
-    style={{
-      paddingHorizontal: 16,
-      paddingVertical: 10,
-      backgroundColor: focused ? ACTIVE_BG : "transparent",
-      borderRadius: 16,
-      borderWidth: focused ? 1 : 0,
-      borderColor: focused ? ACTIVE_BORDER : "transparent",
-      alignItems: "center",
-      justifyContent: "center",
-    }}
+    className={`rounded-2xl items-center justify-center ${focused ? "bg-[#C6F6D5] border border-[#009838] px-[14px] py-2" : "px-[10px] py-2"
+      }`}
   >
     <Icon width={ICON_SIZE} height={ICON_SIZE} color={focused ? ACTIVE_ICON : "white"} />
   </View>
@@ -50,11 +40,16 @@ export default function Layout() {
             height: 90,
             borderRadius: 0,
             elevation: 10,
+            paddingHorizontal: 10,
+          },
+          tabBarItemStyle: {
+            marginHorizontal: -2,
           },
           tabBarShowLabel: false,
           headerShown: false,
         }}
       >
+
         <Tabs.Screen
           name="home"
           options={{
@@ -75,19 +70,7 @@ export default function Layout() {
           name="scan"
           options={{
             tabBarIcon: () => (
-              <View
-                style={{
-                  position: "absolute",
-                  top: -40,
-                  width: 72,
-                  height: 72,
-                  borderRadius: 36,
-                  backgroundColor: ACTIVE_BG,
-                  elevation: 6,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+              <View className="absolute -top-10 w-[72px] h-[72px] rounded-full bg-[#C6F6D5] items-center justify-center">
                 <ScanIcon width={70} height={70} color={ACTIVE_ICON} />
               </View>
             ),
