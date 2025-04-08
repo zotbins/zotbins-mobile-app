@@ -1,50 +1,47 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { Image, View } from "react-native";
+import { View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
-import HomeIcon from "@/assets/icons/home-icon.png";
-import TreeIcon from "@/assets/icons/location-icon.png";
-import ScanIcon from "@/assets/icons/camera-icon.png";
-import TrophyIcon from "@/assets/icons/trophy-icon.png";
-import ProfileIcon from "@/assets/icons/profile-icon.png";
+// SVG icon imports (with fill="currentColor" in each SVG file)
+import HomeIcon from "@/assets/icons/home-icon.svg";
+import TreeIcon from "@/assets/icons/location-icon.svg";
+import ScanIcon from "@/assets/icons/camera-icon.svg";
+import TrophyIcon from "@/assets/icons/trophy-icon.svg";
+import ProfileIcon from "@/assets/icons/profile-icon.svg";
 
+// Styling constants
 const ICON_SIZE = 28;
-const ACTIVE_BG = "#C6F6D5";
-const ACTIVE_BORDER = "#009838";
-const ACTIVE_ICON = "#48BB78";
-const TAB_BG = "#48BB78";
+const ACTIVE_BG = "#C6F6D5";      // light green background for active tab
+const ACTIVE_BORDER = "#009838";  // border around active tab
+const ACTIVE_ICON = "#48BB78";    // fill color for active icons
+const TAB_BG = "#48BB78";         // entire tab bar background
 
+// Reusable icon component (except for scan)
 const TabIcon = ({
-  source,
+  Icon,
   focused,
 }: {
-  source: any;
+  Icon: React.FC<React.ComponentProps<typeof HomeIcon>>;
   focused: boolean;
 }) => (
   <View
     style={{
       paddingHorizontal: 16,
       paddingVertical: 10,
-      backgroundColor: focused ? ACTIVE_BG : "transparent",
+      backgroundColor: focused ? "#C6F6D5" : "transparent",
       borderRadius: 16,
       borderWidth: focused ? 1 : 0,
-      borderColor: focused ? ACTIVE_BORDER : "transparent",
+      borderColor: focused ? "#009838" : "transparent",
       alignItems: "center",
       justifyContent: "center",
     }}
   >
-    <Image
-      source={source}
-      style={{
-        width: ICON_SIZE,
-        height: ICON_SIZE,
-        tintColor: focused ? ACTIVE_ICON : "white",
-      }}
-      resizeMode="contain"
-    />
+    {/* ⬇️ Pass color, NOT fill */}
+    <Icon width={28} height={28} color={focused ? "#48BB78" : "white"} />
   </View>
 );
+
 
 export default function Layout() {
   return (
@@ -67,7 +64,7 @@ export default function Layout() {
           name="home"
           options={{
             tabBarIcon: ({ focused }) => (
-              <TabIcon source={HomeIcon} focused={focused} />
+              <TabIcon Icon={HomeIcon} focused={focused} />
             ),
           }}
         />
@@ -75,7 +72,7 @@ export default function Layout() {
           name="tree"
           options={{
             tabBarIcon: ({ focused }) => (
-              <TabIcon source={TreeIcon} focused={focused} />
+              <TabIcon Icon={TreeIcon} focused={focused} />
             ),
           }}
         />
@@ -90,31 +87,22 @@ export default function Layout() {
                   width: 72,
                   height: 72,
                   borderRadius: 36,
-                  backgroundColor: "#C6F6D5",
+                  backgroundColor: ACTIVE_BG,
                   elevation: 6,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
-                <Image
-                  source={ScanIcon}
-                  style={{
-                    width: 70, // 80% of 72
-                    height: 70,
-                    tintColor: "#4A9E5B",
-                    resizeMode: "contain",
-                  }}
-                />
+                <ScanIcon width={70} height={70} fill="#4A9E5B" />
               </View>
             ),
           }}
         />
-
         <Tabs.Screen
           name="trophy"
           options={{
             tabBarIcon: ({ focused }) => (
-              <TabIcon source={TrophyIcon} focused={focused} />
+              <TabIcon Icon={TrophyIcon} focused={focused} />
             ),
           }}
         />
@@ -122,7 +110,7 @@ export default function Layout() {
           name="profile"
           options={{
             tabBarIcon: ({ focused }) => (
-              <TabIcon source={ProfileIcon} focused={focused} />
+              <TabIcon Icon={ProfileIcon} focused={focused} />
             ),
           }}
         />
