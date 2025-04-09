@@ -8,6 +8,7 @@ import { updateAchievementProgress } from "@/functions/src/updateProgress";
 import { LinearGradient } from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ScanWidget from "@/components/Home/ScanWidget";
+import DailyQuizWidget from "@/components/Home/DailyQuizWidget";
 
 async function populateMissions(uid: string) {
   const db = getFirestore();
@@ -127,6 +128,7 @@ const Home = () => {
         <SafeAreaView className="flex-1 px-7">
           <Header streak={streak} />
           <ScanWidget scans={scans} />
+          <DailyQuizWidget />
 
             <Link href="/quiz" asChild>
               <Pressable className="items-center justify-center py-6 px-8 rounded-md bg-tintColor mb-2 active:opacity-50">
