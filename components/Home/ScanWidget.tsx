@@ -29,7 +29,7 @@ const ScanCount = ({ count }: { count: number }) => (
 const ScanWidget = ({ scans }: { scans: number }) => (
     <LinearGradient
         colors={['#004c18', '#DFFFE3', '#DFFFE3', '#004c18']}
-        style={{ padding: 1, borderRadius: 35 }}
+        style={{ padding: 1, borderRadius: 35, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4, shadowRadius: 3.84 }}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         className="mb-4 shadow-lg"
