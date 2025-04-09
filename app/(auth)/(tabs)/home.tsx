@@ -37,6 +37,7 @@ const Home = () => {
 
   const [streak, setStreak] = useState(0);
   const [level, setLevel] = useState(1);
+  const [scans, setScans] = useState(3); // Assuming you want to set the initial scans to 5
   //checking streak within home in case we want a modal to pop up
   const updateLoginStreak = async (uid: any) => {
     if (!uid) return;
@@ -58,6 +59,9 @@ const Home = () => {
     const timeDiff = now.getTime() - lastLoginUpdateDate.getTime();
 
     const hoursDiff = timeDiff / (1000 * 3600);
+
+    const dailyScans = userData?.dailyScans || 0;
+    setScans(3 - dailyScans);
 
     if (hoursDiff >= 24 && hoursDiff < 48) {
       // Update data including new missions
@@ -122,7 +126,7 @@ const Home = () => {
       >
         <SafeAreaView className="flex-1 px-7">
           <Header streak={streak} />
-          <ScanWidget scans={5} />
+          <ScanWidget scans={scans} />
 
             <Link href="/quiz" asChild>
               <Pressable className="items-center justify-center py-6 px-8 rounded-md bg-tintColor mb-2 active:opacity-50">
