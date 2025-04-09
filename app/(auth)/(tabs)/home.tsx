@@ -7,6 +7,7 @@ import { getAuth } from "@react-native-firebase/auth";
 import { updateAchievementProgress } from "@/functions/src/updateProgress";
 import { LinearGradient } from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
+import ScanWidget from "@/components/Home/ScanWidget";
 
 async function populateMissions(uid: string) {
   const db = getFirestore();
@@ -119,9 +120,10 @@ const Home = () => {
         colors={["#F5FFF5", "#DBFFD8"]}
         style={{ flex: 1 }}
       >
-        <SafeAreaView className="flex-1">
+        <SafeAreaView className="flex-1 px-7">
           <Header streak={streak} />
-          <View className="flex-1 px-5">
+          <ScanWidget scans={5} />
+
             <Link href="/quiz" asChild>
               <Pressable className="items-center justify-center py-6 px-8 rounded-md bg-tintColor mb-2 active:opacity-50">
                 <Text className="text-white">Daily Quiz</Text>
@@ -142,7 +144,7 @@ const Home = () => {
                 <Text className="text-white">Missions</Text>
               </Pressable>
             </Link>
-          </View>
+
         </SafeAreaView>
       </LinearGradient>
     </>

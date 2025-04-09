@@ -15,7 +15,7 @@ const Header: React.FC<HeaderProps> = ({ streak }) => {
 
 
   return (
-      <View className="flex-col justify-between px-6 py-6">
+      <View className="flex-col justify-between py-6">
         <SimpleLogoSvg width={100} height={50} />
 
         <Text className="text-darkGreen text-3xl font-semibold mt-3 mb-2">
