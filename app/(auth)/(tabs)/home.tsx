@@ -39,8 +39,9 @@ const Home = () => {
   const [streak, setStreak] = useState(0);
   const [level, setLevel] = useState(1);
   const [scans, setScans] = useState(3); // Assuming you want to set the initial scans to 5
+  const [username, setUsername] = useState("");
   //checking streak within home in case we want a modal to pop up
-  const updateLoginStreak = async (uid: any) => {
+  const initUserHome = async (uid: any) => {
     if (!uid) return;
 
     const db = getFirestore();
@@ -64,6 +65,8 @@ const Home = () => {
     const dailyScans = userData?.dailyScans || 0;
     setScans(3 - dailyScans);
 
+    const username = userData?.username || user?.displayName || "User";
+    setUsername(username);
     if (hoursDiff >= 24 && hoursDiff < 48) {
       // Update data including new missions
       await populateMissions(uid);
@@ -109,7 +112,7 @@ const Home = () => {
 
   useEffect(() => {
     if (user) {
-      updateLoginStreak(user.uid);
+      initUserHome(user.uid);
     }
   }, [user]);
 
@@ -126,7 +129,7 @@ const Home = () => {
         style={{ flex: 1 }}
       >
         <SafeAreaView className="flex-1 px-7">
-          <Header streak={streak} />
+          <Header username={username} />
           <ScanWidget scans={scans} />
           <DailyQuizWidget />
 
