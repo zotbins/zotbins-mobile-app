@@ -9,6 +9,7 @@ import { LinearGradient } from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ScanWidget from "@/components/Home/ScanWidget";
 import DailyQuizWidget from "@/components/Home/DailyQuizWidget";
+import MissionsWidget from "@/components/Home/MissionsWidget";
 
 async function populateMissions(uid: string) {
   const db = getFirestore();
@@ -138,6 +139,7 @@ const Home = () => {
                 <Text className="text-white">Missions</Text>
               </Pressable>
             </Link>
+            <MissionsWidget />
 
         </SafeAreaView>
       </LinearGradient>
