@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Link, Stack } from "expo-router";
 import Header from "@/components/Reusables/Header";
@@ -85,7 +85,7 @@ const Home = () => {
       // adds new missions
       await populateMissions(uid);
       // reset dailystreak
-      await updateDoc(userRef,{
+      await updateDoc(userRef, {
         dailyStreak: 0,
         dailyScans: 0,
         lastLoginUpdate: now.getTime(),
@@ -102,7 +102,7 @@ const Home = () => {
     if (xp >= requiredXPforNextLevel) {
       const newXP = xp - requiredXPforNextLevel;
       const newLevel = level + 1;
-      await updateDoc(userRef,{
+      await updateDoc(userRef, {
         level: increment(1),
         xp: newXP,
       });
@@ -123,20 +123,24 @@ const Home = () => {
         options={{
           headerShown: false,
         }}
-       />
+      />
 
       <LinearGradient
         colors={["#F5FFF5", "#DBFFD8"]}
         style={{ flex: 1 }}
       >
-        <SafeAreaView className="flex-1 px-5 gap-2">
-          <Header username={username} />
-          <ScanWidget scans={scans} />
-          <DailyQuizWidget />
+        <ScrollView>
+          <SafeAreaView className="flex-1 px-5 gap-2 pb-24">
+            <Header username={username} />
+            <ScanWidget scans={scans} />
+            <DailyQuizWidget />
 
-          <MissionsWidget />
+            <MissionsWidget />
 
-        </SafeAreaView>
+          </SafeAreaView>
+        </ScrollView>
+
+
       </LinearGradient>
     </>
   );

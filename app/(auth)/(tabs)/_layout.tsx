@@ -1,6 +1,6 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { View } from "react-native";
+import { View, Dimensions } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
 import HomeIcon from "@/assets/icons/home-icon.svg";
@@ -29,6 +29,7 @@ const TabIcon = ({
 );
 
 export default function Layout() {
+  const windowHeight = Dimensions.get('window').height; 
   return (
     <>
       <Tabs
@@ -37,7 +38,7 @@ export default function Layout() {
             backgroundColor: TAB_BG,
             position: "absolute",
             bottom: 0,
-            height: 90,
+            height: windowHeight * 0.1,
             borderRadius: 0,
             elevation: 10,
             paddingHorizontal: 10,
