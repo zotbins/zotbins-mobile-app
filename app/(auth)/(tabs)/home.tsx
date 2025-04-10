@@ -129,7 +129,7 @@ const Home = () => {
         colors={["#F5FFF5", "#DBFFD8"]}
         style={{ flex: 1 }}
       >
-        <SafeAreaView className="flex-1 px-5">
+        <SafeAreaView className="flex-1 px-5 gap-2">
           <Header username={username} />
           <ScanWidget scans={scans} />
           <DailyQuizWidget />
