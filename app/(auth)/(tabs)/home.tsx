@@ -133,13 +133,7 @@ const Home = () => {
           <Header username={username} />
           <ScanWidget scans={scans} />
           <DailyQuizWidget />
-
-            <Link href="/missions" asChild>
-              <Pressable className="items-center justify-center py-6 px-8 rounded-md bg-tintColor mb-2 active:opacity-50">
-                <Text className="text-white">Missions</Text>
-              </Pressable>
-            </Link>
-            <MissionsWidget />
+          <MissionsWidget />
 
         </SafeAreaView>
       </LinearGradient>
