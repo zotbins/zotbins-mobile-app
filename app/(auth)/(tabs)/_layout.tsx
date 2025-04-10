@@ -77,7 +77,7 @@ export default function Layout() {
           }}
         />
         <Tabs.Screen
-          name="achievements"
+          name="leaderboard"
           options={{
             tabBarIcon: ({ focused }) => (
               <TabIcon Icon={TrophyIcon} focused={focused} />

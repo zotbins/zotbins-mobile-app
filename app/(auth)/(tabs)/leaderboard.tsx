@@ -4,7 +4,7 @@ import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState, useRef } from "react";
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import { Image, ScrollView, Text, View, TouchableOpacity } from "react-native";
-import { currentUserUid } from "../_layout";
+import { currentUserUid } from "../../_layout";
 import { getStorage, ref, getDownloadURL } from '@react-native-firebase/storage';
 
 interface LeaderboardUser {
@@ -13,7 +13,7 @@ interface LeaderboardUser {
   points: number;
   username: string;
 }
-const trophy = require('../../assets/images/trophy.png');
+const trophy = require('@/assets/images/trophy.png');
 const Leaderboard = () => {
   const router = useRouter();
   const [allLeaderboardData, setAllLeaderboardData] = useState<LeaderboardUser[]>([]);
