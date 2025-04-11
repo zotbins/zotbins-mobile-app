@@ -94,6 +94,7 @@ const envimpact = () => {
     // FAKE sample calculation, change later
     const co2Saved =
       (userDoc.recyclableScanned || 0) * 30 +
+      (userDoc.landfillScanned || 0) * 100 +
       (userDoc.compostScanned || 0) * 50;
 
     return `${co2Saved}g`;
