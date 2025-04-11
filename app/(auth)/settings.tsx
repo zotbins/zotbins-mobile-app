@@ -1,9 +1,9 @@
 import { getAuth } from "@react-native-firebase/auth";
-import { router, useRouter } from "expo-router";
+import { router, Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Pressable, SafeAreaView, View, Text, Alert } from "react-native";
-
 import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
+import BackButton from "@/components/Reusables/BackButton";
 
 const Settings = () => {
   const router = useRouter();
@@ -40,6 +40,15 @@ const Settings = () => {
 
   return (
     <>
+      <Stack.Screen
+        options={{
+          headerShadowVisible: false,
+          headerBackVisible: false,
+          headerTransparent: true,
+          headerLeft: () => <BackButton />,
+          headerTitle: "",
+        }}
+      />
       <SafeAreaView>
         <Pressable
           onPress={() => router.push("/envimpact")}

@@ -12,6 +12,7 @@ import {
 } from "@react-native-firebase/firestore";
 import { getAuth, FirebaseAuthTypes } from "@react-native-firebase/auth";
 import AchievementIcon from "@/components/Profile/achievementImagePlaceholder.png";
+import LinearGradient from "react-native-linear-gradient";
 
 interface Achievement {
   id: number;
@@ -59,54 +60,55 @@ const Achievements = () => {
   }, []);
 
   return (
-    <View className="flex-1 justify-center items-center">
-      <Stack.Screen
-        options={{
-          headerShadowVisible: false,
-          headerBackVisible: false,
-          headerTransparent: true,
-          headerLeft: () => <BackButton />,
-          headerTitle: "",
-        }}
-      />
+    <View className="flex-1 px-4 w-full">
+      {/* Achievements List */}
+      {achievements.map((achievement) => {
+        const fraction = `${achievement.progress}/${achievement.actionAmount}`;
+        const progressPercent =
+          (achievement.progress / achievement.actionAmount) * 100;
 
-      <View className="flex-1 px-4 w-full">
-        {/* Achievements List */}
-        {achievements.map((achievement) => {
-          const fraction = `${achievement.progress}/${achievement.actionAmount}`;
-          const progressPercent =
-            (achievement.progress / achievement.actionAmount) * 100;
-
-          return (
-            <View
-              key={achievement.id}
-              className="bg-lightBackground p-4 rounded-[35] mb-3 border border-gray-300 flex flex-row"
+        return (
+          <View key={achievement.id} className="mb-3">
+            {/* Gradient Border Container */}
+            <LinearGradient
+              colors={["#018029", "#DFFFE3", "#b4fabd", "#004c18"]}
+              style={{
+                padding: 1.3,
+                borderRadius: 35,
+              }}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              className="mb-4 shadow-lg"
+              locations={[0.1, 0.5, 0.8, 1]}
             >
-              <View>
-                <Image source={AchievementIcon} alt="" />
-              </View>
-              <View>
-                <Text className="text-lg font-bold text-gray-700">
-                  {achievement.name}
-                </Text>
-                <Text className="text-gray-600">{achievement.reward}</Text>
-                <View className="mt-3">
-                  <View className="relative w-full h-5 bg-gray-700 rounded">
-                    {/* Use inline style only for the dynamic width */}
-                    <View
-                      className="absolute left-0 top-0 h-5 bg-green-500 rounded"
-                      style={{ width: `${progressPercent}%` }}
-                    />
-                    <Text className="absolute w-full text-center text-white font-bold">
-                      {fraction}
-                    </Text>
+              {/* Achievement Content */}
+              <View className="bg-lightBackground p-4 rounded-[33] flex flex-row ">
+                <View>
+                  <Image source={AchievementIcon} alt="" />
+                </View>
+                <View className="ml-4">
+                  <Text className="text-xl font-semibold text-darkestGreen">
+                    {achievement.name}
+                  </Text>
+                  <Text className="text-darkGreen">{achievement.reward}</Text>
+                  <View className="mt-3">
+                    <View className="relative w-full h-5 bg-gray-700 rounded">
+                      {/* Use inline style only for the dynamic width */}
+                      <View
+                        className="absolute left-0 top-0 h-5 bg-green-500 rounded"
+                        style={{ width: `${progressPercent}%` }}
+                      />
+                      <Text className="absolute w-full text-center text-white font-bold">
+                        {fraction}
+                      </Text>
+                    </View>
                   </View>
                 </View>
               </View>
-            </View>
-          );
-        })}
-      </View>
+            </LinearGradient>
+          </View>
+        );
+      })}
     </View>
   );
 };

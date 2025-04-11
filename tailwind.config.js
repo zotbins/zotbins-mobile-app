@@ -13,9 +13,11 @@ module.exports = {
         red: "#fc6565",
         grey: "#242424",
         darkGreen: "#008229",
+        darkestGreen: "#004C18",
         primaryGreen: "#48bb78",
         lightBackground: "#F4FFF2",
         mediumGreen: "#00762B",
+
       },
     },
   },
