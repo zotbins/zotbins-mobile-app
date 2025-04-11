@@ -1,14 +1,46 @@
 import { getAuth } from "@react-native-firebase/auth";
 import { router, Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Pressable, SafeAreaView, View, Text, Alert } from "react-native";
+import {
+  Pressable,
+  SafeAreaView,
+  View,
+  Text,
+  Alert,
+  StatusBar,
+  Image,
+  ImageSourcePropType,
+} from "react-native";
 import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
 import BackButton from "@/components/Reusables/BackButton";
+import SimpleLogoSvg from "@/components/Reusables/SimpleLogoSVG";
+import { FontAwesome } from "@expo/vector-icons";
+import LinearGradient from "react-native-linear-gradient";
+import ProfileBanner from "@/components/Profile/profile-banner.svg";
+import SpiritIcon from "@/components/Profile/spiritIcon.svg";
+import StreakIcon from "@/components/Profile/streakIcon.svg";
+import * as ImagePicker from "expo-image-picker";
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+} from "@react-native-firebase/storage";
 
 const Settings = () => {
   const router = useRouter();
 
   const user = getAuth().currentUser;
+  // set profile picture to user's photoURL or placeholder image
+  const [profilePic, setProfilePic] = useState<string | ImageSourcePropType>(
+    user?.photoURL || require("@/assets/images/default_profile_picture.png")
+  );
+
+  const getImageSource = (source: string | ImageSourcePropType) => {
+    if (typeof source === "string") {
+      return { uri: source };
+    }
+    return source;
+  };
 
   const [userDoc, setUserDoc] = useState<any>(null);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -38,9 +70,59 @@ const Settings = () => {
     fetchUserDoc();
   });
 
+  // request permission to access camera roll
+  const requestPermission = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "Sorry, we need camera roll permissions to add a profile picture!"
+      );
+    }
+  };
+
+  // pick image from camera roll, upload to firebase storage, and set user photoURL to storage URL
+  const pickImage = async () => {
+    requestPermission();
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0,
+    });
+
+    if (!result.canceled && result.assets) {
+      const selectedImageUri = result.assets[0].uri;
+      const uid = user?.uid;
+
+      if (!uid) {
+        return;
+      }
+
+      const storage = getStorage();
+      const storageRef = ref(storage, `zotzero-user-profile-pics/${uid}`);
+      const uploadTask = storageRef.putFile(selectedImageUri);
+
+      uploadTask.on(
+        "state_changed",
+        () => {},
+        (error) => {
+          console.error(error);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(storageRef);
+          user?.updateProfile({ photoURL: downloadURL });
+          setProfilePic(downloadURL);
+        }
+      );
+    }
+  };
+
   return (
     <>
-      <Stack.Screen
+      <LinearGradient colors={["#F5FFF5", "#DBFFD8"]} style={{ flex: 1 }}>
+        <Stack.Screen options={{ headerShown: false }} />
+        {/* <Stack.Screen
         options={{
           headerShadowVisible: false,
           headerBackVisible: false,
@@ -48,19 +130,48 @@ const Settings = () => {
           headerLeft: () => <BackButton />,
           headerTitle: "",
         }}
-      />
-      <SafeAreaView>
-        <Pressable
-          onPress={() => router.push("/envimpact")}
-          className="bg-blue py-3 rounded-lg"
-        >
-          <Text className="text-white text-center">
-            Check Environmental Impact
-          </Text>
-        </Pressable>
+      /> */}
+        <SafeAreaView>
+          <View className="flex justify-center items-center w-full">
+            <View className="w-11/12 flex flex-row justify-between items-baseline h-16">
+              <SimpleLogoSvg width={100} height={100} />
 
-        {/* Friends container */}
-        <View className="pb-2">
+              {/* <Pressable onPress={() => router.push("/settings")}>
+              <SettingsButton width={50} />
+            </Pressable> */}
+            </View>
+
+            <View className="relative mb-5">
+              <ProfileBanner />
+              <View className="absolute left-2 top-2">
+                <BackButton />
+              </View>
+
+              <View className="absolute left-0 right-0 bottom-3 flex items-center justify-center">
+                <Pressable onPress={pickImage}>
+                  <Image
+                    source={getImageSource(profilePic)}
+                    className="w-24 h-24 rounded-full"
+                  />
+                  <View className="absolute bottom-0 right-2 bg-mediumGreen rounded-full p-2">
+                    <FontAwesome name="pencil" size={14} color="white" />
+                  </View>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+
+          <Pressable
+            onPress={() => router.push("/envImpactPreview")}
+            className="bg-blue py-3 rounded-lg"
+          >
+            <Text className="text-white text-center">
+              Check Environmental Impact
+            </Text>
+          </Pressable>
+
+          {/* Friends container */}
+          {/* <View className="pb-2">
           <Pressable
             onPress={() => router.push("/friendrequests")}
             className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
@@ -78,45 +189,53 @@ const Settings = () => {
           ) : (
             <Text className="text-center">No friends added yet!</Text>
           )}
-        </View>
+        </View> */}
 
-        <Pressable
+          {/* <Pressable
           onPress={() => router.push("/achievements")}
           className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
         >
           <Text className="text-white text-center">Achievements</Text>
-        </Pressable>
+        </Pressable> */}
 
-        <Pressable
-          onPress={() => router.push("/faq")}
-          className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-        >
-          <Text className="text-white text-center">FAQ</Text>
-        </Pressable>
+          <View className="flex justify-center items-center ">
+            <Pressable
+              onPress={() => router.push("/faq")}
+              className="bg-brightGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-9/12 mt-6"
+            >
+              <Text className="text-darkGreen text-center font-bold text-xl">
+                FAQ
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => router.replace("/(auth)/spirittrash")}
+              className="bg-brightGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-9/12"
+            >
+              <Text className="text-darkGreen text-center font-bold text-xl">
+                Retake Spirit Trash Quiz
+              </Text>
+            </Pressable>
 
-        <Pressable
-          onPress={() => router.replace("/(auth)/spirittrash")}
-          className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-        >
-          <Text className="text-white text-center">
-            Retake Spirit Trash Quiz
-          </Text>
-        </Pressable>
+            <Pressable
+              onPress={() => router.push("/passwordchange")}
+              className="bg-brightGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-9/12"
+            >
+              <Text className="text-darkGreen text-center font-bold text-xl">
+                Change Password
+              </Text>
+            </Pressable>
 
-        <Pressable
-          onPress={() => getAuth().signOut()}
-          className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-        >
-          <Text className="text-white text-center">Sign Out</Text>
-        </Pressable>
-
-        <Pressable
-          onPress={() => router.push("/passwordchange")}
-          className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-        >
-          <Text className="text-white text-center">Change Password</Text>
-        </Pressable>
-      </SafeAreaView>
+            <Pressable
+              onPress={() => getAuth().signOut()}
+              className="bg-primaryGreen py-3 rounded-full my-2 active:opacity-50 border border-green-700 w-1/4 mt-6"
+            >
+              <Text className="text-white text-center font-bold text-md">
+                Sign Out
+              </Text>
+            </Pressable>
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
     </>
   );
 };

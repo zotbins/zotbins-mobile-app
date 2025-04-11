@@ -17,7 +17,7 @@ module.exports = {
         primaryGreen: "#48bb78",
         lightBackground: "#F4FFF2",
         mediumGreen: "#00762B",
-
+        brightGreen: "#C9FFE2",
       },
     },
   },

@@ -27,8 +27,9 @@ import ProfileBanner from "@/components/Profile/profile-banner.svg";
 import SpiritIcon from "@/components/Profile/spiritIcon.svg";
 import StreakIcon from "@/components/Profile/streakIcon.svg";
 import StatusBar from "@/components/Profile/statusBar.svg";
+import FriendsIcon from "@/components/Profile/friendsIcon.svg";
 import Achievements from "../achievements";
-import Settings from "../settings";
+import EnvImpactPreview from "../envImpactPreview";
 
 const Profile = () => {
   const router = useRouter();
@@ -143,6 +144,9 @@ const Profile = () => {
 
               <View className="relative mb-5">
                 <ProfileBanner />
+                <View className="absolute left-24 top-24">
+                  <FriendsIcon />
+                </View>
                 <View className="absolute left-0 right-0 bottom-3 flex items-center justify-center">
                   <Pressable onPress={pickImage}>
                     <Image
@@ -171,49 +175,51 @@ const Profile = () => {
                   <View className="bg-lightBackground rounded-full py-2 flex flex-row items-center justify-between">
                     <View className="flex flex-col items-center w-1/4">
                       <SpiritIcon />
-                      <Text className="font-medium text-xs">
+                      <Text className="font-medium text-xs text-mediumGreen">
                         {userDoc?.spiritTrash}
                       </Text>
                     </View>
 
-                    <View className="flex flex-col items-center w-2/4 ">
-                      <Text className="font-semibold">Level 4</Text>
+                    <View className="flex flex-col items-center w-2/4 gap-y-1">
+                      <Text className="font-semibold text-mediumGreen">
+                        Level 4
+                      </Text>
                       <StatusBar />
 
-                      <Text className="text-[9px] text-center">
+                      <Text className="text-[9px] text-center text-mediumGreen font-light">
                         20/100 XP to reach Level 5
                       </Text>
                     </View>
 
                     <View className="flex flex-col items-center w-1/4">
                       <View className="flex flex-row items-center gap-x-1">
-                        <Text>16</Text>
+                        <Text className="text-mediumGreen font-light text-sm">
+                          16
+                        </Text>
                         <StreakIcon />
                       </View>
-                      <Text className="font-medium text-xs">Streak</Text>
+                      <Text className="font-medium text-xs text-mediumGreen">
+                        Streak
+                      </Text>
                     </View>
                   </View>
                 </LinearGradient>
               </View>
+
+              {/* <View>
+                <EnvImpactPreview />
+              </View> */}
             </View>
 
-            <View className="flex flex-col">
-              <Text className="text-xl font-medium text-darkGreen ml-6">
-                Achievements{" "}
+            <View className="my-12">
+              <Text className="text-xl font-medium text-darkGreen ml-6 mb-4">
+                Achievements{"  "}
                 <Text className="text-sm underline underline-offset-4">
                   See all
                 </Text>
               </Text>
 
               <Achievements />
-            </View>
-
-            <View className="px-4">
-              <Settings />
-
-              <Text>IGNORE EVERYTHING BELOW - OG </Text>
-
-              {/* ignore below */}
             </View>
           </ScrollView>
         </SafeAreaView>

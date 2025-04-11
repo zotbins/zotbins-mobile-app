@@ -92,7 +92,7 @@ const Achievements = () => {
                   </Text>
                   <Text className="text-darkGreen">{achievement.reward}</Text>
                   <View className="mt-3">
-                    <View className="relative w-full h-5 bg-gray-700 rounded">
+                    <View className="relative w-[220px] h-5 bg-darkGreen rounded-full">
                       {/* Use inline style only for the dynamic width */}
                       <View
                         className="absolute left-0 top-0 h-5 bg-green-500 rounded"
