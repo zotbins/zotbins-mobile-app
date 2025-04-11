@@ -161,14 +161,14 @@ const Settings = () => {
             </View>
           </View>
 
-          <Pressable
-            onPress={() => router.push("/envImpactPreview")}
+          {/* <Pressable
+            onPress={() => router.push("/envimpact")}
             className="bg-blue py-3 rounded-lg"
           >
             <Text className="text-white text-center">
               Check Environmental Impact
             </Text>
-          </Pressable>
+          </Pressable> */}
 
           {/* Friends container */}
           {/* <View className="pb-2">

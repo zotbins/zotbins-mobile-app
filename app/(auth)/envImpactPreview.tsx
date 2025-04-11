@@ -1,5 +1,5 @@
 import BackButton from "@/components/Reusables/BackButton";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import React, { useState, useEffect } from "react";
 import { Alert, SafeAreaView, View, Text, Pressable } from "react-native";
 import { getAuth } from "@react-native-firebase/auth";
@@ -8,6 +8,7 @@ import storage from "@react-native-firebase/storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const envImpactPreview = () => {
+  const router = useRouter();
   const user = getAuth().currentUser;
   const [userDoc, setUserDoc] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -100,17 +101,20 @@ const envImpactPreview = () => {
     return `${co2Saved}g`;
   };
 
-  if (loading) {
-    return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
+  //   if (loading) {
+  //     return (
+  //       <View className="flex-1 justify-center items-center bg-white">
+  //         <Text>Loading...</Text>
+  //       </View>
+  //     );
+  //   }
 
   return (
     <>
-      <View className="flex-row my-6 h-[95px] rounded-[35px] border justify-evenly mx-auto">
+      <Pressable
+        className="flex-row my-6 h-[95px] rounded-[35px] border border-darkGreen justify-evenly mx-auto"
+        onPress={() => router.push("/envimpact")}
+      >
         {/* carbon footprint stats*/}
         <View className="flex-col items-center justify-center px-3">
           <Text className="text-darkestGreen text-xl font-semibold">
@@ -146,7 +150,7 @@ const envImpactPreview = () => {
             recycled
           </Text>
         </View>
-      </View>
+      </Pressable>
     </>
   );
 };

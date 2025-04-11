@@ -205,13 +205,11 @@ const Profile = () => {
                   </View>
                 </LinearGradient>
               </View>
-
-              {/* <View>
-                <EnvImpactPreview />
-              </View> */}
             </View>
 
-            <View className="my-12">
+            <EnvImpactPreview />
+
+            <View className="mb-20">
               <Text className="text-xl font-medium text-darkGreen ml-6 mb-4">
                 Achievements{"  "}
                 <Text className="text-sm underline underline-offset-4">
