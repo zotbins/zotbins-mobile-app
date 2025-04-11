@@ -8,7 +8,7 @@ import storage from "@react-native-firebase/storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const envimpact = () => {
-  const user = auth().currentUser;
+  const user = getAuth().currentUser;
   const [userDoc, setUserDoc] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,8 +23,9 @@ const envimpact = () => {
       }
 
       try {
-        const userDocRef = firestore().collection("users").doc(uid);
-        const userDocSnap = await userDocRef.get();
+        const db = getFirestore();
+        const userDocRef = doc(db, "users", uid);
+        const userDocSnap = await getDoc(userDocRef);
         if (!userDocSnap.exists) {
           throw new Error("User document does not exist");
         }
@@ -32,7 +33,7 @@ const envimpact = () => {
         // get user data
         const userData = userDocSnap.data();
 
-        // if recyclableScanned or compostScanned don't exist, create them
+        // if landfill, recyclableScanned or compostScanned don't exist, create them
         if (
           userData &&
           (!userData.hasOwnProperty("recyclableScanned") ||
@@ -46,7 +47,7 @@ const envimpact = () => {
           });
 
           // fetch updated document
-          const updatedDocSnap = await userDocRef.get();
+          const updatedDocSnap = await getDoc(userDocRef);
           setUserDoc(updatedDocSnap.data());
         } else {
           setUserDoc(userData);
@@ -63,7 +64,8 @@ const envimpact = () => {
     fetchUserDoc();
   }, [user]);
 
-  // calculate total points (1 point per item)
+  // calculate total points
+  // adjust points based on item
   const calculateTotalPoints = () => {
     if (!userDoc) return 0;
 
@@ -118,9 +120,11 @@ const envimpact = () => {
       />
       <SafeAreaView className="">
         <Text className="text-4xl text-center font-bold">
-          Hi {userDoc?.firstname || "there"},
+          Hi {userDoc?.username || "there"},
         </Text>
-        <Text className="text-3xl text-center mb-5">This month you...</Text>
+        <Text className="text-3xl text-center mb-5 w-10/12 mx-auto">
+          This month you scanned a total of {totalItemsDiscarded()} items...
+        </Text>
 
         <View className="flex-row justify-center mb-5">
           {/* carbon footprint stats*/}
@@ -132,10 +136,10 @@ const envimpact = () => {
           {/* vertical divider */}
           <View className="w-px h-5/6 bg-gray-300 self-center"></View>
 
-          {/* landfill, recycle, compost stats*/}
+          {/* scanned, landfill, recycle, compost stats*/}
           <View className="mx-10 flex">
             <Text className="text-2xl mt-3 font-bold">
-              {totalItemsDiscarded()} items
+              {userDoc?.landfillScanned || 0} items
             </Text>
             <View className="flex-row">
               <Ionicons name="trash-outline" size={23} color="green" />
