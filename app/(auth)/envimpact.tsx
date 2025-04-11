@@ -3,7 +3,7 @@ import { Stack } from "expo-router";
 import React, { useState, useEffect } from "react";
 import { Alert, SafeAreaView, View, Text, Pressable } from "react-native";
 import { getAuth } from "@react-native-firebase/auth";
-import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
+import { getFirestore, doc, getDoc, updateDoc } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
@@ -40,7 +40,7 @@ const envimpact = () => {
             !userData.hasOwnProperty("compostScanned") ||
             !userData.hasOwnProperty("landfillScanned"))
         ) {
-          await userDocRef.update({
+          await updateDoc(userDocRef, {
             recyclableScanned: userData.recyclableScanned || 0,
             compostScanned: userData.compostScanned || 0,
             landfillScanned: userData.landfillScanned || 0,
