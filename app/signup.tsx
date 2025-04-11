@@ -1,5 +1,5 @@
-import auth from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
+import auth, { getAuth } from "@react-native-firebase/auth";
+import { getFirestore, doc, setDoc, getDocs, writeBatch, serverTimestamp, query, collection, where } from "@react-native-firebase/firestore";
 import { Link, useRouter } from "expo-router";
 import { FirebaseError } from "firebase/app";
 import React, { useState } from "react";
@@ -46,7 +46,9 @@ const createUserDocument = async (
   const lastStreakUpdate: number = Date.now();
   const footprint: number = 0;
   const spiritTrash: string = "";
-  await firestore().collection("users").doc(uid).set({
+  const db = getFirestore();
+  const userRef = doc(db, "users", uid);
+  await setDoc(userRef, {
     email,
     uid,
     firstname,
@@ -178,20 +180,21 @@ const Signup = () => {
   };
 
   async function populateMissions(uid: string) {
-    const missionsRef = firestore().collection("missions");
-    const userMissionsRef = firestore().collection("users").doc(uid).collection("missions");
+    const db = getFirestore();
+    const missionsRef = collection(db, "missions");
+    const userMissionsRef = collection(db, "users", uid, "missions");
+    const missionsQuery = query(missionsRef, where("status", "==", true));
+    const missionsSnapshot = await getDocs(missionsQuery);
 
-    const missionsSnapshot = await missionsRef.where("status", "==", true).get();
-
-    const batch = firestore().batch();
-    missionsSnapshot.forEach((doc) => {
-        const userMissionRef = userMissionsRef.doc(doc.id);
+    const batch = writeBatch(db);
+    missionsSnapshot.forEach((document) => {
+        const userMissionRef = doc(userMissionsRef, document.id);
         batch.set(userMissionRef, {
-            ...doc.data(),
-            id: doc.id,
+            ...document.data(),
+            id: document.id,
             progress: 0,
             userStatus: false,
-            assignedAt: firestore.FieldValue.serverTimestamp(),
+            assignedAt: serverTimestamp(),
         });
     });
 
@@ -199,17 +202,17 @@ const Signup = () => {
   }
 
   async function populateAchievements(uid: string) { 
-    const achievementsRef = firestore().collection("achievements");
-    const userAchievementsRef = firestore().collection("users").doc(uid).collection("achievements");
+    const db = getFirestore();
+    const achievementsRef = collection(db, "achievements");
+    const achievementsSnapshot = await getDocs(achievementsRef);
+    const userAchievementsRef = collection(db, "users", uid, "achievements");
 
-    const achievementsSnapshot = await achievementsRef.get();
-
-    const batch = firestore().batch();
-    achievementsSnapshot.forEach((doc) => {
-        const userAchievementRef = userAchievementsRef.doc(doc.id);
+    const batch = writeBatch(db);
+    achievementsSnapshot.forEach((document) => {
+        const userAchievementRef = doc(userAchievementsRef, document.id);
         batch.set(userAchievementRef, {
-            ...doc.data(),
-            id: doc.id,
+            ...document.data(),
+            id: document.id,
             progress: 0,
             userStatus: false,
         });

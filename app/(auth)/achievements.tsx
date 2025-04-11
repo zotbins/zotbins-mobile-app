@@ -1,9 +1,10 @@
 import BackButton from "@/components/Reusables/BackButton";
 import { Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { View, Text, SafeAreaView } from "react-native";
-import firestore, { doc, FieldValue } from "@react-native-firebase/firestore";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { View, Text} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { getFirestore, doc, FieldValue, collection, getDocs, } from "@react-native-firebase/firestore";
+import { getAuth, FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 interface Achievement {
     id: number;
@@ -17,14 +18,17 @@ interface Achievement {
 
 const Achievements = () => {
     const [achievements, setAchievements] = useState<Achievement[]>([]);
-    const user = auth().currentUser;
+    const user = getAuth().currentUser;
     useEffect(() => {
         if (user) {
             const fetchAchievements = async (user: FirebaseAuthTypes.User) => {
                 try {
-                    const querySnapshot = await firestore().collection("users").doc(user.uid).collection("achievements").get();
-                    const achievementsData: Achievement[] = querySnapshot.docs.map((doc) => {
-                        const data = doc.data();
+                    const db = getFirestore();
+                    const userRef = doc(db, "users", user.uid);
+                    const achievementsRef = collection(userRef, "achievements");
+                    const querySnapshot = await getDocs(achievementsRef);                    
+                    const achievementsData: Achievement[] = querySnapshot.docs.map((document) => {
+                        const data = document.data();
                         return {
                             id: data.id,
                             name: data.name,
@@ -60,7 +64,7 @@ const Achievements = () => {
             />
 
             <View className="flex-1 px-4">
-                <Text className="text-2xl font-bold text-gray-800 mb-4">Achievements</Text>
+                <Text className="text-2xl font-bold text-gray-800 mb-4 text-center">Achievements</Text>
 
                 {/* Achievements List */}
                 {achievements.map((achievement) => {

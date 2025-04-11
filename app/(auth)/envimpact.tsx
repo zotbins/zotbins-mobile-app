@@ -2,8 +2,8 @@ import BackButton from "@/components/Reusables/BackButton";
 import { Stack } from "expo-router";
 import React, { useState, useEffect } from "react";
 import { Alert, SafeAreaView, View, Text, Pressable } from "react-native";
-import auth from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
+import { getAuth } from "@react-native-firebase/auth";
+import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
