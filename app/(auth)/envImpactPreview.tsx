@@ -6,6 +6,7 @@ import { getAuth } from "@react-native-firebase/auth";
 import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import LinearGradient from "react-native-linear-gradient";
 
 const envImpactPreview = () => {
   const router = useRouter();
@@ -111,46 +112,47 @@ const envImpactPreview = () => {
 
   return (
     <>
-      <Pressable
-        className="flex-row my-6 h-[95px] rounded-[35px] border border-darkGreen justify-evenly mx-auto"
-        onPress={() => router.push("/envimpact")}
-      >
-        {/* carbon footprint stats*/}
-        <View className="flex-col items-center justify-center px-3">
-          <Text className="text-darkestGreen text-xl font-semibold">
-            {calculateCO2Saved()}
-          </Text>
-          <Text className="text-darkestGreen text-xl font-semibold">
-            CO2 saved!
-          </Text>
-        </View>
+        <Pressable
+          className="flex-row my-6 h-[95px] rounded-[35px] justify-evenly mx-[3%] mb-4 shadow-sm shadow-b bg-lightBackground"
+          onPress={() => router.push("/envimpact")}
+        >
+          {/* carbon footprint stats*/}
+          <View className="flex-col items-center justify-center px-3">
+            <Text className="text-darkestGreen text-xl font-semibold">
+              {calculateCO2Saved()}
+            </Text>
+            <Text className="text-darkestGreen text-xl font-semibold">
+              CO2 saved!
+            </Text>
+          </View>
 
-        {/* vertical divider */}
-        <View className="w-px h-full bg-gray-200 self-center"></View>
+          {/* vertical divider */}
+          <View className="w-px h-full bg-gray-200 self-center"></View>
 
-        <View className="flex-col justify-center items-center px-3">
-          <Text className="text-darkestGreen text-xl font-semibold">
-            {userDoc?.landfillScanned || 0} items
-          </Text>
-          <Text className="text-darkestGreen text-xl font-semibold">
-            {" "}
-            discarded
-          </Text>
-        </View>
+          <View className="flex-col justify-center items-center px-3">
+            <Text className="text-darkestGreen text-xl font-semibold">
+              {userDoc?.landfillScanned || 0} items
+            </Text>
+            <Text className="text-darkestGreen text-xl font-semibold">
+              {" "}
+              discarded
+            </Text>
+          </View>
 
-        {/* vertical divider */}
-        <View className="w-px h-full bg-gray-200 self-center"></View>
+          {/* vertical divider */}
+          <View className="w-px h-full bg-gray-200 self-center"></View>
 
-        <View className="flex-col justify-center items-center px-3">
-          <Text className="text-darkestGreen text-xl font-semibold">
-            {userDoc?.recyclableScanned || 0} items
-          </Text>
-          <Text className="text-darkestGreen text-xl font-semibold">
-            {" "}
-            recycled
-          </Text>
-        </View>
-      </Pressable>
+          <View className="flex-col justify-center items-center px-3">
+            <Text className="text-darkestGreen text-xl font-semibold">
+              {userDoc?.recyclableScanned || 0} items
+            </Text>
+            <Text className="text-darkestGreen text-xl font-semibold">
+              {" "}
+              recycled
+            </Text>
+          </View>
+        </Pressable>
+
     </>
   );
 };

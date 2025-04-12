@@ -110,7 +110,7 @@ const Profile = () => {
 
       uploadTask.on(
         "state_changed",
-        () => {},
+        () => { },
         (error) => {
           console.error(error);
         },
@@ -128,9 +128,8 @@ const Profile = () => {
       <Stack.Screen options={{ headerShown: false }} />
 
       <LinearGradient colors={["#F5FFF5", "#DBFFD8"]} style={{ flex: 1 }}>
-        <SafeAreaView className="flex-1">
+        <SafeAreaView className="flex-1 px-5 gap-2 pb-24">
           <ScrollView
-            contentContainerStyle={{ paddingBottom: 20 }}
             showsVerticalScrollIndicator={false}
           >
             <View className="flex justify-center items-center w-full">
@@ -145,7 +144,9 @@ const Profile = () => {
               <View className="relative mb-5">
                 <ProfileBanner />
                 <View className="absolute left-24 top-24">
-                  <FriendsIcon />
+                  <Pressable onPress={() => router.push("/friendrequests")}>
+                    <FriendsIcon />
+                  </Pressable>
                 </View>
                 <View className="absolute left-0 right-0 bottom-3 flex items-center justify-center">
                   <Pressable onPress={pickImage}>
@@ -160,22 +161,22 @@ const Profile = () => {
                 </View>
               </View>
 
-              <View className="w-[336px]">
+              <View className="w-[95%] shadow-sm">
                 <LinearGradient
                   colors={["#018029", "#DFFFE3", "#b4fabd", "#004c18"]}
                   style={{
-                    padding: 1.3,
+                    padding: 1,
                     borderRadius: 35,
                   }}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   className="mb-4 shadow-lg"
-                  locations={[0.1, 0.5, 0.8, 1]}
+                  locations={[0, 0.1, 0.9, 1]}
                 >
                   <View className="bg-lightBackground rounded-full py-2 flex flex-row items-center justify-between">
                     <View className="flex flex-col items-center w-1/4">
                       <SpiritIcon />
-                      <Text className="font-medium text-xs text-mediumGreen">
+                      <Text className="font-medium text-xs text-mediumGreen text-center ml-1">
                         {userDoc?.spiritTrash}
                       </Text>
                     </View>
@@ -208,17 +209,11 @@ const Profile = () => {
             </View>
 
             <EnvImpactPreview />
-
-            <View className="mb-20">
-              <Text className="text-xl font-medium text-darkGreen ml-6 mb-4">
-                Achievements{"  "}
-                <Text className="text-sm underline underline-offset-4">
-                  See all
-                </Text>
-              </Text>
-
-              <Achievements />
+            <View className="flex flex-row items-center ml-6 mb-4">
+              <Text className="text-xl font-bold text-darkGreen">Achievements</Text>
+              <Text className="text-sm text-darkGreen underline ml-2">See all</Text>
             </View>
+            <Achievements />
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>

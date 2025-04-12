@@ -68,7 +68,7 @@ const Achievements = () => {
           (achievement.progress / achievement.actionAmount) * 100;
 
         return (
-          <View key={achievement.id} className="mb-3">
+          <View key={achievement.id} className="mb-3 shadow-sm">
             {/* Gradient Border Container */}
             <LinearGradient
               colors={["#018029", "#DFFFE3", "#b4fabd", "#004c18"]}
@@ -82,20 +82,20 @@ const Achievements = () => {
               locations={[0.1, 0.5, 0.8, 1]}
             >
               {/* Achievement Content */}
-              <View className="bg-lightBackground p-4 rounded-[33] flex flex-row ">
+              <View className="bg-lightBackground p-4 rounded-[33] flex flex-row items-center">
                 <View>
                   <Image source={AchievementIcon} alt="" />
                 </View>
-                <View className="ml-4">
+                <View className="ml-4 flex-1">
                   <Text className="text-xl font-semibold text-darkestGreen">
                     {achievement.name}
                   </Text>
                   <Text className="text-darkGreen">{achievement.reward}</Text>
                   <View className="mt-3">
-                    <View className="relative w-[220px] h-5 bg-darkGreen rounded-full">
+                    <View className="relative w-full h-5 bg-darkGreen rounded-full">
                       {/* Use inline style only for the dynamic width */}
                       <View
-                        className="absolute left-0 top-0 h-5 bg-green-500 rounded"
+                        className="absolute left-0 top-0 h-5 bg-green-500 rounded-full"
                         style={{ width: `${progressPercent}%` }}
                       />
                       <Text className="absolute w-full text-center text-white font-bold">
