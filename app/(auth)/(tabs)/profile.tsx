@@ -1,12 +1,35 @@
 import { getAuth } from "@react-native-firebase/auth";
 import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
-import { getStorage, ref, getDownloadURL } from '@react-native-firebase/storage';
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+} from "@react-native-firebase/storage";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert, Image, ImageSourcePropType, Pressable, Text, View } from "react-native";
+import {
+  Alert,
+  Image,
+  ImageSourcePropType,
+  Pressable,
+  Text,
+  View,
+  ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import LinearGradient from "react-native-linear-gradient";
+import Header from "@/components/Reusables/Header";
+import SimpleLogoSvg from "@/components/Reusables/SimpleLogoSVG";
+import SettingsButton from "@/components/Profile/settingsButton.svg";
+import ProfileBanner from "@/components/Profile/profile-banner.svg";
+import SpiritIcon from "@/components/Profile/spiritIcon.svg";
+import StreakIcon from "@/components/Profile/streakIcon.svg";
+import StatusBar from "@/components/Profile/statusBar.svg";
+import FriendsIcon from "@/components/Profile/friendsIcon.svg";
+import Achievements from "../achievements";
+import EnvImpactPreview from "../envImpactPreview";
 
 const Profile = () => {
   const router = useRouter();
@@ -18,7 +41,7 @@ const Profile = () => {
   );
 
   const getImageSource = (source: string | ImageSourcePropType) => {
-    if (typeof source === 'string') {
+    if (typeof source === "string") {
       return { uri: source };
     }
     return source;
@@ -104,129 +127,96 @@ const Profile = () => {
     <>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <SafeAreaView className="bg-white flex-1">
-        {/* Above Divider */}
-        <View className="p-4">
-          <View className="flex-row items-center">
-            <View className="relative">
-              <Pressable onPress={pickImage}>
-                {/* <Image
-                  source={{ uri: profilePic }}
-                  className="w-24 h-24 rounded-full"
-                /> */}
-                <Image
-                  source={getImageSource(profilePic)}
-                  className="w-24 h-24 rounded-full"
-                />
-                <View className="absolute bottom-0 right-0 bg-gray-800 rounded-full p-2">
-                  <FontAwesome name="pencil" size={14} color="white" />
+      <LinearGradient colors={["#F5FFF5", "#DBFFD8"]} style={{ flex: 1 }}>
+        <SafeAreaView className="flex-1 px-5 gap-2 pb-24">
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+          >
+            <View className="flex justify-center items-center w-full">
+              <View className="w-11/12 flex flex-row justify-between items-baseline h-16">
+                <SimpleLogoSvg width={100} height={100} />
+
+                <Pressable onPress={() => router.push("/settings")}>
+                  <SettingsButton width={50} />
+                </Pressable>
+              </View>
+
+              <View className="relative mb-5">
+                <ProfileBanner />
+                <View className="absolute left-24 top-24">
+                  <Pressable onPress={() => router.push("/friendrequests")}>
+                    <FriendsIcon />
+                  </Pressable>
                 </View>
-              </Pressable>
+                <View className="absolute left-0 right-0 bottom-3 flex items-center justify-center">
+                  <Pressable onPress={pickImage}>
+                    <Image
+                      source={getImageSource(profilePic)}
+                      className="w-24 h-24 rounded-full"
+                    />
+                    <View className="absolute bottom-0 right-2 bg-mediumGreen rounded-full p-2">
+                      <FontAwesome name="pencil" size={14} color="white" />
+                    </View>
+                  </Pressable>
+                </View>
+              </View>
+
+              <View className="w-[95%] shadow-sm">
+                <LinearGradient
+                  colors={["#018029", "#DFFFE3", "#b4fabd", "#004c18"]}
+                  style={{
+                    padding: 1,
+                    borderRadius: 35,
+                  }}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  className="mb-4 shadow-lg"
+                  locations={[0, 0.1, 0.9, 1]}
+                >
+                  <View className="bg-lightBackground rounded-full py-2 flex flex-row items-center justify-between">
+                    <View className="flex flex-col items-center w-1/4">
+                      <SpiritIcon />
+                      <Text className="font-medium text-xs text-mediumGreen text-center ml-1">
+                        {userDoc?.spiritTrash}
+                      </Text>
+                    </View>
+
+                    <View className="flex flex-col items-center w-2/4 gap-y-1">
+                      <Text className="font-semibold text-mediumGreen">
+                        Level 4
+                      </Text>
+                      <StatusBar />
+
+                      <Text className="text-[9px] text-center text-mediumGreen font-light">
+                        20/100 XP to reach Level 5
+                      </Text>
+                    </View>
+
+                    <View className="flex flex-col items-center w-1/4">
+                      <View className="flex flex-row items-center gap-x-1">
+                        <Text className="text-mediumGreen font-light text-sm">
+                          16
+                        </Text>
+                        <StreakIcon />
+                      </View>
+                      <Text className="font-medium text-xs text-mediumGreen">
+                        Streak
+                      </Text>
+                    </View>
+                  </View>
+                </LinearGradient>
+              </View>
             </View>
-            <View className="flex-1 ml-4">
-              <Text className="text-3xl">@{userDoc?.username}</Text>
-              <Text className="text-black">
-                Level {userDoc?.level} | ({userDoc?.xp}/{userDoc?.level * 50}{" "}
-                XP)
-              </Text>
-              <Text className="text-black">Points: {userDoc?.totalPoints}</Text>
+
+            <EnvImpactPreview />
+            <View className="flex flex-row items-center ml-6 mb-4">
+              <Text className="text-xl font-bold text-darkGreen">Achievements</Text>
+              <Text className="text-sm text-darkGreen underline ml-2">See all</Text>
             </View>
-            <Text className="mr-1 text-[#fc8803] text-lg">
-              {userDoc?.dailyStreak}
-            </Text>
-            <FontAwesome5
-              name="fire"
-              size={12}
-              color="#fc8803"
-              className="mr-2"
-            />
-          </View>
-        </View>
-
-        {/* Profile Divider */}
-        <View className="w-full h-[1px] bg-gray-300 my-4" />
-
-        {/* Below Divider */}
-        <View className="flex-1 p-4">
-          <View className="flex-row justify-between items-center mb-4">
-            <View className="items-center">
-              <Text className="text-black text-lg font-bold">Footprint</Text>
-              <Text className="text-black">{userDoc?.footprint}</Text>
-            </View>
-            <View className="items-center">
-              <Text className="text-black text-lg font-bold">Spirit Trash</Text>
-              <Text className="text-black">{userDoc?.spiritTrash}</Text>
-            </View>
-          </View>
-
-          <Pressable
-            onPress={() => router.push("/envimpact")}
-            className="bg-blue py-3 rounded-lg"
-          >
-            <Text className="text-white text-center">
-              Check Environmental Impact
-            </Text>
-          </Pressable>
-
-          {/* Friends container */}
-          <View className="pb-2">
-            <Pressable
-              onPress={() => router.push("/friendrequests")}
-              className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-            >
-              <Text className="text-white text-center">Friend Requests</Text>
-            </Pressable>
-            <Text className="text-xl text-center font-bold">Friends</Text>
-            {userDoc?.friendsList?.length > 0 ? (
-              // TODO: Update types
-              userDoc.friendsList.map((friend: any, index: number) => (
-                <Text key={index} className="text-center">
-                  {friend}
-                </Text>
-              ))
-            ) : (
-              <Text>No friends added yet!</Text>
-            )}
-          </View>
-
-          <Pressable
-            onPress={() => router.push("/achievements")}
-            className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-          >
-            <Text className="text-white text-center">Achievements</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/faq")}
-            className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-          >
-            <Text className="text-white text-center">FAQ</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.replace("/(auth)/spirittrash")}
-            className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-          >
-            <Text className="text-white text-center">
-              Retake Spirit Trash Quiz
-            </Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => getAuth().signOut()}
-            className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-          >
-            <Text className="text-white text-center">Sign Out</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.push("/passwordchange")}
-            className="bg-blue px-4 py-3 rounded-lg my-2 active:opacity-50"
-          >
-            <Text className="text-white text-center">Change Password</Text>
-          </Pressable>
-        </View>
-      </SafeAreaView>
+            <Achievements />
+          </ScrollView>
+        </SafeAreaView>
+      </LinearGradient>
     </>
   );
 };
