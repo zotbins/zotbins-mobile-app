@@ -146,9 +146,24 @@ const Leaderboard = () => {
   // Helper function to render leaderboard rows
   const renderLeaderboardRow = (user: LeaderboardUser, index: number) => (
     <React.Fragment key={user.rank}>
-      <View className="flex flex-row items-center mb-2 w-full px-4">
-        <Text className="text-xl text-black w-1/4 pl-4">{user.rank}</Text>
-        <View className="w-1/2 flex flex-row items-center justify-start">
+      <View
+        className={
+          index == 0
+            ? "flex flex-row items-center mb-3 w-full px-4 py-3 bg-brightGreen2 rounded-3xl shadow-sm gap-x-6"
+            : "flex flex-row items-center mb-3 w-full px-4 py-3 bg-lightBackground rounded-3xl shadow-sm gap-x-6"
+        }
+      >
+        <View
+          className={
+            index == 0
+              ? "bg-green-400 rounded-xl px-4 py-3"
+              : "rounded-xl px-4 py-3 bg-highlightGreen"
+          }
+        >
+          <Text>{user.rank}</Text>
+        </View>
+
+        <View className="w-1/2 flex flex-row items-center">
           <Image
             source={{ uri: user.pfp }}
             className={`w-10 h-10 rounded-full mr-4 ${
@@ -166,10 +181,9 @@ const Leaderboard = () => {
           </Text>
         </View>
         <Text className="text-xl w-1/4 text-center text-black">
-          {user.points}
+          {user.points} Pts
         </Text>
       </View>
-      <View className="w-full mb-4 w-full px-4 border-b border-gray-300 py-2" />
     </React.Fragment>
   );
 
@@ -255,18 +269,6 @@ const Leaderboard = () => {
                   height: 120,
                 }}
               />
-
-              <View className="flex flex-row items-center mb-4 w-full px-4 border-b border-gray-300 py-2">
-                <Text className="text-xl text-black font-semibold w-1/4 text-left">
-                  Rank
-                </Text>
-                <Text className="text-xl text-black font-semibold w-1/2 text-left pl-14">
-                  User
-                </Text>
-                <Text className="text-xl text-black font-semibold w-1/4 text-right pr-3">
-                  Points
-                </Text>
-              </View>
 
               {renderLeaderboard()}
             </View>
