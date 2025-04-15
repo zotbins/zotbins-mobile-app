@@ -60,7 +60,7 @@ const Achievements = () => {
   }, []);
 
   return (
-    <View className="flex-1 px-4 w-full">
+    <View className="flex-1 px-4 w-full pb-24">
       {/* Achievements List */}
       {achievements.map((achievement) => {
         const fraction = `${achievement.progress}/${achievement.actionAmount}`;

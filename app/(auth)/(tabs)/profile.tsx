@@ -128,7 +128,7 @@ const Profile = () => {
       <Stack.Screen options={{ headerShown: false }} />
 
       <LinearGradient colors={["#F5FFF5", "#DBFFD8"]} style={{ flex: 1 }}>
-        <SafeAreaView className="flex-1 px-5 gap-2 pb-24">
+        <SafeAreaView className="flex-1 px-5 gap-2">
           <ScrollView
             showsVerticalScrollIndicator={false}
           >
@@ -176,7 +176,7 @@ const Profile = () => {
                   <View className="bg-lightBackground rounded-full py-2 flex flex-row items-center justify-between">
                     <View className="flex flex-col items-center w-1/4">
                       <SpiritIcon />
-                      <Text className="font-medium text-xs text-mediumGreen text-center ml-1">
+                      <Text className="font-medium text-xs text-mediumGreen text-center ml-2">
                         {userDoc?.spiritTrash}
                       </Text>
                     </View>
@@ -213,7 +213,7 @@ const Profile = () => {
               <Text className="text-xl font-bold text-darkGreen">Achievements</Text>
               <Text className="text-sm text-darkGreen underline ml-2">See all</Text>
             </View>
-            <Achievements />
+            <Achievements/>
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>
