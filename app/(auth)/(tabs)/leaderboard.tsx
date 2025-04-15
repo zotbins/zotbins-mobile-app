@@ -27,7 +27,6 @@ import LinearGradient from "react-native-linear-gradient";
 import LeaderboardIcon from "../../../assets/images/leaderboardIcon.png";
 
 interface LeaderboardUser {
-  pfp: string;
   rank: number;
   points: number;
   username: string;
@@ -44,6 +43,10 @@ const Leaderboard = () => {
   const [friendLeaderboardData, setFriendLeaderboardData] = useState<
     LeaderboardUser[]
   >([]);
+  const [totalLeaderboardData, setTotalLeaderboardData] = useState<
+    LeaderboardUser[]
+  >([]);
+
   const [userTotalScore, setUserTotalScore] = useState<number>(0);
   const [userWeeklyScore, setUserWeeklyScore] = useState<number>(0);
   const [userRank, setUserRank] = useState<number>(0);
@@ -52,19 +55,6 @@ const Leaderboard = () => {
   type TabType = "weekly" | "allRankings" | "friends";
   const [activeTab, setActiveTab] = useState<TabType>("allRankings");
   const [friendList, setFriendList] = useState<string[]>([]);
-
-  const defaultProfilePic = require("@/assets/images/default_profile_picture.png");
-
-  const getProfilePicUrl = async (uid: string) => {
-    try {
-      const storage = getStorage();
-      const imageRef = ref(storage, `zotzero-user-profile-pics/${uid}`);
-      const url = await getDownloadURL(imageRef);
-      return url;
-    } catch (error) {
-      return null;
-    }
-  };
 
   const [currentUserData, setCurrentUserData] =
     useState<LeaderboardUser | null>(null);
@@ -95,9 +85,7 @@ const Leaderboard = () => {
         let currentUserPosition: LeaderboardUser | null = null;
 
         for (let doc of allTimeQuerySnapshot.docs) {
-          const pfpUrl = await getProfilePicUrl(doc.data().uid);
           const userData = {
-            pfp: pfpUrl || defaultProfilePic, // Use default pic when pfpUrl is null
             rank: allTimeLeaderboard.length + 1,
             username: doc.data().username,
             points: doc.data().totalPoints,
@@ -112,9 +100,9 @@ const Leaderboard = () => {
 
           allTimeLeaderboard.push(userData);
         }
+        setTotalLeaderboardData(allTimeLeaderboard);
         setCurrentUserData(currentUserPosition);
         setAllLeaderboardData(allTimeLeaderboard.slice(0, 10));
-
         // Fetch weekly leaderboard
         const weeklyLeaderboardQuery = query(
           collection(db, "users"),
@@ -126,9 +114,7 @@ const Leaderboard = () => {
         let currentUserWeeklyPosition: LeaderboardUser | null = null;
 
         for (let doc of weeklyQuerySnapshot.docs) {
-          const pfpUrl = await getProfilePicUrl(doc.data().uid);
           const userData = {
-            pfp: pfpUrl || defaultProfilePic,
             rank: weeklyLeaderboard.length + 1,
             username: doc.data().username,
             points: doc.data().weeklyPoints || 0, // Default to 0 if weeklyPoints doesn't exist
@@ -211,10 +197,11 @@ const Leaderboard = () => {
    * Updates to support both weekly and all-time points depending on the active tab.
    */
   useEffect(() => {
-    if (friendList.length > 0 && dataLoaded) {
+    if (friendList.length >= 0 && dataLoaded) {
       // The source data will depend on which tab is active
       const sourceData =
-        activeTab === "weekly" ? weeklyLeaderboardData : allLeaderboardData;
+        activeTab === "weekly" ? weeklyLeaderboardData : totalLeaderboardData; // total contains all leaderbord data to ensure all friends appear
+
       const filteredLeaderboard = sourceData.filter(
         (user) =>
           friendList.includes(user.username) || user.username === username
@@ -224,7 +211,6 @@ const Leaderboard = () => {
         ...user,
         rank: index + 1,
       }));
-
       setFriendLeaderboardData(rankedLeaderboard);
     }
   }, [
@@ -257,22 +243,13 @@ const Leaderboard = () => {
         </View>
 
         <View className="w-1/2 flex flex-row items-center">
-          <Image
-            source={typeof user.pfp === "string" ? { uri: user.pfp } : user.pfp}
-            className={`w-10 h-10 rounded-full mr-4 ${
-              user.username === username
-                ? "border-2 border-tintColor"
-                : "border-2 border-gray-200"
-            }`}
-          />
           <Text
-            className={`w-full text-xl ${
-              user.username === username
+            className={`w-full text-xl ${user.username === username
                 ? "text-black font-semibold"
                 : index === 0
-                ? "text-mediumGreen"
-                : "text-black"
-            }`}
+                  ? "text-mediumGreen"
+                  : "text-black"
+              }`}
           >
             {user.username === username ? "You" : user.username}
           </Text>
@@ -291,48 +268,42 @@ const Leaderboard = () => {
           <View className="flex items-center flex-row  mt-2 bg-green-100 rounded-xl border border-green-200 mx-8">
             <TouchableOpacity
               onPress={() => setActiveTab("weekly")}
-              className={`flex-1 mx-2 rounded-xl my-1 ${
-                activeTab === "weekly" ? "bg-brightGreen2 " : ""
-              }`}
+              className={`flex-1 mx-2 rounded-xl my-1 ${activeTab === "weekly" ? "bg-brightGreen2 " : ""
+                }`}
             >
               <Text
-                className={`text-xl text-center -1 ${
-                  activeTab === "weekly"
-                    ? "text-brightGreen font-bold"
-                    : "text-brightGreen"
-                }`}
+                className={`text-xl text-center -1 ${activeTab === "weekly"
+                    ? "text-brightGreen3 font-bold"
+                    : "text-brightGreen3"
+                  }`}
               >
                 Weekly
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setActiveTab("allRankings")}
-              className={`flex-1 mx-2 rounded-xl my-1 ${
-                activeTab === "allRankings" ? "bg-brightGreen2" : ""
-              }`}
+              className={`flex-1 mx-2 rounded-xl my-1 ${activeTab === "allRankings" ? "bg-brightGreen2" : ""
+                }`}
             >
               <Text
-                className={`text-xl text-center ${
-                  activeTab === "allRankings"
-                    ? "text-brightGreen font-bold"
-                    : "text-brightGreen"
-                }`}
+                className={`text-xl text-center ${activeTab === "allRankings"
+                    ? "text-brightGreen3 font-bold"
+                    : "text-brightGreen3"
+                  }`}
               >
                 All
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setActiveTab("friends")}
-              className={`flex-1 mx-2 rounded-xl my-1 ${
-                activeTab === "friends" ? "bg-brightGreen2" : ""
-              }`}
+              className={`flex-1 mx-2 rounded-xl my-1 ${activeTab === "friends" ? "bg-brightGreen2" : ""
+                }`}
             >
               <Text
-                className={`text-xl text-center ${
-                  activeTab === "friends"
-                    ? "text-brightGreen font-bold"
-                    : "text-brightGreen"
-                }`}
+                className={`text-xl text-center ${activeTab === "friends"
+                    ? "text-brightGreen3 font-bold"
+                    : "text-brightGreen3"
+                  }`}
               >
                 Friends
               </Text>
