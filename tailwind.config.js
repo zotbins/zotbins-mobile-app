@@ -21,6 +21,7 @@ module.exports = {
         lightestGreen: "#E8FFEB",
         brightGreen2: "#89FF99",
         highlightGreen: "#BDFFC6",
+        highlightGreen2: "#BDFFC4",
       },
     },
   },

@@ -9,7 +9,14 @@ import {
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState, useRef } from "react";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
-import { Image, ScrollView, Text, View, TouchableOpacity } from "react-native";
+import {
+  Image,
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  ImageSourcePropType,
+} from "react-native";
 import { currentUserUid } from "../../_layout";
 import {
   getStorage,
@@ -43,6 +50,9 @@ const Leaderboard = () => {
   type TabType = "weekly" | "allRankings" | "friends";
   const [activeTab, setActiveTab] = useState<TabType>("allRankings");
   const [friendList, setFriendList] = useState<string[]>([]);
+
+  const defaultProfilePic = require("@/assets/images/default_profile_picture.png");
+
   const getProfilePicUrl = async (uid: string) => {
     try {
       const storage = getStorage();
@@ -50,7 +60,7 @@ const Leaderboard = () => {
       const url = await getDownloadURL(imageRef);
       return url;
     } catch (error) {
-      return "https://placehold.co/250";
+      return null;
     }
   };
 
@@ -83,7 +93,7 @@ const Leaderboard = () => {
           }
           const pfpUrl = await getProfilePicUrl(doc.data().uid);
           leaderboard.push({
-            pfp: pfpUrl,
+            pfp: pfpUrl || defaultProfilePic,
             rank: leaderboard.length + 1,
             username: doc.data().username,
             points: doc.data().totalPoints,
@@ -149,8 +159,8 @@ const Leaderboard = () => {
       <View
         className={
           index == 0
-            ? "flex flex-row items-center mb-3 w-full px-4 py-3 bg-brightGreen2 rounded-3xl shadow-sm gap-x-6"
-            : "flex flex-row items-center mb-3 w-full px-4 py-3 bg-lightBackground rounded-3xl shadow-sm gap-x-6"
+            ? "flex flex-row items-center mb-3 w-[370px] px-4 py-3 bg-highlightGreen2 rounded-3xl shadow-sm gap-x-6"
+            : "flex flex-row items-center mb-3 w-[370px] px-4 py-3 bg-lightBackground rounded-3xl shadow-sm gap-x-6"
         }
       >
         <View
@@ -160,12 +170,12 @@ const Leaderboard = () => {
               : "rounded-xl px-4 py-3 bg-highlightGreen"
           }
         >
-          <Text>{user.rank}</Text>
+          <Text className="font-bold">{user.rank}</Text>
         </View>
 
         <View className="w-1/2 flex flex-row items-center">
           <Image
-            source={{ uri: user.pfp }}
+            source={typeof user.pfp === "string" ? { uri: user.pfp } : user.pfp}
             className={`w-10 h-10 rounded-full mr-4 ${
               user.username === username
                 ? "border-2 border-tintColor"
@@ -174,7 +184,11 @@ const Leaderboard = () => {
           />
           <Text
             className={`w-full text-xl ${
-              user.username === username ? "text-tintColor" : "text-black"
+              user.username === username
+                ? "text-black font-semibold"
+                : index === 0
+                ? "text-mediumGreen"
+                : "text-black"
             }`}
           >
             {user.username === username ? "You" : user.username}
@@ -188,75 +202,75 @@ const Leaderboard = () => {
   );
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView className="bg-white flex-1">
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
-          className="bg-white"
-          automaticallyAdjustsScrollIndicatorInsets={true}
-        >
-          <Stack.Screen
-            options={{
-              headerShadowVisible: false,
-              headerBackVisible: false,
-              headerTransparent: true,
-              headerLeft: () => <BackButton />,
-              headerTitle: "",
-            }}
-          />
-          <LinearGradient colors={["#F5FFF5", "#DBFFD8"]} style={{ flex: 1 }}>
-            <View className="flex flex-col items-center px-8 my-4">
-              <View className="flex items-center flex-row mb-6 mt-2 bg-green-100 rounded-xl border border-green-200">
-                <TouchableOpacity
-                  onPress={() => setActiveTab("weekly")}
-                  className={`flex-1 mx-2 rounded-lg my-1 ${
-                    activeTab === "weekly" ? "bg-brightGreen2 " : ""
-                  }`}
-                >
-                  <Text
-                    className={`text-xl text-center -1 ${
-                      activeTab === "weekly"
-                        ? "text-brightGreen font-bold"
-                        : "text-brightGreen"
-                    }`}
-                  >
-                    Weekly
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setActiveTab("allRankings")}
-                  className={`flex-1 mx-2 rounded-lg my-1 ${
-                    activeTab === "allRankings" ? "bg-brightGreen2" : ""
-                  }`}
-                >
-                  <Text
-                    className={`text-xl text-center ${
-                      activeTab === "allRankings"
-                        ? "text-brightGreen font-bold"
-                        : "text-brightGreen"
-                    }`}
-                  >
-                    All
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setActiveTab("friends")}
-                  className={`flex-1 mx-2 rounded-lg my-1 ${
-                    activeTab === "friends" ? "bg-brightGreen2" : ""
-                  }`}
-                >
-                  <Text
-                    className={`text-xl text-center ${
-                      activeTab === "friends"
-                        ? "text-brightGreen font-bold"
-                        : "text-brightGreen"
-                    }`}
-                  >
-                    Friends
-                  </Text>
-                </TouchableOpacity>
-              </View>
+    <LinearGradient colors={["#F5FFF5", "#DBFFD8"]} style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <SafeAreaView className="">
+          <View className="flex items-center flex-row  mt-2 bg-green-100 rounded-xl border border-green-200 mx-8">
+            <TouchableOpacity
+              onPress={() => setActiveTab("weekly")}
+              className={`flex-1 mx-2 rounded-xl my-1 ${
+                activeTab === "weekly" ? "bg-brightGreen2 " : ""
+              }`}
+            >
+              <Text
+                className={`text-xl text-center -1 ${
+                  activeTab === "weekly"
+                    ? "text-brightGreen font-bold"
+                    : "text-brightGreen"
+                }`}
+              >
+                Weekly
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setActiveTab("allRankings")}
+              className={`flex-1 mx-2 rounded-xl my-1 ${
+                activeTab === "allRankings" ? "bg-brightGreen2" : ""
+              }`}
+            >
+              <Text
+                className={`text-xl text-center ${
+                  activeTab === "allRankings"
+                    ? "text-brightGreen font-bold"
+                    : "text-brightGreen"
+                }`}
+              >
+                All
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setActiveTab("friends")}
+              className={`flex-1 mx-2 rounded-xl my-1 ${
+                activeTab === "friends" ? "bg-brightGreen2" : ""
+              }`}
+            >
+              <Text
+                className={`text-xl text-center ${
+                  activeTab === "friends"
+                    ? "text-brightGreen font-bold"
+                    : "text-brightGreen"
+                }`}
+              >
+                Friends
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            className=""
+            automaticallyAdjustsScrollIndicatorInsets={true}
+          >
+            <Stack.Screen
+              options={{
+                headerShadowVisible: false,
+                headerBackVisible: false,
+                headerTransparent: true,
+                headerLeft: () => <BackButton />,
+                headerTitle: "",
+              }}
+            />
 
+            <View className="flex flex-col items-center px-8 my-4">
               <Text className="text-4xl font-semibold text-darkGreen mt-4">
                 {tabTitles[activeTab] || ""}
               </Text>
@@ -272,10 +286,10 @@ const Leaderboard = () => {
 
               {renderLeaderboard()}
             </View>
-          </LinearGradient>
-        </ScrollView>
-      </SafeAreaView>
-    </SafeAreaProvider>
+          </ScrollView>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </LinearGradient>
   );
 };
 
