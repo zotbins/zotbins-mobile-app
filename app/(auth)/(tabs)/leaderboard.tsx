@@ -64,6 +64,9 @@ const Leaderboard = () => {
     }
   };
 
+  const [currentUserData, setCurrentUserData] =
+    useState<LeaderboardUser | null>(null);
+
   /**
    * @description Gets descending order of scores and searches to find the current user's score.
    * Adds profile pictures, rank, usernames, and scores to the leaderboard. Leaderboard only displays
@@ -83,22 +86,27 @@ const Leaderboard = () => {
 
         const querySnapshot = await getDocs(leaderboardQuery);
         const leaderboard: LeaderboardUser[] = [];
+        let currentUserPosition: LeaderboardUser | null = null;
 
         for (let doc of querySnapshot.docs) {
+          const pfpUrl = await getProfilePicUrl(doc.data().uid);
+          const userData = {
+            pfp: pfpUrl || defaultProfilePic, // Use default pic when pfpUrl is null
+            rank: leaderboard.length + 1,
+            username: doc.data().username,
+            points: doc.data().totalPoints,
+          };
           if (doc.data().uid == currentUserUid) {
             setUsername(doc.data().username);
             setUserScore(doc.data().totalPoints);
             setUserRank(leaderboard.length + 1);
             setFriendList(doc.data().friendsList || []);
+            currentUserPosition = userData;
           }
-          const pfpUrl = await getProfilePicUrl(doc.data().uid);
-          leaderboard.push({
-            pfp: pfpUrl || defaultProfilePic,
-            rank: leaderboard.length + 1,
-            username: doc.data().username,
-            points: doc.data().totalPoints,
-          });
+
+          leaderboard.push(userData);
         }
+        setCurrentUserData(currentUserPosition);
         setAllLeaderboardData(leaderboard.slice(0, 10));
         setWeeklyLeaderboardData(leaderboard.slice(0, 10));
         dataLoaded.current = true;
@@ -111,21 +119,46 @@ const Leaderboard = () => {
   }, []);
 
   const renderLeaderboard = () => {
+    let leaderboardData;
+
     switch (activeTab) {
       case "weekly":
-        return weeklyLeaderboardData.map((user, index) =>
-          renderLeaderboardRow(user, index)
-        );
+        leaderboardData = weeklyLeaderboardData;
+        break;
       case "friends":
-        return friendLeaderboardData.map((user, index) =>
-          renderLeaderboardRow(user, index)
-        );
+        leaderboardData = friendLeaderboardData;
+        break;
       case "allRankings":
       default:
-        return allLeaderboardData.map((user, index) =>
-          renderLeaderboardRow(user, index)
-        );
+        leaderboardData = allLeaderboardData;
+        break;
     }
+
+    // Render the top users
+    const leaderboardRows = leaderboardData.map((user, index) =>
+      renderLeaderboardRow(user, index)
+    );
+
+    // If current user isn't in the displayed leaderboard, show them at the bottom
+    if (
+      currentUserData &&
+      !leaderboardData.some((user) => user.username === username) &&
+      activeTab !== "friends" // Don't add to friends tab since user is always included there
+    ) {
+      leaderboardRows.push(
+        <React.Fragment key="current-user-separator">
+          <View className="h-8 flex items-center justify-center">
+            <Text className="text-gray-500">. . .</Text>
+          </View>
+        </React.Fragment>
+      );
+
+      leaderboardRows.push(
+        renderLeaderboardRow(currentUserData, -1) // Using -1 to indicate special styling if needed
+      );
+    }
+
+    return leaderboardRows;
   };
 
   const tabTitles: Record<TabType, string> = {
@@ -153,19 +186,20 @@ const Leaderboard = () => {
     }
   }, [friendList, dataLoaded, allLeaderboardData]);
 
-  // Helper function to render leaderboard rows
   const renderLeaderboardRow = (user: LeaderboardUser, index: number) => (
-    <React.Fragment key={user.rank}>
+    <React.Fragment
+      key={index === -1 ? `user-${user.rank}` : `rank-${user.rank}`}
+    >
       <View
         className={
-          index == 0
+          index === 0
             ? "flex flex-row items-center mb-3 w-[370px] px-4 py-3 bg-highlightGreen2 rounded-3xl shadow-sm gap-x-6"
             : "flex flex-row items-center mb-3 w-[370px] px-4 py-3 bg-lightBackground rounded-3xl shadow-sm gap-x-6"
         }
       >
         <View
           className={
-            index == 0
+            index === 0
               ? "bg-green-400 rounded-xl px-4 py-3"
               : "rounded-xl px-4 py-3 bg-highlightGreen"
           }
@@ -285,6 +319,8 @@ const Leaderboard = () => {
               />
 
               {renderLeaderboard()}
+
+              <View className="py-16"></View>
             </View>
           </ScrollView>
         </SafeAreaView>
