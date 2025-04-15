@@ -44,8 +44,10 @@ const Leaderboard = () => {
   const [friendLeaderboardData, setFriendLeaderboardData] = useState<
     LeaderboardUser[]
   >([]);
-  const [userScore, setUserScore] = useState<number>(0);
+  const [userTotalScore, setUserTotalScore] = useState<number>(0);
+  const [userWeeklyScore, setUserWeeklyScore] = useState<number>(0);
   const [userRank, setUserRank] = useState<number>(0);
+  const [userWeeklyRank, setUserWeeklyRank] = useState<number>(0);
   const [username, setUsername] = useState<string>("");
   type TabType = "weekly" | "allRankings" | "friends";
   const [activeTab, setActiveTab] = useState<TabType>("allRankings");
@@ -67,6 +69,9 @@ const Leaderboard = () => {
   const [currentUserData, setCurrentUserData] =
     useState<LeaderboardUser | null>(null);
 
+  const [currentUserWeeklyData, setCurrentUserWeeklyData] =
+    useState<LeaderboardUser | null>(null);
+
   /**
    * @description Gets descending order of scores and searches to find the current user's score.
    * Adds profile pictures, rank, usernames, and scores to the leaderboard. Leaderboard only displays
@@ -79,36 +84,66 @@ const Leaderboard = () => {
       try {
         const db = getFirestore();
 
-        const leaderboardQuery = query(
+        // Fetch all-time leaderboard
+        const allTimeLeaderboardQuery = query(
           collection(db, "users"),
           orderBy("totalPoints", "desc")
         );
 
-        const querySnapshot = await getDocs(leaderboardQuery);
-        const leaderboard: LeaderboardUser[] = [];
+        const allTimeQuerySnapshot = await getDocs(allTimeLeaderboardQuery);
+        const allTimeLeaderboard: LeaderboardUser[] = [];
         let currentUserPosition: LeaderboardUser | null = null;
 
-        for (let doc of querySnapshot.docs) {
+        for (let doc of allTimeQuerySnapshot.docs) {
           const pfpUrl = await getProfilePicUrl(doc.data().uid);
           const userData = {
             pfp: pfpUrl || defaultProfilePic, // Use default pic when pfpUrl is null
-            rank: leaderboard.length + 1,
+            rank: allTimeLeaderboard.length + 1,
             username: doc.data().username,
             points: doc.data().totalPoints,
           };
           if (doc.data().uid == currentUserUid) {
             setUsername(doc.data().username);
-            setUserScore(doc.data().totalPoints);
-            setUserRank(leaderboard.length + 1);
+            setUserTotalScore(doc.data().totalPoints);
+            setUserRank(allTimeLeaderboard.length + 1);
             setFriendList(doc.data().friendsList || []);
             currentUserPosition = userData;
           }
 
-          leaderboard.push(userData);
+          allTimeLeaderboard.push(userData);
         }
         setCurrentUserData(currentUserPosition);
-        setAllLeaderboardData(leaderboard.slice(0, 10));
-        setWeeklyLeaderboardData(leaderboard.slice(0, 10));
+        setAllLeaderboardData(allTimeLeaderboard.slice(0, 10));
+
+        // Fetch weekly leaderboard
+        const weeklyLeaderboardQuery = query(
+          collection(db, "users"),
+          orderBy("weeklyPoints", "desc")
+        );
+
+        const weeklyQuerySnapshot = await getDocs(weeklyLeaderboardQuery);
+        const weeklyLeaderboard: LeaderboardUser[] = [];
+        let currentUserWeeklyPosition: LeaderboardUser | null = null;
+
+        for (let doc of weeklyQuerySnapshot.docs) {
+          const pfpUrl = await getProfilePicUrl(doc.data().uid);
+          const userData = {
+            pfp: pfpUrl || defaultProfilePic,
+            rank: weeklyLeaderboard.length + 1,
+            username: doc.data().username,
+            points: doc.data().weeklyPoints || 0, // Default to 0 if weeklyPoints doesn't exist
+          };
+          if (doc.data().uid == currentUserUid) {
+            setUserWeeklyScore(doc.data().weeklyPoints || 0);
+            setUserWeeklyRank(weeklyLeaderboard.length + 1);
+            currentUserWeeklyPosition = userData;
+          }
+
+          weeklyLeaderboard.push(userData);
+        }
+
+        setCurrentUserWeeklyData(currentUserWeeklyPosition);
+        setWeeklyLeaderboardData(weeklyLeaderboard.slice(0, 10));
         dataLoaded.current = true;
       } catch (error) {
         console.error("Error fetching leaderboard data: ", error);
@@ -120,17 +155,21 @@ const Leaderboard = () => {
 
   const renderLeaderboard = () => {
     let leaderboardData;
+    let currentUserSpecificData;
 
     switch (activeTab) {
       case "weekly":
         leaderboardData = weeklyLeaderboardData;
+        currentUserSpecificData = currentUserWeeklyData;
         break;
       case "friends":
         leaderboardData = friendLeaderboardData;
+        currentUserSpecificData = currentUserData;
         break;
       case "allRankings":
       default:
         leaderboardData = allLeaderboardData;
+        currentUserSpecificData = currentUserData;
         break;
     }
 
@@ -141,7 +180,7 @@ const Leaderboard = () => {
 
     // If current user isn't in the displayed leaderboard, show them at the bottom
     if (
-      currentUserData &&
+      currentUserSpecificData &&
       !leaderboardData.some((user) => user.username === username) &&
       activeTab !== "friends" // Don't add to friends tab since user is always included there
     ) {
@@ -154,7 +193,7 @@ const Leaderboard = () => {
       );
 
       leaderboardRows.push(
-        renderLeaderboardRow(currentUserData, -1) // Using -1 to indicate special styling if needed
+        renderLeaderboardRow(currentUserSpecificData, -1) // Using -1 to indicate special styling if needed
       );
     }
 
@@ -169,10 +208,14 @@ const Leaderboard = () => {
 
   /**
    * @description Takes the entire leaderboard and filters for friends.
+   * Updates to support both weekly and all-time points depending on the active tab.
    */
   useEffect(() => {
     if (friendList.length > 0 && dataLoaded) {
-      const filteredLeaderboard = allLeaderboardData.filter(
+      // The source data will depend on which tab is active
+      const sourceData =
+        activeTab === "weekly" ? weeklyLeaderboardData : allLeaderboardData;
+      const filteredLeaderboard = sourceData.filter(
         (user) =>
           friendList.includes(user.username) || user.username === username
       );
@@ -184,7 +227,13 @@ const Leaderboard = () => {
 
       setFriendLeaderboardData(rankedLeaderboard);
     }
-  }, [friendList, dataLoaded, allLeaderboardData]);
+  }, [
+    friendList,
+    dataLoaded,
+    allLeaderboardData,
+    weeklyLeaderboardData,
+    activeTab,
+  ]);
 
   const renderLeaderboardRow = (user: LeaderboardUser, index: number) => (
     <React.Fragment
