@@ -17,6 +17,7 @@ import {
   getDownloadURL,
 } from "@react-native-firebase/storage";
 import LinearGradient from "react-native-linear-gradient";
+import LeaderboardIcon from "../../../assets/images/leaderboardIcon.png";
 
 interface LeaderboardUser {
   pfp: string;
@@ -39,7 +40,8 @@ const Leaderboard = () => {
   const [userScore, setUserScore] = useState<number>(0);
   const [userRank, setUserRank] = useState<number>(0);
   const [username, setUsername] = useState<string>("");
-  const [activeTab, setActiveTab] = useState("all-rankings");
+  type TabType = "weekly" | "allRankings" | "friends";
+  const [activeTab, setActiveTab] = useState<TabType>("allRankings");
   const [friendList, setFriendList] = useState<string[]>([]);
   const getProfilePicUrl = async (uid: string) => {
     try {
@@ -108,12 +110,18 @@ const Leaderboard = () => {
         return friendLeaderboardData.map((user, index) =>
           renderLeaderboardRow(user, index)
         );
-      case "all-rankings":
+      case "allRankings":
       default:
         return allLeaderboardData.map((user, index) =>
           renderLeaderboardRow(user, index)
         );
     }
+  };
+
+  const tabTitles: Record<TabType, string> = {
+    weekly: "Weekly Standings",
+    allRankings: "All-time Standings",
+    friends: "Friends Standings",
   };
 
   /**
@@ -183,7 +191,7 @@ const Leaderboard = () => {
             }}
           />
           <LinearGradient colors={["#F5FFF5", "#DBFFD8"]} style={{ flex: 1 }}>
-            <View className="flex flex-col items-center px-8">
+            <View className="flex flex-col items-center px-8 my-4">
               <View className="flex items-center flex-row mb-6 mt-2 bg-green-100 rounded-xl border border-green-200">
                 <TouchableOpacity
                   onPress={() => setActiveTab("weekly")}
@@ -202,14 +210,14 @@ const Leaderboard = () => {
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => setActiveTab("all-rankings")}
+                  onPress={() => setActiveTab("allRankings")}
                   className={`flex-1 mx-2 rounded-lg my-1 ${
-                    activeTab === "all-rankings" ? "bg-brightGreen2" : ""
+                    activeTab === "allRankings" ? "bg-brightGreen2" : ""
                   }`}
                 >
                   <Text
                     className={`text-xl text-center ${
-                      activeTab === "all-rankings"
+                      activeTab === "allRankings"
                         ? "text-brightGreen font-bold"
                         : "text-brightGreen"
                     }`}
@@ -235,16 +243,18 @@ const Leaderboard = () => {
                 </TouchableOpacity>
               </View>
 
+              <Text className="text-4xl font-semibold text-darkGreen mt-4">
+                {tabTitles[activeTab] || ""}
+              </Text>
+
               <Image
-                source={trophy}
+                className="my-8"
+                source={LeaderboardIcon}
                 style={{
-                  width: 100,
-                  height: 100,
+                  width: 120,
+                  height: 120,
                 }}
               />
-              <Text className="text-4xl text-black font-semibold my-2">
-                Leaderboard
-              </Text>
 
               <View className="flex flex-row items-center mb-4 w-full px-4 border-b border-gray-300 py-2">
                 <Text className="text-xl text-black font-semibold w-1/4 text-left">
