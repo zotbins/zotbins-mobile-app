@@ -94,7 +94,7 @@ export default function Layout() {
           }}
         />
       </Tabs>
-      <StatusBar style="light" />
+
     </>
   );
 }
