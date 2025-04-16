@@ -143,20 +143,20 @@ const Profile = () => {
 
               <View className="relative mb-5">
                 <ProfileBanner />
-                <View className="absolute left-24 top-24">
-                  <Pressable onPress={() => router.push("/friendrequests")}>
-                    <FriendsIcon />
-                  </Pressable>
-                </View>
                 <View className="absolute left-0 right-0 bottom-3 flex items-center justify-center">
                   <Pressable onPress={pickImage}>
                     <Image
                       source={getImageSource(profilePic)}
                       className="w-24 h-24 rounded-full"
                     />
-                    <View className="absolute bottom-0 right-2 bg-mediumGreen rounded-full p-2">
+                    <View className="absolute bottom-0 right-2 bg-primaryGreen rounded-full p-2">
                       <FontAwesome name="pencil" size={14} color="white" />
                     </View>
+                  </Pressable>
+                </View>
+                <View className="absolute left-24 top-24">
+                  <Pressable onPress={() => router.push("/friendrequests")}>
+                    <FriendsIcon />
                   </Pressable>
                 </View>
               </View>
@@ -174,9 +174,9 @@ const Profile = () => {
                   locations={[0, 0.1, 0.9, 1]}
                 >
                   <View className="bg-lightBackground rounded-full py-2 flex flex-row items-center justify-between">
-                    <View className="flex flex-col items-center w-1/4">
+                    <View className="flex flex-col items-center w-1/4 pl-4">
                       <SpiritIcon />
-                      <Text className="font-medium text-xs text-mediumGreen text-center ml-2">
+                      <Text className="font-medium text-xs text-mediumGreen text-center">
                         {userDoc?.spiritTrash}
                       </Text>
                     </View>
@@ -210,8 +210,8 @@ const Profile = () => {
 
             <EnvImpactPreview />
             <View className="flex flex-row items-center ml-6 mb-4">
-              <Text className="text-xl font-bold text-darkGreen">Achievements</Text>
-              <Text className="text-sm text-darkGreen underline ml-2">See all</Text>
+              <Text className="text-xl font-bold text-primaryGreen">Achievements</Text>
+              <Text className="text-sm text-primaryGreen underline ml-2">See all</Text>
             </View>
             <Achievements/>
           </ScrollView>
