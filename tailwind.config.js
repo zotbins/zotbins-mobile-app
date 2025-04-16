@@ -23,7 +23,7 @@ module.exports = {
         brightGreen3: "#00BF1A",
         highlightGreen: "#BDFFC6",
         highlightGreen2: "#BDFFC4",
-        brightlightGreen3: "#B4F17C"
+        brightGreen4: "#B4F17C"
       },
     },
   },
