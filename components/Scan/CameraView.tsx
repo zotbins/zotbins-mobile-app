@@ -33,8 +33,10 @@ const CameraView: React.FC<CameraViewProps> = ({
         className="p-3 rounded-lg bottom-12 absolute z-20"
         onPress={takePicture}
       >
-        <View className="border-4 border-white p-4 rounded-full">
-          <View className="w-12 h-12 rounded-full" />
+        <View className="border-4 border-brightlightGreen3 rounded-full">
+          <View className="p-2 rounded-full" >
+            <View className="w-20 h-20 rounded-full bg-brightlightGreen3" />
+          </View>
         </View>
       </Pressable>
     </>
