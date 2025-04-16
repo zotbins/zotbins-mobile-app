@@ -1,5 +1,5 @@
 import { getAuth } from "@react-native-firebase/auth";
-import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
+import { getFirestore, doc, getDoc, collection, getDocsFromCache, getDocs, query, where } from "@react-native-firebase/firestore";
 import {
   getStorage,
   ref,
@@ -27,7 +27,8 @@ import ProfileBanner from "@/components/Profile/profile-banner.svg";
 import SpiritIcon from "@/components/Profile/spiritIcon.svg";
 import StreakIcon from "@/components/Profile/streakIcon.svg";
 import StatusBar from "@/components/Profile/statusBar.svg";
-import FriendsIcon from "@/components/Profile/friendsIcon.svg";
+import AddFriendsIcon from "@/components/Profile/friendsIcon.svg";
+import FriendIcons from "@/components/Profile/friendIcons";
 import Achievements from "../achievements";
 import EnvImpactPreview from "../envImpactPreview";
 
@@ -49,6 +50,8 @@ const Profile = () => {
 
   const [userDoc, setUserDoc] = useState<any>(null);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [friendListSize, setFriendListSize] = useState(0);
+  const [friendProfileImages, setFriendProfileImages] = useState<FriendProfile[]>([]);
 
   // on user change, fetch user document from firestore
   useEffect(() => {
@@ -66,6 +69,7 @@ const Profile = () => {
           throw new Error("User document does not exist");
         }
         setUserDoc(userDocSnap.data());
+        setFriendListSize(userDocSnap?.data()?.friendsList?.length || 0);
       } catch (error) {
         console.error("Error fetching user document: ", error);
         Alert.alert("Error", "Failed to fetch user document");
@@ -156,9 +160,10 @@ const Profile = () => {
                 </View>
                 <View className="absolute left-24 top-24">
                   <Pressable onPress={() => router.push("/friendrequests")}>
-                    <FriendsIcon />
+                    <AddFriendsIcon />
                   </Pressable>
                 </View>
+                <FriendIcons />
               </View>
 
               <View className="w-[95%] shadow-sm">
@@ -213,7 +218,7 @@ const Profile = () => {
               <Text className="text-xl font-bold text-primaryGreen">Achievements</Text>
               <Text className="text-sm text-primaryGreen underline ml-2">See all</Text>
             </View>
-            <Achievements/>
+            <Achievements />
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>
