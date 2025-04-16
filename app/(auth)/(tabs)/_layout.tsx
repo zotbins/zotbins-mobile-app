@@ -1,5 +1,5 @@
 import React from "react";
-import { Tabs } from "expo-router";
+import { Tabs, router } from "expo-router";
 import { View, Dimensions } from "react-native";
 import { StatusBar } from "expo-status-bar";
 
@@ -75,6 +75,12 @@ export default function Layout() {
                 <ScanIcon width={70} height={70} color={ACTIVE_ICON} />
               </View>
             ),
+          }}
+          listeners={{
+            tabPress: (e) => {
+              e.preventDefault(); // Prevent default navigation
+              router.push("/(auth)/camera"); // Navigate to the camera screen
+            },
           }}
         />
         <Tabs.Screen
