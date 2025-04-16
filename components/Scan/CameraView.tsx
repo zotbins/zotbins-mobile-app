@@ -18,7 +18,16 @@ const CameraView: React.FC<CameraViewProps> = ({
   return (
     <>
       <View className="bg-black/30 z-10 w-screen h-screen flex justify-center items-center">
-        <View className="border-4 border-dashed rounded-md border-white bg-white/20 w-96 h-96 z-20" />
+        <View className="absolute w-9/12 h-[40%]">
+  
+          <View className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-white rounded-tl-lg" />
+          
+          <View className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-white rounded-tr-lg" />
+          
+          <View className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-white rounded-bl-lg" />
+          
+          <View className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-white rounded-br-lg" />
+        </View>
       </View>
 
       <Camera

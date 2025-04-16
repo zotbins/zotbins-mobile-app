@@ -7,7 +7,7 @@ import { Colors } from "react-native/Libraries/NewAppScreen";
 const BackButton = () => {
   return (
     <Pressable
-      className="bg-brightGreen rounded-full p-2 active:opacity-50 border-brightGreen3 border-1"
+      className="bg-brightGreen rounded-full p-2 active:opacity-50 border-1 border-brightGreen3"
       onPress={() => router.back()}
     >
       <Ionicons name="arrow-back-outline" size={24} color={"#00762B"} />
