@@ -1,44 +1,71 @@
 import BackButton from "@/components/Reusables/BackButton";
-import { collection, query, orderBy, getDocs, getFirestore } from '@react-native-firebase/firestore';
+import {
+  collection,
+  query,
+  orderBy,
+  getDocs,
+  getFirestore,
+} from "@react-native-firebase/firestore";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState, useRef } from "react";
-import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
-import { Image, ScrollView, Text, View, TouchableOpacity } from "react-native";
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  Image,
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  ImageSourcePropType,
+} from "react-native";
 import { currentUserUid } from "../../_layout";
-import { getStorage, ref, getDownloadURL } from '@react-native-firebase/storage';
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+} from "@react-native-firebase/storage";
+import LinearGradient from "react-native-linear-gradient";
+import LeaderboardIcon from "../../../assets/images/leaderboardIcon.png";
 
 interface LeaderboardUser {
-  pfp: string;
   rank: number;
   points: number;
   username: string;
 }
-const trophy = require('@/assets/images/trophy.png');
+const trophy = require("@/assets/images/trophy.png");
 const Leaderboard = () => {
   const router = useRouter();
-  const [allLeaderboardData, setAllLeaderboardData] = useState<LeaderboardUser[]>([]);
-  const [weeklyLeaderboardData, setWeeklyLeaderboardData] = useState<LeaderboardUser[]>([]);
-  const [friendLeaderboardData, setFriendLeaderboardData] = useState<LeaderboardUser[]>([]);
-  const [userScore, setUserScore] = useState<number>(0);
+  const [allLeaderboardData, setAllLeaderboardData] = useState<
+    LeaderboardUser[]
+  >([]);
+  const [weeklyLeaderboardData, setWeeklyLeaderboardData] = useState<
+    LeaderboardUser[]
+  >([]);
+  const [friendLeaderboardData, setFriendLeaderboardData] = useState<
+    LeaderboardUser[]
+  >([]);
+  const [totalLeaderboardData, setTotalLeaderboardData] = useState<
+    LeaderboardUser[]
+  >([]);
+
+  const [userTotalScore, setUserTotalScore] = useState<number>(0);
+  const [userWeeklyScore, setUserWeeklyScore] = useState<number>(0);
   const [userRank, setUserRank] = useState<number>(0);
+  const [userWeeklyRank, setUserWeeklyRank] = useState<number>(0);
   const [username, setUsername] = useState<string>("");
-  const [activeTab, setActiveTab] = useState('all-rankings');
+  type TabType = "weekly" | "allRankings" | "friends";
+  const [activeTab, setActiveTab] = useState<TabType>("allRankings");
   const [friendList, setFriendList] = useState<string[]>([]);
-  const getProfilePicUrl = async (uid: string) => {
-    try {
-      const storage = getStorage();
-      const imageRef = ref(storage, `zotzero-user-profile-pics/${uid}`);
-      const url = await getDownloadURL(imageRef);
-      return url;
-    } catch (error) {
-      return "https://placehold.co/250";
-    }
-  };
+
+  const [currentUserData, setCurrentUserData] =
+    useState<LeaderboardUser | null>(null);
+
+  const [currentUserWeeklyData, setCurrentUserWeeklyData] =
+    useState<LeaderboardUser | null>(null);
 
   /**
    * @description Gets descending order of scores and searches to find the current user's score.
-   * Adds profile pictures, rank, usernames, and scores to the leaderboard. Leaderboard only displays 
-   * top 10 users unless friends are being displayed. 
+   * Adds profile pictures, rank, usernames, and scores to the leaderboard. Leaderboard only displays
+   * top 10 users unless friends are being displayed.
    */
   const dataLoaded = useRef(false);
   useEffect(() => {
@@ -47,31 +74,62 @@ const Leaderboard = () => {
       try {
         const db = getFirestore();
 
-        const leaderboardQuery = query(
+        // Fetch all-time leaderboard
+        const allTimeLeaderboardQuery = query(
           collection(db, "users"),
           orderBy("totalPoints", "desc")
         );
 
-        const querySnapshot = await getDocs(leaderboardQuery);
-        const leaderboard: LeaderboardUser[] = [];
+        const allTimeQuerySnapshot = await getDocs(allTimeLeaderboardQuery);
+        const allTimeLeaderboard: LeaderboardUser[] = [];
+        let currentUserPosition: LeaderboardUser | null = null;
 
-        for (let doc of querySnapshot.docs) {
-          if (doc.data().uid == currentUserUid) {
-            setUsername(doc.data().username);
-            setUserScore(doc.data().totalPoints);
-            setUserRank(leaderboard.length + 1);
-            setFriendList(doc.data().friendsList || []);
-          }
-          const pfpUrl = await getProfilePicUrl(doc.data().uid);
-          leaderboard.push({
-            pfp: pfpUrl,
-            rank: leaderboard.length + 1,
+        for (let doc of allTimeQuerySnapshot.docs) {
+          const userData = {
+            rank: allTimeLeaderboard.length + 1,
             username: doc.data().username,
             points: doc.data().totalPoints,
-          });
+          };
+          if (doc.data().uid == currentUserUid) {
+            setUsername(doc.data().username);
+            setUserTotalScore(doc.data().totalPoints);
+            setUserRank(allTimeLeaderboard.length + 1);
+            setFriendList(doc.data().friendsList || []);
+            currentUserPosition = userData;
+          }
+
+          allTimeLeaderboard.push(userData);
         }
-        setAllLeaderboardData(leaderboard.slice(0, 10));
-        setWeeklyLeaderboardData(leaderboard.slice(0, 10));
+        setTotalLeaderboardData(allTimeLeaderboard);
+        setCurrentUserData(currentUserPosition);
+        setAllLeaderboardData(allTimeLeaderboard.slice(0, 10));
+        // Fetch weekly leaderboard
+        const weeklyLeaderboardQuery = query(
+          collection(db, "users"),
+          orderBy("weeklyPoints", "desc")
+        );
+
+        const weeklyQuerySnapshot = await getDocs(weeklyLeaderboardQuery);
+        const weeklyLeaderboard: LeaderboardUser[] = [];
+        let currentUserWeeklyPosition: LeaderboardUser | null = null;
+
+        for (let doc of weeklyQuerySnapshot.docs) {
+          const userData = {
+            rank: weeklyLeaderboard.length + 1,
+            username: doc.data().username,
+            points: doc.data().weeklyPoints || 0, // Default to 0 if weeklyPoints doesn't exist
+          };
+          if (doc.data().uid == currentUserUid) {
+            setUserWeeklyScore(doc.data().weeklyPoints || 0);
+            setUserWeeklyRank(weeklyLeaderboard.length + 1);
+            currentUserWeeklyPosition = userData;
+          }
+
+          weeklyLeaderboard.push(userData);
+        }
+
+        setCurrentUserWeeklyData(currentUserWeeklyPosition);
+        setWeeklyLeaderboardData(weeklyLeaderboard.slice(0, 10));
         dataLoaded.current = true;
       } catch (error) {
         console.error("Error fetching leaderboard data: ", error);
@@ -82,115 +140,212 @@ const Leaderboard = () => {
   }, []);
 
   const renderLeaderboard = () => {
+    let leaderboardData;
+    let currentUserSpecificData;
+
     switch (activeTab) {
-      case 'weekly':
-        return weeklyLeaderboardData.map((user, index) => renderLeaderboardRow(user, index));
-      case 'friends':
-        return friendLeaderboardData.map((user, index) => renderLeaderboardRow(user, index));
-      case 'all-rankings':
+      case "weekly":
+        leaderboardData = weeklyLeaderboardData;
+        currentUserSpecificData = currentUserWeeklyData;
+        break;
+      case "friends":
+        leaderboardData = friendLeaderboardData;
+        currentUserSpecificData = currentUserData;
+        break;
+      case "allRankings":
       default:
-        return allLeaderboardData.map((user, index) => renderLeaderboardRow(user, index));
+        leaderboardData = allLeaderboardData;
+        currentUserSpecificData = currentUserData;
+        break;
     }
+
+    // Render the top users
+    const leaderboardRows = leaderboardData.map((user, index) =>
+      renderLeaderboardRow(user, index)
+    );
+
+    // If current user isn't in the displayed leaderboard, show them at the bottom
+    if (
+      currentUserSpecificData &&
+      !leaderboardData.some((user) => user.username === username) &&
+      activeTab !== "friends" // Don't add to friends tab since user is always included there
+    ) {
+      leaderboardRows.push(
+        <React.Fragment key="current-user-separator">
+          <View className="h-8 flex items-center justify-center">
+            <Text className="text-gray-500">. . .</Text>
+          </View>
+        </React.Fragment>
+      );
+
+      leaderboardRows.push(
+        renderLeaderboardRow(currentUserSpecificData, -1) // Using -1 to indicate special styling if needed
+      );
+    }
+
+    return leaderboardRows;
   };
 
+  const tabTitles: Record<TabType, string> = {
+    weekly: "Weekly Standings",
+    allRankings: "All-time Standings",
+    friends: "Friends Standings",
+  };
 
   /**
    * @description Takes the entire leaderboard and filters for friends.
+   * Updates to support both weekly and all-time points depending on the active tab.
    */
   useEffect(() => {
-    if (friendList.length > 0 && dataLoaded) {
-      const filteredLeaderboard = allLeaderboardData.filter((user) =>
-        friendList.includes(user.username) || (user.username === username)
+    if (friendList.length >= 0 && dataLoaded) {
+      // The source data will depend on which tab is active
+      const sourceData =
+        activeTab === "weekly" ? weeklyLeaderboardData : totalLeaderboardData; // total contains all leaderbord data to ensure all friends appear
+
+      const filteredLeaderboard = sourceData.filter(
+        (user) =>
+          friendList.includes(user.username) || user.username === username
       );
 
       const rankedLeaderboard = filteredLeaderboard.map((user, index) => ({
         ...user,
         rank: index + 1,
       }));
-
       setFriendLeaderboardData(rankedLeaderboard);
     }
-  }, [friendList, dataLoaded, allLeaderboardData]);
+  }, [
+    friendList,
+    dataLoaded,
+    allLeaderboardData,
+    weeklyLeaderboardData,
+    activeTab,
+  ]);
 
-  // Helper function to render leaderboard rows
   const renderLeaderboardRow = (user: LeaderboardUser, index: number) => (
-    <React.Fragment key={user.rank}>
-      <View className="flex flex-row items-center mb-2 w-full px-4">
-        <Text className="text-xl text-black w-1/4 pl-4">{user.rank}</Text>
-        <View className="w-1/2 flex flex-row items-center justify-start">
-          <Image
-            source={{ uri: user.pfp }}
-            className={`w-10 h-10 rounded-full mr-4 ${user.username === username ? 'border-2 border-tintColor' : 'border-2 border-gray-200'}`}
-          />
-          <Text className={`w-full text-xl ${user.username === username ? 'text-tintColor' : 'text-black'}`}>
-            {user.username === username ? 'You' : user.username}
+    <React.Fragment
+      key={index === -1 ? `user-${user.rank}` : `rank-${user.rank}`}
+    >
+      <View
+        className={
+          index === 0
+            ? "flex flex-row items-center mb-3 w-[370px] px-4 py-3 bg-highlightGreen2 rounded-3xl shadow-sm gap-x-6"
+            : "flex flex-row items-center mb-3 w-[370px] px-4 py-3 bg-lightBackground rounded-3xl shadow-sm gap-x-6"
+        }
+      >
+        <View
+          className={
+            index === 0
+              ? "bg-green-400 rounded-xl px-4 py-3"
+              : "rounded-xl px-4 py-3 bg-highlightGreen"
+          }
+        >
+          <Text className="font-bold">{user.rank}</Text>
+        </View>
+
+        <View className="w-1/2 flex flex-row items-center">
+          <Text
+            className={`w-full text-xl ${user.username === username
+                ? "text-black font-semibold"
+                : index === 0
+                  ? "text-mediumGreen"
+                  : "text-black"
+              }`}
+          >
+            {user.username === username ? "You" : user.username}
           </Text>
         </View>
-        <Text className="text-xl w-1/4 text-center text-black">{user.points}</Text>
+        <Text className="text-xl w-1/4 text-center text-black">
+          {user.points} Pts
+        </Text>
       </View>
-        <View className="w-full mb-4 w-full px-4 border-b border-gray-300 py-2" />
     </React.Fragment>
   );
 
   return (
-    <SafeAreaProvider >
-      <SafeAreaView className="bg-white flex-1">
-      <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      className="bg-white"
-      automaticallyAdjustsScrollIndicatorInsets={true}
-    >
-      <Stack.Screen
-        options={{
-          headerShadowVisible: false,
-          headerBackVisible: false,
-          headerTransparent: true,
-          headerLeft: () => <BackButton />,
-          headerTitle: "",
-        }}
-      />
-      <View className="flex flex-col items-center px-8">
-      <Image
-        source={trophy}
-        style={{
-          width: 100,
-          height: 100,
-        }}
-      />
-      <Text className="text-4xl text-black font-semibold my-2">Leaderboard</Text>
-
-        <View className="flex flex-row mb-6 mt-2">
-          <TouchableOpacity 
-            onPress={() => setActiveTab('all-rankings')}
-            className={`flex-1 mx-2 rounded ${activeTab === 'all-rankings' ? 'border-b-4 border-tintColor' : 'text-black border-b-4 border-gray-200'}`}
+    <LinearGradient colors={["#F5FFF5", "#DBFFD8"]} style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <SafeAreaView className="">
+          <View className="flex items-center flex-row  mt-2 bg-green-100 rounded-xl border border-green-200 mx-8">
+            <TouchableOpacity
+              onPress={() => setActiveTab("weekly")}
+              className={`flex-1 mx-2 rounded-xl my-1 ${activeTab === "weekly" ? "bg-brightGreen2 " : ""
+                }`}
+            >
+              <Text
+                className={`text-xl text-center -1 ${activeTab === "weekly"
+                    ? "text-brightGreen3 font-bold"
+                    : "text-brightGreen3"
+                  }`}
+              >
+                Weekly
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setActiveTab("allRankings")}
+              className={`flex-1 mx-2 rounded-xl my-1 ${activeTab === "allRankings" ? "bg-brightGreen2" : ""
+                }`}
+            >
+              <Text
+                className={`text-xl text-center ${activeTab === "allRankings"
+                    ? "text-brightGreen3 font-bold"
+                    : "text-brightGreen3"
+                  }`}
+              >
+                All
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setActiveTab("friends")}
+              className={`flex-1 mx-2 rounded-xl my-1 ${activeTab === "friends" ? "bg-brightGreen2" : ""
+                }`}
+            >
+              <Text
+                className={`text-xl text-center ${activeTab === "friends"
+                    ? "text-brightGreen3 font-bold"
+                    : "text-brightGreen3"
+                  }`}
+              >
+                Friends
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            className=""
+            automaticallyAdjustsScrollIndicatorInsets={true}
           >
-            <Text className={`text-xl text-center ${activeTab === 'all-rankings' ? 'font-semibold text-darkTintColor' : 'text-black'}`}>All</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            onPress={() => setActiveTab('weekly')}
-            className={`flex-1 mx-2 rounded ${activeTab === 'weekly' ? 'border-b-4 border-tintColor' : 'text-black border-b-4 border-gray-200'}`}
-          >
-            <Text className={`text-xl text-center ${activeTab === 'weekly' ? 'text-darkTintColor font-semibold' : 'text-black'}`}>Weekly</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            onPress={() => setActiveTab('friends')}
-            className={`flex-1 mx-2 rounded ${activeTab === 'friends' ? 'border-b-4 border-tintColor' : 'text-black border-b-4 border-gray-200'}`}
-          >
-            <Text className={`text-xl text-center ${activeTab === 'friends' ? 'font-semibold text-darkTintColor' : 'text-black'}`}>Friends</Text>
-          </TouchableOpacity>
-        </View>
+            <Stack.Screen
+              options={{
+                headerShadowVisible: false,
+                headerBackVisible: false,
+                headerTransparent: true,
+                headerLeft: () => <BackButton />,
+                headerTitle: "",
+              }}
+            />
 
-        <View className="flex flex-row items-center mb-4 w-full px-4 border-b border-gray-300 py-2">
-          <Text className="text-xl text-black font-semibold w-1/4 text-left">Rank</Text>
-          <Text className="text-xl text-black font-semibold w-1/2 text-left pl-14">User</Text>
-          <Text className="text-xl text-black font-semibold w-1/4 text-right pr-3">Points</Text>
-        </View>
+            <View className="flex flex-col items-center px-8 my-4">
+              <Text className="text-4xl font-semibold text-darkGreen mt-4">
+                {tabTitles[activeTab] || ""}
+              </Text>
 
-        {renderLeaderboard()}
-      </View>
-    </ScrollView>
-      </SafeAreaView>
-    </SafeAreaProvider>
+              <Image
+                className="my-8"
+                source={LeaderboardIcon}
+                style={{
+                  width: 120,
+                  height: 120,
+                }}
+              />
+
+              {renderLeaderboard()}
+
+              <View className="py-16"></View>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </LinearGradient>
   );
 };
 
