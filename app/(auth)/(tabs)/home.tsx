@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { View, Text, Pressable, Button, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Link, Stack } from "expo-router";
 import Header from "@/components/Reusables/Header";
@@ -10,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ScanWidget from "@/components/Home/ScanWidget";
 import DailyQuizWidget from "@/components/Home/DailyQuizWidget";
 import MissionsWidget from "@/components/Home/MissionsWidget";
+import QuizData from "@/data/QuizData";
 
 async function populateMissions(uid: string) {
   const db = getFirestore();
@@ -136,6 +137,7 @@ const Home = () => {
             <DailyQuizWidget />
 
             <MissionsWidget />
+
 
           </SafeAreaView>
         </ScrollView>

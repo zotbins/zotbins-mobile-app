@@ -14,7 +14,7 @@ interface Question {
   correctAnswer: string;
   createdAt: Date;
   image?: string | null;
-  multipleAnswers: boolean;
+  multipleAnswers?: boolean | null;
 }
 
 const Quiz = () => {
