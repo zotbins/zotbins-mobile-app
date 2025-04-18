@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import React, { useEffect, useState, useRef } from "react";
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
+import { ImageBackground, StyleSheet, View, Animated, Dimensions, Text } from "react-native";
 import ImageEditor from "@react-native-community/image-editor";
 import { getFirestore, getDoc, doc, increment, updateDoc } from "@react-native-firebase/firestore";
 import { getAuth } from "@react-native-firebase/auth";
@@ -10,6 +10,8 @@ import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { WasteObject } from './WasteItemResult';
+import { LinearGradient } from "expo-linear-gradient";
+import ScanIndicator from "./ScanIndicator";
 
 interface ScanResultsProps {
   image: string | null;
@@ -21,6 +23,9 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
   const [base64Image, setBase64Image] = useState<string>("");
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const [wasteObjects, setWasteObjects] = useState<WasteObject[]>([]);
+  const [isScanning, setIsScanning] = useState(false);
+  const scanPosition = useRef(new Animated.Value(0)).current;
+  const screenHeight = Dimensions.get("window").height;
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => { 
@@ -91,11 +96,26 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
 
   useEffect(() => {
     if (image) {
+      setIsScanning(true);
       setTimeout(() => {
         bottomSheetRef.current?.present();
-      }, 1000); // Delay to allow image to load
+        setIsScanning(false);
+      }, 5000); // Delay to allow image to load
     }
   }, [image]);
+
+  // animate the white scan‑bar up and down
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(scanPosition, { toValue: 1, duration: 1500, useNativeDriver: true }),
+        Animated.timing(scanPosition, { toValue: 0, duration: 1500, useNativeDriver: true }),
+      ])
+    );
+    if (isScanning) animation.start();
+    else animation.stop();
+    return () => animation.stop();
+  }, [isScanning]);
 
   // crop image to be 1600 x 1600 pixels for waste recognition model
   // center-crop with clamped offsets to ensure x, y >= 0
@@ -194,6 +214,14 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
         >
 
         </ImageBackground>
+
+        {isScanning && (
+          <ScanIndicator
+            scanPosition={scanPosition}
+            screenHeight={screenHeight}
+          />
+        )}
+
         <ScanBottomSheetModal
             ref={bottomSheetRef}
             onClose={() => {
@@ -204,5 +232,27 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
       </BottomSheetModalProvider>
   );
 };
+
+const styles = StyleSheet.create({
+  scanOverlay: {
+    position: "absolute",
+    top: 0, left: 0, right: 0, bottom: 0,
+    overflow: "hidden",
+  },
+  blurOverlay: {
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+  },
+  scanBar: {
+    position: "absolute",
+    left: 0,                     // span from edge
+    width: "100%",               // full width
+    height: 4,
+    backgroundColor: "rgba(255,255,255,0.8)",
+  },
+  gradient: {
+    width: "100%",
+    height: 20,
+  },
+});
 
 export default ScanResults;
