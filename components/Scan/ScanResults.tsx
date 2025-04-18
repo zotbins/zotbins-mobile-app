@@ -9,6 +9,7 @@ import ScanBottomSheetModal from "./ScanBottomSheetModal";
 import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { WasteObject } from './WasteItemResult';
 
 interface ScanResultsProps {
   image: string | null;
@@ -19,8 +20,7 @@ interface ScanResultsProps {
 const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setImage }) => {
   const [base64Image, setBase64Image] = useState<string>("");
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
-  const [wasteObject, setWasteObject] = useState<string>("");
-  const [wasteCategory, setWasteCategory] = useState<string>("");
+  const [wasteObjects, setWasteObjects] = useState<WasteObject[]>([]);
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => { 
@@ -141,6 +141,23 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
         type: "image/jpeg",
         data: base64Image,
       });
+
+      setWasteObjects([
+        {
+          name: "Plastic Bottle",
+          material: "Plastic",
+          category: "Recyclable",
+        },
+        {
+          name: "Aluminum Can",
+          material: "Metal",
+          category: "Recyclable",
+        }
+      ])
+
+      
+
+
       /*
       fetch(`http://${process.env.EXPO_PUBLIC_IPADDRESS}:8000/classify_img`, {
         method: "post",
@@ -181,8 +198,8 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
             ref={bottomSheetRef}
             onClose={() => {
               setImage(null);
-              router.back();
             }}
+            wasteObjects={wasteObjects}
           />
       </BottomSheetModalProvider>
   );
