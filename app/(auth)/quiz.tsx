@@ -10,6 +10,7 @@ import RecycleIcon from "@/assets/icons/recycle.svg";
 import QuizBackground from "@/assets/icons/QuizBackground.svg";
 import ProgressBar from "@/components/Quiz/ProgressBar";
 import ArrowRightIcon from "@/assets/icons/arrow-right.svg";
+import ResultsPopup from "@/components/Quiz/ResultsPopup";
 
 interface Question {
   id?: string;
@@ -317,45 +318,31 @@ const Quiz = () => {
           </View>
         </View>
       ) : (
-        <>
-          {showResults ? (
-            <View className="pt-32 flex-1 bg-white px-5 py-12">
-              <View>
-                <Text className="text-5xl text-black text-center pb-2">Results</Text>
-                <Text className="text-3xl text-black text-center">
-                  {score} / 3
-                </Text>
-                <View className="pt-10 flex items-center justify-center">
-                  <Link href="/home" asChild>
-                    <Pressable className="w-11/12 items-center justify-center py-5 px-8 rounded-xl bg-[#009838] active:opacity-50">
-                      <Text className="text-white text-xl">Back to Home</Text>
-                    </Pressable>
-                  </Link>
-                </View>
-              </View>
-            </View>
-          ) : (
-            <View className="flex-1 bg-[#f8fff8] pt-24 relative">
-              <ProgressBar
-                totalSteps={3}
-                answeredQuestions={answeredQuestions}
-              />
+        <View className="flex-1 bg-[#f8fff8] pt-24 relative">
+          <ProgressBar
+            totalSteps={3}
+            answeredQuestions={answeredQuestions}
+          />
 
-              <View className="ml-5">
-                <BackButton />
-              </View>
-
-              <View className="mb-2">
-                {displayQuestion()}
-              </View>
-
-              <View className="flex-1 relative mt-2">
-                {displayOptions()}
-                {showNextButton()}
-              </View>
+          {!showResults && ( // disable back button when results is showing
+            <View className="ml-5">
+              <BackButton />
             </View>
           )}
-        </>
+
+          <View className="mb-2">
+            {displayQuestion()}
+          </View>
+
+          <View className="flex-1 relative mt-2">
+            {displayOptions()}
+            {showNextButton()}
+          </View>
+
+          {showResults && (
+            <ResultsPopup score={score} />
+          )}
+        </View>
       )}
     </>
   );
