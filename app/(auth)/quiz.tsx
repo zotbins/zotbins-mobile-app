@@ -225,7 +225,7 @@ const Quiz = () => {
             onPress={handleNext}
             className="relative flex-row items-center pl-8 pr-14 py-4 rounded-3xl bg-[#C9FFE2] border border-[#00D363] active:opacity-50 w-40 shadow-xl"
           >
-            <Text className="text-xl text-[#00762B]">
+            <Text className="text-xl font-bold text-[#00762B]">
               {isLastQuestion ? "Finish" : "Next"}
             </Text>
             <View className="absolute right-5">
