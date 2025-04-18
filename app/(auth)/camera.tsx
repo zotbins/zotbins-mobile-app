@@ -3,7 +3,7 @@ import CameraView from "@/components/Scan/CameraView";
 import ScanResults from "@/components/Scan/ScanResults";
 import { router, Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, View } from "react-native";
 import { Camera, useCameraDevice } from "react-native-vision-camera";
 
 const CameraScreen = () => {
@@ -43,7 +43,13 @@ const CameraScreen = () => {
       if (!camera) return;
 
       const photo = await camera.takePhoto();
-      setImage(photo.path);
+
+      const uri = Platform.OS === "android"
+      ? `file://${photo.path}`
+      : photo.path;
+
+      setImage(uri);
+
       setImageDimensions([photo.height, photo.width]);
     } catch (error) {
       console.error("Take picture error:", error);
