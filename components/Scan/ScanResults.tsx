@@ -1,10 +1,14 @@
 import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { Image, Text, View, TouchableOpacity } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import ImageEditor from "@react-native-community/image-editor";
 import { getFirestore, getDoc, doc, increment, updateDoc } from "@react-native-firebase/firestore";
 import { getAuth } from "@react-native-firebase/auth";
 import { updateAchievementProgress, updateMissionProgress } from "@/functions/src/updateProgress";
+import ScanBottomSheetModal from "./ScanBottomSheetModal";
+import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 interface ScanResultsProps {
   image: string | null;
@@ -17,6 +21,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const [wasteObject, setWasteObject] = useState<string>("");
   const [wasteCategory, setWasteCategory] = useState<string>("");
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => { 
     const fetchData = async () => {
@@ -84,6 +89,14 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
     classifyWaste();
   }, [croppedImage, base64Image]);
 
+  useEffect(() => {
+    if (image) {
+      setTimeout(() => {
+        bottomSheetRef.current?.present();
+      }, 1000); // Delay to allow image to load
+    }
+  }, [image]);
+
   // crop image to be 1600 x 1600 pixels for waste recognition model
   // center-crop with clamped offsets to ensure x, y >= 0
   const cropImage = () => {
@@ -128,7 +141,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
         type: "image/jpeg",
         data: base64Image,
       });
-
+      /*
       fetch(`http://${process.env.EXPO_PUBLIC_IPADDRESS}:8000/classify_img`, {
         method: "post",
         body: formData,
@@ -141,57 +154,37 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
         .catch((err) => {
           console.error(err);
         });
+      */
     }
+        
   };
 
-  if (!imageDimensions || !croppedImage || !base64Image) {
+  if (!image || !imageDimensions || !croppedImage) {
     return (
-      <View>
-        <Text>Loading...</Text>
+      <View className="flex-1 items-center justify-center bg-white">
+        <Text className="text-lg font-bold">Loading...</Text>
       </View>
-    );
+    )
   }
 
   return (
-    <View className="flex-1 w-full h-12 items-center justify-center">
-      <View className="items-center">
-        <Text className="text-blue text-3xl py-4">
-          Detected:{" "}
-          <Text className="text-red">
-            {wasteObject.charAt(0).toUpperCase() + wasteObject.slice(1)}
-          </Text>
-        </Text>
 
-        {croppedImage && (
-          <Image
-            source={{ uri: croppedImage }}
-            className="w-72 h-72 rounded-xl"
-          />
-        )}
-
-        <Text className="text-blue text-xl py-4">
-          This belongs in{" "}
-          <Text className="text-tintColor">
-            {wasteCategory.charAt(0).toUpperCase() + wasteCategory.slice(1)}
-          </Text>
-          .
-        </Text>
-      </View>
-
-      <View className="flex flex-row gap-4 pt-8">
-        <TouchableOpacity className="bg-tintColor px-5 py-4 rounded-lg">
-          <Text className="text-white" onPress={() => setImage(null)}>
-            Retake Photo
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="bg-blue px-5 py-4 rounded-lg"
-          onPress={() => router.back()}
+      <BottomSheetModalProvider>
+        <ImageBackground
+          source={{ uri: image }}
+          resizeMode="cover"
+          style={{width: "100%", height: "100%", flex: 1}}
         >
-          <Text className="text-white">Return Home</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+
+        </ImageBackground>
+        <ScanBottomSheetModal
+            ref={bottomSheetRef}
+            onClose={() => {
+              setImage(null);
+              router.back();
+            }}
+          />
+      </BottomSheetModalProvider>
   );
 };
 

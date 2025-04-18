@@ -43,13 +43,14 @@ const CameraScreen = () => {
       if (!camera) return;
 
       const photo = await camera.takePhoto();
+      console.log("Photo taken:", photo);
 
       const uri = Platform.OS === "android"
       ? `file://${photo.path}`
       : photo.path;
 
       setImage(uri);
-
+      console.log("Image URI:", uri);
       setImageDimensions([photo.height, photo.width]);
     } catch (error) {
       console.error("Take picture error:", error);
