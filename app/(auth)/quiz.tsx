@@ -6,6 +6,9 @@ import data from "../../data/QuizData.js";
 import { getFirestore, doc, getDoc, updateDoc, increment, collection, getDocs } from "@react-native-firebase/firestore";
 import { getAuth } from "@react-native-firebase/auth";
 import { updateAchievementProgress, updateMissionProgress } from "@/functions/src/updateProgress";
+import RecycleIcon from "@/assets/icons/recycle.svg";
+import ProgressBar from "@/components/Quiz/ProgressBar";
+import ArrowRightIcon from "@/assets/icons/arrow-right.svg";
 
 interface Question {
   id?: string;
@@ -15,6 +18,11 @@ interface Question {
   createdAt: Date;
   image?: string | null;
   multipleAnswers?: boolean | null;
+}
+
+interface AnsweredQuestion {
+  index: number;
+  correct: boolean;
 }
 
 const Quiz = () => {
@@ -28,6 +36,7 @@ const Quiz = () => {
   const [showResults, setShowResults] = useState(false);
   const [progress, setProgress] = useState(new Animated.Value(0));
   const [reachedDailyLimit, setReachedDailyLimit] = useState(false);
+  const [answeredQuestions, setAnsweredQuestions] = useState<AnsweredQuestion[]>([]);
   const progressAnim = progress.interpolate({
     inputRange: [0, questions.length],
     outputRange: ["0%", "100%"],
@@ -88,18 +97,6 @@ const Quiz = () => {
     getQuestions();
   }, []);
 
-  // show a progress bar of the quiz
-  const displayProgress = () => {
-    return (
-      <View className="w-full h-5 rounded-[20px] bg-black/20">
-        <Animated.View
-          className="h-5 rounded-[20px] bg-tintColor"
-          style={{ width: progressAnim }}
-        ></Animated.View>
-      </View>
-    );
-  };
-
   // display quiz question
   const displayQuestion = () => {
     Animated.timing(progress, {
@@ -109,45 +106,65 @@ const Quiz = () => {
     }).start();
 
     return (
-      <View className="flex justify-center items-center">
-        <View className="pt-8 pb-5 w-11/12">
-          <View className="flex-row items-end pb-2">
-            <Text className="text-black text-2xl">
-              {currentQuestionIndex + 1}{" "}
-            </Text>
-            <Text className="text-black text-2xl">/ {questions.length}</Text>
-          </View>
-          <Text className="text-black text-4xl">
-            {questions[currentQuestionIndex]?.question}
-          </Text>
-        </View>
+      <View className="items-center justify-center">
+        <RecycleIcon width={240} height={240} />
       </View>
     );
   };
 
   // display possible answers
   const displayOptions = () => {
+    if (!questions[currentQuestionIndex]) return null;
+
+    const { question, choices, correctAnswer } = questions[currentQuestionIndex];
+
     return (
-      <View className="flex-1 px-5 mt-4">
-        {questions[currentQuestionIndex]?.choices.slice(0, 5).map((choice, index) => (
-          <Pressable
-            key={`${choice}-${index}`}
-            disabled={isOptionsDisabled}
-            className={`min-h-16 rounded-xl items-start justify-center px-5 py-3 my-2 active:opacity-50
-              ${choice === answer
-                ? "bg-tintColor"
-                : choice === currentSelected
-                  ? "bg-red"
-                  : "bg-blue"
-              }`}
-            onPress={() => checkAnswer(choice)}
-          >
-            <Text className="text-xl text-white">{choice}</Text>
-          </Pressable>
-        ))}
+      <View className="w-full px-6 py-16 bg-[#009838] rounded-t-3xl flex-1">
+        <Text className="text-white text-3xl font-semibold mb-10 text-center">
+          {question}
+        </Text>
+
+        <View className="flex-row flex-wrap justify-between">
+          {choices.map((choice, index) => {
+            let buttonClass, textClass;
+
+            if (isOptionsDisabled) {
+              if (choice === correctAnswer) {
+                // correct answer
+                buttonClass = "border border-[#82FFAD] rounded-3xl py-4 px-5 mb-4 items-center justify-center w-[48%] bg-[#B4F17C]";
+                textClass = "text-lg text-center text-[#00762B]";
+              } else if (choice === currentSelected && choice !== correctAnswer) {
+                // wrong answer
+                buttonClass = "border border-[#EC9A78] rounded-3xl py-4 px-5 mb-4 items-center justify-center w-[48%] bg-[#FFC7D3]";
+                textClass = "text-lg text-center text-[#00762B]";
+              } else {
+                // other options
+                buttonClass = "border border-[#82FFAD] rounded-3xl py-4 px-5 mb-4 items-center justify-center w-[48%] bg-transparent";
+                textClass = "text-lg text-center text-white opacity-70";
+              }
+            } else {
+              // before answering
+              buttonClass = "border border-[#82FFAD] rounded-3xl py-4 px-5 mb-4 items-center justify-center w-[48%] bg-transparent";
+              textClass = "text-lg text-center text-white";
+            }
+
+            return (
+              <Pressable
+                key={`${choice}-${index}`}
+                disabled={isOptionsDisabled}
+                className={buttonClass}
+                onPress={() => checkAnswer(choice)}
+              >
+                <Text className={textClass}>
+                  {choice}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
       </View>
     );
-  };
+  }
 
   // checks if answer selected is correct
   const checkAnswer = async (selected: string) => {
@@ -155,6 +172,13 @@ const Quiz = () => {
     setCurrentSelected(selected);
     setAnswer(answer);
     setIsOptionsDisabled(true);
+
+    // record this answer for progress bar
+    const isCorrect = selected === answer;
+    setAnsweredQuestions([
+      ...answeredQuestions,
+      { index: currentQuestionIndex, correct: isCorrect }
+    ]);
 
     const user = getAuth().currentUser;
     if (user) {
@@ -167,7 +191,7 @@ const Quiz = () => {
           dailyQuestions: increment(1)
         });
 
-        if (selected == answer) {
+        if (isCorrect) {
           setScore(score + 1);
 
           // award points for correct answers
@@ -187,22 +211,22 @@ const Quiz = () => {
   // display "next question" button after current one is answered
   const showNextButton = () => {
     if (isOptionsDisabled) {
+      const isLastQuestion = currentQuestionIndex === questions.length - 1;
+
       return (
-        <View className="flex justify-center items-center">
+        <View className="absolute bottom-16 right-6">
           <Pressable
             onPress={handleNext}
-            className="w-11/12 border-2 border-grey bg-white my-2.5 h-16 rounded-[10px] 
-            flex justify-center active:opacity-50"
+            className="relative flex-row items-center pl-8 pr-14 py-4 rounded-3xl bg-[#C9FFE2] border border-[#00D363] active:opacity-50 w-40 shadow-xl"
           >
-            <Text className="text-2xl text-black text-center">
-              {currentQuestionIndex == questions.length - 1
-                ? "Show Results"
-                : "Next Question"}
+            <Text className="text-xl text-[#00762B]">
+              {isLastQuestion ? "Finish" : "Next"}
             </Text>
+            <View className="absolute right-5">
+              <ArrowRightIcon width={24} height={24} fill="#00762B" />
+            </View>
           </Pressable>
         </View>
-
-
       );
     } else {
       return null;
@@ -266,12 +290,12 @@ const Quiz = () => {
           headerShadowVisible: false,
           headerBackVisible: false,
           headerTransparent: true,
-          headerLeft: () => <BackButton />,
           headerTitle: "",
         }}
       />
-      <View className="pt-32 flex-1 bg-white px-5 py-12">
-        {reachedDailyLimit ? (
+
+      {reachedDailyLimit ? (
+        <View className="pt-32 flex-1 bg-white px-5 py-12">
           <View>
             <Text className="text-5xl text-black text-center pb-2">Daily Limit Reached</Text>
             <Text className="text-xl text-black text-center pb-8">
@@ -279,20 +303,17 @@ const Quiz = () => {
             </Text>
             <View className="pt-10 flex items-center justify-center">
               <Link href="/home" asChild>
-                <Pressable className="w-11/12 items-center justify-center py-5 px-8 rounded-xl bg-tintColor active:opacity-50">
+                <Pressable className="w-11/12 items-center justify-center py-5 px-8 rounded-xl bg-[#009838] active:opacity-50">
                   <Text className="text-white text-xl">Back to Home</Text>
                 </Pressable>
               </Link>
             </View>
           </View>
-        ) : (
-          <>
-            {!showResults && displayProgress()}
-            {!showResults && displayQuestion()}
-            {!showResults && displayOptions()}
-            {!showResults && showNextButton()}
-
-            {showResults && (
+        </View>
+      ) : (
+        <>
+          {showResults ? (
+            <View className="pt-32 flex-1 bg-white px-5 py-12">
               <View>
                 <Text className="text-5xl text-black text-center pb-2">Results</Text>
                 <Text className="text-3xl text-black text-center">
@@ -300,16 +321,36 @@ const Quiz = () => {
                 </Text>
                 <View className="pt-10 flex items-center justify-center">
                   <Link href="/home" asChild>
-                    <Pressable className="w-11/12 items-center justify-center py-5 px-8 rounded-xl bg-tintColor active:opacity-50">
+                    <Pressable className="w-11/12 items-center justify-center py-5 px-8 rounded-xl bg-[#009838] active:opacity-50">
                       <Text className="text-white text-xl">Back to Home</Text>
                     </Pressable>
                   </Link>
                 </View>
               </View>
-            )}
-          </>
-        )}
-      </View>
+            </View>
+          ) : (
+            <View className="flex-1 bg-[#f8fff8] pt-24 relative">
+              <ProgressBar
+                totalSteps={3}
+                answeredQuestions={answeredQuestions}
+              />
+
+              <View className="ml-5 mb-6">
+                <BackButton />
+              </View>
+
+              <View className="mb-2">
+                {displayQuestion()}
+              </View>
+
+              <View className="flex-1 relative mt-2">
+                {displayOptions()}
+                {showNextButton()}
+              </View>
+            </View>
+          )}
+        </>
+      )}
     </>
   );
 };
