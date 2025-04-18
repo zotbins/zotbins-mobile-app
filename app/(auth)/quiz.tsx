@@ -55,7 +55,7 @@ const Quiz = () => {
       const shuffledQuestions = allQuestions.sort(() => Math.random() - 0.5);
 
       // select the first 5 random questions
-      const randomQuestions = shuffledQuestions.slice(0, 5);
+      const randomQuestions = shuffledQuestions.slice(0, 3);
 
       setQuestions(randomQuestions);
     } catch (error) {
