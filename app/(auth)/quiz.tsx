@@ -124,32 +124,32 @@ const Quiz = () => {
         <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#009838' }}>
           <QuizBackground width="100%" height="100%" preserveAspectRatio="xMidYMid slice" />
         </View>
-        <View className="w-full px-6 py-16 flex-1 z-10 mb-10">
-          <Text className="text-white text-3xl font-semibold mb-20 text-center">
+        <View className="w-full px-6 py-8 flex-1 z-10 mb-10">
+          <Text className="text-white text-3xl font-semibold mb-4 text-center">
             {question}
           </Text>
 
-          <View className="flex-row flex-wrap justify-between">
+          <View className="flex-col">
             {choices.map((choice, index) => {
               let buttonClass, textClass;
 
               if (isOptionsDisabled) {
                 if (choice === correctAnswer) {
                   // correct answer
-                  buttonClass = "border border-[#82FFAD] rounded-full py-4 px-5 mb-4 items-center justify-center w-[48%] bg-[#B4F17C]";
+                  buttonClass = "border border-[#82FFAD] rounded-full py-4 px-5 mb-4 items-center justify-center w-full bg-[#B4F17C]";
                   textClass = "text-lg text-center text-[#00762B]";
                 } else if (choice === currentSelected && choice !== correctAnswer) {
                   // wrong answer
-                  buttonClass = "border border-[#EC9A78] rounded-full py-4 px-5 mb-4 items-center justify-center w-[48%] bg-[#FFC7D3]";
+                  buttonClass = "border border-[#EC9A78] rounded-full py-4 px-5 mb-4 items-center justify-center w-full bg-[#FFC7D3]";
                   textClass = "text-lg text-center text-[#00762B]";
                 } else {
                   // other options
-                  buttonClass = "border border-[#82FFAD] rounded-full py-4 px-5 mb-4 items-center justify-center w-[48%] bg-transparent";
+                  buttonClass = "border border-[#82FFAD] rounded-full py-4 px-5 mb-4 items-center justify-center w-full bg-transparent";
                   textClass = "text-lg text-center text-white";
                 }
               } else {
                 // before answering
-                buttonClass = "border border-[#82FFAD] rounded-full py-4 px-5 mb-4 items-center justify-center w-[48%] bg-transparent";
+                buttonClass = "border border-[#82FFAD] rounded-full py-4 px-5 mb-4 items-center justify-center w-full bg-transparent";
                 textClass = "text-lg text-center text-white";
               }
 
@@ -341,7 +341,7 @@ const Quiz = () => {
                 answeredQuestions={answeredQuestions}
               />
 
-              <View className="ml-5 mb-6">
+              <View className="ml-5">
                 <BackButton />
               </View>
 
