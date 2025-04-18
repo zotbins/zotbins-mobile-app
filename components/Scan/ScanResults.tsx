@@ -233,26 +233,4 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
   );
 };
 
-const styles = StyleSheet.create({
-  scanOverlay: {
-    position: "absolute",
-    top: 0, left: 0, right: 0, bottom: 0,
-    overflow: "hidden",
-  },
-  blurOverlay: {
-    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-  },
-  scanBar: {
-    position: "absolute",
-    left: 0,                     // span from edge
-    width: "100%",               // full width
-    height: 4,
-    backgroundColor: "rgba(255,255,255,0.8)",
-  },
-  gradient: {
-    width: "100%",
-    height: 20,
-  },
-});
-
 export default ScanResults;
