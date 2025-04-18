@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react'
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
-import { View, Text, Pressable } from 'react-native'
+import { View, Text, Pressable, Alert } from 'react-native'
 import WasteItemResult, { WasteObject } from './WasteItemResult'
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,7 +9,15 @@ interface ScanBottomSheetModalProps {
   onClose: () => void;
   wasteObjects: WasteObject[];
 }
-
+const handleScanSubmit = () => {
+  router.back();
+  Alert.alert(
+    "Scan Submitted",
+    "Your scan has been submitted successfully.",
+    [{ text: "OK" }],
+    { cancelable: false }
+  );
+}
 const ScanBottomSheetModal = forwardRef<BottomSheetModal, ScanBottomSheetModalProps>(
   ({ onClose, wasteObjects }, ref) => {
     return (
@@ -41,7 +49,7 @@ const ScanBottomSheetModal = forwardRef<BottomSheetModal, ScanBottomSheetModalPr
                     <Text className="text-darkGreen font-semibold text-md">Retake</Text>
                 </Pressable>
                 <Pressable
-                    onPress={() => {router.back()}}
+                    onPress={handleScanSubmit}
                     className="flex-row bg-brightGreen rounded-xl p-2 px-10 border border-darkGreen items-center justify-center shadow-lg"
                 >
                     <Text className="text-darkGreen font-semibold text-md -translate-x-1">Submit</Text>
