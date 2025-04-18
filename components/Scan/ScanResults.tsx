@@ -96,13 +96,15 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
 
   useEffect(() => {
     if (image) {
-      setIsScanning(true);
-      setTimeout(() => {
+      if (wasteObjects.length > 0) {
         bottomSheetRef.current?.present();
         setIsScanning(false);
-      }, 5000); // Delay to allow image to load
+      }
+      else {
+        setIsScanning(true);
+      }
     }
-  }, [image]);
+  }, [image, wasteObjects]);
 
   // animate the white scan‑bar up and down
   useEffect(() => {
@@ -161,22 +163,21 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
         type: "image/jpeg",
         data: base64Image,
       });
-
-      setWasteObjects([
-        {
-          name: "Plastic Bottle",
-          material: "Plastic",
-          category: "Recyclable",
-        },
-        {
-          name: "Aluminum Can",
-          material: "Metal",
-          category: "Recyclable",
-        }
-      ])
-
-      
-
+      setTimeout(() => {
+        
+        setWasteObjects([
+          {
+            name: "Plastic Bottle",
+            material: "Plastic",
+            category: "Recyclable",
+          },
+          {
+            name: "Aluminum Can",
+            material: "Metal",
+            category: "Recyclable",
+          }
+        ])
+    }, 2000); // Simulate a delay for the scan result
 
       /*
       fetch(`http://${process.env.EXPO_PUBLIC_IPADDRESS}:8000/classify_img`, {
