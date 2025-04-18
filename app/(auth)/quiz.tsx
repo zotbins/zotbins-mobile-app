@@ -7,6 +7,7 @@ import { getFirestore, doc, getDoc, updateDoc, increment, collection, getDocs } 
 import { getAuth } from "@react-native-firebase/auth";
 import { updateAchievementProgress, updateMissionProgress } from "@/functions/src/updateProgress";
 import RecycleIcon from "@/assets/icons/recycle.svg";
+import QuizBackground from "@/assets/icons/QuizBackground.svg";
 import ProgressBar from "@/components/Quiz/ProgressBar";
 import ArrowRightIcon from "@/assets/icons/arrow-right.svg";
 
@@ -119,48 +120,53 @@ const Quiz = () => {
     const { question, choices, correctAnswer } = questions[currentQuestionIndex];
 
     return (
-      <View className="w-full px-6 py-16 bg-[#009838] rounded-t-3xl flex-1">
-        <Text className="text-white text-3xl font-semibold mb-10 text-center">
-          {question}
-        </Text>
+      <View className="w-full flex-1 rounded-t-3xl overflow-hidden">
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#009838' }}>
+          <QuizBackground width="100%" height="100%" preserveAspectRatio="xMidYMid slice" />
+        </View>
+        <View className="w-full px-6 py-16 flex-1 z-10 mb-10">
+          <Text className="text-white text-3xl font-semibold mb-20 text-center">
+            {question}
+          </Text>
 
-        <View className="flex-row flex-wrap justify-between">
-          {choices.map((choice, index) => {
-            let buttonClass, textClass;
+          <View className="flex-row flex-wrap justify-between">
+            {choices.map((choice, index) => {
+              let buttonClass, textClass;
 
-            if (isOptionsDisabled) {
-              if (choice === correctAnswer) {
-                // correct answer
-                buttonClass = "border border-[#82FFAD] rounded-3xl py-4 px-5 mb-4 items-center justify-center w-[48%] bg-[#B4F17C]";
-                textClass = "text-lg text-center text-[#00762B]";
-              } else if (choice === currentSelected && choice !== correctAnswer) {
-                // wrong answer
-                buttonClass = "border border-[#EC9A78] rounded-3xl py-4 px-5 mb-4 items-center justify-center w-[48%] bg-[#FFC7D3]";
-                textClass = "text-lg text-center text-[#00762B]";
+              if (isOptionsDisabled) {
+                if (choice === correctAnswer) {
+                  // correct answer
+                  buttonClass = "border border-[#82FFAD] rounded-full py-4 px-5 mb-4 items-center justify-center w-[48%] bg-[#B4F17C]";
+                  textClass = "text-lg text-center text-[#00762B]";
+                } else if (choice === currentSelected && choice !== correctAnswer) {
+                  // wrong answer
+                  buttonClass = "border border-[#EC9A78] rounded-full py-4 px-5 mb-4 items-center justify-center w-[48%] bg-[#FFC7D3]";
+                  textClass = "text-lg text-center text-[#00762B]";
+                } else {
+                  // other options
+                  buttonClass = "border border-[#82FFAD] rounded-full py-4 px-5 mb-4 items-center justify-center w-[48%] bg-transparent";
+                  textClass = "text-lg text-center text-white";
+                }
               } else {
-                // other options
-                buttonClass = "border border-[#82FFAD] rounded-3xl py-4 px-5 mb-4 items-center justify-center w-[48%] bg-transparent";
-                textClass = "text-lg text-center text-white opacity-70";
+                // before answering
+                buttonClass = "border border-[#82FFAD] rounded-full py-4 px-5 mb-4 items-center justify-center w-[48%] bg-transparent";
+                textClass = "text-lg text-center text-white";
               }
-            } else {
-              // before answering
-              buttonClass = "border border-[#82FFAD] rounded-3xl py-4 px-5 mb-4 items-center justify-center w-[48%] bg-transparent";
-              textClass = "text-lg text-center text-white";
-            }
 
-            return (
-              <Pressable
-                key={`${choice}-${index}`}
-                disabled={isOptionsDisabled}
-                className={buttonClass}
-                onPress={() => checkAnswer(choice)}
-              >
-                <Text className={textClass}>
-                  {choice}
-                </Text>
-              </Pressable>
-            );
-          })}
+              return (
+                <Pressable
+                  key={`${choice}-${index}`}
+                  disabled={isOptionsDisabled}
+                  className={buttonClass}
+                  onPress={() => checkAnswer(choice)}
+                >
+                  <Text className={textClass}>
+                    {choice}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
       </View>
     );
