@@ -27,6 +27,7 @@ const Quiz = () => {
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [progress, setProgress] = useState(new Animated.Value(0));
+  const [reachedDailyLimit, setReachedDailyLimit] = useState(false);
   const progressAnim = progress.interpolate({
     inputRange: [0, questions.length],
     outputRange: ["0%", "100%"],
@@ -34,7 +35,28 @@ const Quiz = () => {
 
   const getQuestions = async () => {
     try {
+      const user = getAuth().currentUser;
+      if (!user) return;
+
+      // Check if the user has any daily questions left
       const db = getFirestore();
+      const userRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (!userDoc.exists) return;
+
+      const userData = userDoc.data();
+      const dailyQuestions = userData?.dailyQuestions || 0;
+
+      // If they've already answered 3 questions today, show limit reached
+      if (dailyQuestions >= 3) {
+        setReachedDailyLimit(true);
+        return;
+      }
+
+      // Only display as many questions as they have left for the day
+      const questionsRemaining = 3 - dailyQuestions;
+
       const querySnapshot = await getDocs(collection(db, 'questions'));
       const allQuestions: Question[] = [];
 
@@ -54,8 +76,7 @@ const Quiz = () => {
       // shuffle array
       const shuffledQuestions = allQuestions.sort(() => Math.random() - 0.5);
 
-      // select the first 5 random questions
-      const randomQuestions = shuffledQuestions.slice(0, 3);
+      const randomQuestions = shuffledQuestions.slice(0, questionsRemaining);
 
       setQuestions(randomQuestions);
     } catch (error) {
@@ -134,25 +155,31 @@ const Quiz = () => {
     setCurrentSelected(selected);
     setAnswer(answer);
     setIsOptionsDisabled(true);
-    if (selected == answer) {
-      setScore(score + 1);
 
-      // award points for correct answers
-      const user = getAuth().currentUser;
-      if (user) {
-        try {
-          const db = getFirestore();
-          const userRef = doc(db, 'users', user.uid);
+    const user = getAuth().currentUser;
+    if (user) {
+      try {
+        const db = getFirestore();
+        const userRef = doc(db, 'users', user.uid);
 
+        // Increment the dailyQuestions counter when a question is answered
+        await updateDoc(userRef, {
+          dailyQuestions: increment(1)
+        });
+
+        if (selected == answer) {
+          setScore(score + 1);
+
+          // award points for correct answers
           await updateDoc(userRef, {
             totalPoints: increment(1),
           });
           await updateAchievementProgress("points", 1);
           await updateMissionProgress("points", 1);
           console.log("Added points to totalPoints.");
-        } catch (error) {
-          console.error("Error updating totalPoints:", error);
         }
+      } catch (error) {
+        console.error("Error updating totalPoints:", error);
       }
     }
   };
@@ -244,16 +271,11 @@ const Quiz = () => {
         }}
       />
       <View className="pt-32 flex-1 bg-white px-5 py-12">
-        {!showResults && displayProgress()}
-        {!showResults && displayQuestion()}
-        {!showResults && displayOptions()}
-        {!showResults && showNextButton()}
-
-        {showResults && (
+        {reachedDailyLimit ? (
           <View>
-            <Text className="text-5xl text-black text-center pb-2">Results</Text>
-            <Text className="text-3xl text-black text-center">
-              {score} / {questions.length}
+            <Text className="text-5xl text-black text-center pb-2">Daily Limit Reached</Text>
+            <Text className="text-xl text-black text-center pb-8">
+              You've already answered 3 questions today. Come back tomorrow for more!
             </Text>
             <View className="pt-10 flex items-center justify-center">
               <Link href="/home" asChild>
@@ -263,6 +285,29 @@ const Quiz = () => {
               </Link>
             </View>
           </View>
+        ) : (
+          <>
+            {!showResults && displayProgress()}
+            {!showResults && displayQuestion()}
+            {!showResults && displayOptions()}
+            {!showResults && showNextButton()}
+
+            {showResults && (
+              <View>
+                <Text className="text-5xl text-black text-center pb-2">Results</Text>
+                <Text className="text-3xl text-black text-center">
+                  {score} / 3
+                </Text>
+                <View className="pt-10 flex items-center justify-center">
+                  <Link href="/home" asChild>
+                    <Pressable className="w-11/12 items-center justify-center py-5 px-8 rounded-xl bg-tintColor active:opacity-50">
+                      <Text className="text-white text-xl">Back to Home</Text>
+                    </Pressable>
+                  </Link>
+                </View>
+              </View>
+            )}
+          </>
         )}
       </View>
     </>
