@@ -67,6 +67,9 @@ const Home = () => {
     const dailyScans = userData?.dailyScans || 0;
     setScans(3 - dailyScans);
 
+    // tracks how many questions the user has answered
+    const dailyQuestions = userData?.dailyQuestions || 0;
+
     const username = userData?.username || user?.displayName || "User";
     setUsername(username);
     if (hoursDiff >= 24 && hoursDiff < 48) {
@@ -74,6 +77,9 @@ const Home = () => {
       await populateMissions(uid);
       const updatePayload: any = {
         dailyScans: 0,
+        dailyQuestions: 0,
+        prevResults: [],
+        prevQuestions:userData?.prevQuestions || [],
         lastLoginUpdate: now.getTime(),
         xp: increment(5),
       };
@@ -89,6 +95,9 @@ const Home = () => {
       await updateDoc(userRef, {
         dailyStreak: 0,
         dailyScans: 0,
+        dailyQuestions: 0,
+        prevResults: [],
+        prevQuestions:userData?.prevQuestions || [],
         lastLoginUpdate: now.getTime(),
         xp: increment(5)
       });

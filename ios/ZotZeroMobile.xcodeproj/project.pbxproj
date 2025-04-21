@@ -10,33 +10,33 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		26A0C65678234C7DB1C0420E /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369CCCB8908C4599A9215E5C /* noop-file.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		52E061C54443DCC596A5D840 /* Pods_ZotZeroMobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91BB29071A927759EB19CECB /* Pods_ZotZeroMobile.framework */; };
-		5D3D3AF9ABB2415EAA10740D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0CE2BE3323AC4322AC901B05 /* GoogleService-Info.plist */; };
-		77482369EB4352D86FFB2074 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F2369F9B5E3F70B8088C44D2 /* PrivacyInfo.xcprivacy */; };
+		64D2245E39DA436497C57399 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0382CFCB034D90A9D1524F /* noop-file.swift */; };
+		83A87E64F633488C9770FA74 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 312BEA035E604CA791CCC113 /* GoogleService-Info.plist */; };
+		8CBB419F5019CA597ED219D0 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FC2C43A87C4182F03CFC6F6D /* PrivacyInfo.xcprivacy */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		F85CCE051E53AA81EC6BCFB2 /* Pods_ZotZeroMobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D706723914692210565D114E /* Pods_ZotZeroMobile.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0CE2BE3323AC4322AC901B05 /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "ZotZeroMobile/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* ZotZeroMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZotZeroMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ZotZeroMobile/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = ZotZeroMobile/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ZotZeroMobile/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ZotZeroMobile/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ZotZeroMobile/main.m; sourceTree = "<group>"; };
-		369CCCB8908C4599A9215E5C /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "ZotZeroMobile/noop-file.swift"; sourceTree = "<group>"; };
+		2D0E3D307BDB4F8CB449CBA5 /* ZotZeroMobile-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "ZotZeroMobile-Bridging-Header.h"; path = "ZotZeroMobile/ZotZeroMobile-Bridging-Header.h"; sourceTree = "<group>"; };
+		312BEA035E604CA791CCC113 /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "ZotZeroMobile/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6C2E3173556A471DD304B334 /* Pods-ZotZeroMobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZotZeroMobile.debug.xcconfig"; path = "Target Support Files/Pods-ZotZeroMobile/Pods-ZotZeroMobile.debug.xcconfig"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-ZotZeroMobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZotZeroMobile.release.xcconfig"; path = "Target Support Files/Pods-ZotZeroMobile/Pods-ZotZeroMobile.release.xcconfig"; sourceTree = "<group>"; };
-		8033D40B23DA470E9E5B9FEE /* ZotZeroMobile-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "ZotZeroMobile-Bridging-Header.h"; path = "ZotZeroMobile/ZotZeroMobile-Bridging-Header.h"; sourceTree = "<group>"; };
-		91BB29071A927759EB19CECB /* Pods_ZotZeroMobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ZotZeroMobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8E0382CFCB034D90A9D1524F /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "ZotZeroMobile/noop-file.swift"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = ZotZeroMobile/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		D706723914692210565D114E /* Pods_ZotZeroMobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ZotZeroMobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F2369F9B5E3F70B8088C44D2 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = ZotZeroMobile/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-ZotZeroMobile/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		FC2C43A87C4182F03CFC6F6D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = ZotZeroMobile/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,7 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				52E061C54443DCC596A5D840 /* Pods_ZotZeroMobile.framework in Frameworks */,
+				F85CCE051E53AA81EC6BCFB2 /* Pods_ZotZeroMobile.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,10 +61,10 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				0CE2BE3323AC4322AC901B05 /* GoogleService-Info.plist */,
-				369CCCB8908C4599A9215E5C /* noop-file.swift */,
-				8033D40B23DA470E9E5B9FEE /* ZotZeroMobile-Bridging-Header.h */,
-				F2369F9B5E3F70B8088C44D2 /* PrivacyInfo.xcprivacy */,
+				312BEA035E604CA791CCC113 /* GoogleService-Info.plist */,
+				8E0382CFCB034D90A9D1524F /* noop-file.swift */,
+				2D0E3D307BDB4F8CB449CBA5 /* ZotZeroMobile-Bridging-Header.h */,
+				FC2C43A87C4182F03CFC6F6D /* PrivacyInfo.xcprivacy */,
 			);
 			name = ZotZeroMobile;
 			sourceTree = "<group>";
@@ -73,7 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				91BB29071A927759EB19CECB /* Pods_ZotZeroMobile.framework */,
+				D706723914692210565D114E /* Pods_ZotZeroMobile.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -150,14 +150,14 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ZotZeroMobile" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				E93468FFB4720DE3ECFF980F /* [Expo] Configure project */,
+				EEAE71D9338D3F01FAFD86BC /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				5C0EAA3F3D3EC26FCE500DCE /* [CP] Embed Pods Frameworks */,
-				6768D78465F8027F2D75B399 /* [CP-User] [RNFB] Core Configuration */,
+				CDF468E158C718443436A90F /* [CP] Embed Pods Frameworks */,
+				480A4310C3AA708A0F285A69 /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
 			);
@@ -207,8 +207,8 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				5D3D3AF9ABB2415EAA10740D /* GoogleService-Info.plist in Resources */,
-				77482369EB4352D86FFB2074 /* PrivacyInfo.xcprivacy in Resources */,
+				83A87E64F633488C9770FA74 /* GoogleService-Info.plist in Resources */,
+				8CBB419F5019CA597ED219D0 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,31 +252,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5C0EAA3F3D3EC26FCE500DCE /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ZotZeroMobile/Pods-ZotZeroMobile-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/MapboxCommon/MapboxCommon.framework/MapboxCommon",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/MapboxCoreMaps/MapboxCoreMaps.framework/MapboxCoreMaps",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/MapboxMobileEvents/MapboxMobileEvents.framework/MapboxMobileEvents",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxCommon.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxCoreMaps.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxMobileEvents.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ZotZeroMobile/Pods-ZotZeroMobile-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		6768D78465F8027F2D75B399 /* [CP-User] [RNFB] Core Configuration */ = {
+		480A4310C3AA708A0F285A69 /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -405,7 +381,31 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ZotZeroMobile/Pods-ZotZeroMobile-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E93468FFB4720DE3ECFF980F /* [Expo] Configure project */ = {
+		CDF468E158C718443436A90F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ZotZeroMobile/Pods-ZotZeroMobile-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/MapboxCommon/MapboxCommon.framework/MapboxCommon",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/MapboxCoreMaps/MapboxCoreMaps.framework/MapboxCoreMaps",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/MapboxMobileEvents/MapboxMobileEvents.framework/MapboxMobileEvents",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxCommon.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxCoreMaps.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxMobileEvents.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ZotZeroMobile/Pods-ZotZeroMobile-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EEAE71D9338D3F01FAFD86BC /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -434,7 +434,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				26A0C65678234C7DB1C0420E /* noop-file.swift in Sources */,
+				64D2245E39DA436497C57399 /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
