@@ -3,7 +3,7 @@ import { Link, Stack, useRouter } from "expo-router";
 import React, { useState, useEffect } from "react";
 import { Animated, Pressable, Text, View } from "react-native";
 import data from "../../data/QuizData.js";
-import { getFirestore, doc, getDoc, updateDoc, increment, collection, getDocs } from "@react-native-firebase/firestore";
+import { getFirestore, doc, getDoc, updateDoc, increment, collection, getDocs, arrayUnion } from "@react-native-firebase/firestore";
 import { getAuth } from "@react-native-firebase/auth";
 import { updateAchievementProgress, updateMissionProgress } from "@/functions/src/updateProgress";
 import RecycleIcon from "@/assets/icons/recycle.svg";
@@ -39,6 +39,7 @@ const Quiz = () => {
   const [progress, setProgress] = useState(new Animated.Value(0));
   const [reachedDailyLimit, setReachedDailyLimit] = useState(false);
   const [answeredQuestions, setAnsweredQuestions] = useState<AnsweredQuestion[]>([]);
+  const [prevAnswers, setPrevAnswers] = useState<boolean[]>([]);
   const progressAnim = progress.interpolate({
     inputRange: [0, questions.length],
     outputRange: ["0%", "100%"],
@@ -58,7 +59,9 @@ const Quiz = () => {
 
       const userData = userDoc.data();
       const dailyQuestions = userData?.dailyQuestions || 0;
-
+      const prevQuestions = userData?.prevQuestions || [];
+      const prevResults = Array.isArray(userData?.prevResults) ? userData.prevResults : [];
+      setPrevAnswers(prevResults);
       // If they've already answered 3 questions today, show limit reached
       if (dailyQuestions >= 3) {
         setReachedDailyLimit(true);
@@ -84,12 +87,23 @@ const Quiz = () => {
         });
       });
 
+      const filteredQuestions = allQuestions.filter((question) => {
+        return !prevQuestions.includes(question.id);
+      });
       // shuffle array
-      const shuffledQuestions = allQuestions.sort(() => Math.random() - 0.5);
+      const shuffledQuestions = filteredQuestions.sort(() => Math.random() - 0.5);
 
       const randomQuestions = shuffledQuestions.slice(0, questionsRemaining);
 
       setQuestions(randomQuestions);
+      if (dailyQuestions > 0) {
+        const answeredQuestions = prevResults.map((question, index) => ({
+          index,
+          correct: prevResults[index] || null,
+        }));
+        setAnsweredQuestions(answeredQuestions);
+      }
+
     } catch (error) {
       console.error('Error fetching questions:', error);
     }
@@ -184,7 +198,7 @@ const Quiz = () => {
     const isCorrect = selected === answer;
     setAnsweredQuestions([
       ...answeredQuestions,
-      { index: currentQuestionIndex, correct: isCorrect }
+      { index: prevAnswers.length, correct: isCorrect }
     ]);
 
     const user = getAuth().currentUser;
@@ -192,10 +206,16 @@ const Quiz = () => {
       try {
         const db = getFirestore();
         const userRef = doc(db, 'users', user.uid);
-
+        const userDoc = await getDoc(userRef);
+        if (!userDoc.exists) return;
+        const userData = userDoc.data();
+        const newPrevResults = [...prevAnswers, isCorrect];
+        setPrevAnswers(newPrevResults);
         // Increment the dailyQuestions counter when a question is answered
         await updateDoc(userRef, {
-          dailyQuestions: increment(1)
+          dailyQuestions: increment(1),
+          prevQuestions: arrayUnion(questions[currentQuestionIndex].id),
+          prevResults: newPrevResults,
         });
 
         if (isCorrect) {

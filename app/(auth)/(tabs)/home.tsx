@@ -78,6 +78,8 @@ const Home = () => {
       const updatePayload: any = {
         dailyScans: 0,
         dailyQuestions: 0,
+        prevResults: [],
+        prevQuestions:userData?.prevQuestions || [],
         lastLoginUpdate: now.getTime(),
         xp: increment(5),
       };
@@ -94,6 +96,8 @@ const Home = () => {
         dailyStreak: 0,
         dailyScans: 0,
         dailyQuestions: 0,
+        prevResults: [],
+        prevQuestions:userData?.prevQuestions || [],
         lastLoginUpdate: now.getTime(),
         xp: increment(5)
       });
