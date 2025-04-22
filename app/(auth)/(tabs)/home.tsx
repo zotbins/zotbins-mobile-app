@@ -4,6 +4,7 @@ import { Link, Stack } from "expo-router";
 import Header from "@/components/Reusables/Header";
 import { getFirestore, writeBatch, getDoc, getDocs, doc, collection, query, where, increment, updateDoc, serverTimestamp } from "@react-native-firebase/firestore";
 import { getAuth } from "@react-native-firebase/auth";
+import { useUserContext } from "@/context/UserProvider";
 import { updateAchievementProgress } from "@/functions/src/updateProgress";
 import { LinearGradient } from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -36,12 +37,21 @@ async function populateMissions(uid: string) {
 }
 
 const Home = () => {
+  const { userDoc } = useUserContext();
   const user = getAuth().currentUser;
 
   const [streak, setStreak] = useState(0);
   const [level, setLevel] = useState(1);
   const [scans, setScans] = useState(3); // Assuming you want to set the initial scans to 5
   const [username, setUsername] = useState("");
+
+  // temp test to see if user info is being populated
+  useEffect(() => {
+    if (userDoc) {
+      console.log("Live User Document Update:", userDoc);
+    }
+  }, [userDoc]);
+
   //checking streak within home in case we want a modal to pop up
   const initUserHome = async (uid: any) => {
     if (!uid) return;
