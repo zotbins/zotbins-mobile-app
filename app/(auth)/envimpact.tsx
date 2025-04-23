@@ -1,6 +1,7 @@
 import BackButton from "@/components/Reusables/BackButton";
 import CO2SavedCard from "@/components/EnvImpact/CO2SavedCard";
 import WasteTypeCard from "@/components/EnvImpact/WasteTypeCard";
+import MaterialTypeDisplay from "@/components/EnvImpact/MaterialTypeDisplay";
 import { Stack } from "expo-router";
 import React, { useState, useEffect } from "react";
 import { Alert, SafeAreaView, View, Text, Pressable, ScrollView } from "react-native";
@@ -104,6 +105,28 @@ const envimpact = () => {
     return `${co2Saved}g`;
   };
 
+  // calculate materials breakdown
+  const calculateMaterials = () => {
+    if (!userDoc) return [];
+    
+    const recyclableScanned = userDoc.recyclableScanned || 0;
+    
+    return [
+      {
+        label: "Plastics",
+        count: Math.floor(recyclableScanned * 0.6)
+      },
+      {
+        label: "Metals",
+        count: Math.floor(recyclableScanned * 0.3)
+      },
+      {
+        label: "Cardboard",
+        count: Math.floor(recyclableScanned * 0.1)
+      }
+    ];
+  };
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
@@ -151,42 +174,8 @@ const envimpact = () => {
             <WasteTypeCard count={userDoc?.landfillScanned || 0} type="Landfill" />
           </View>
 
-          <View>
-            <Text className="text-lg text-center mb-8">
-              for a total of {calculateTotalPoints()} points earned!
-            </Text>
-          </View>
-
-          <View className="bg-tintColor rounded-3xl mx-5 mb-10 p-5">
-            <Text className="text-3xl text-center font-bold py-6">Materials</Text>
-
-            <View className="flex-row items-center pb-10 ml-12">
-              <Ionicons name="fast-food-outline" size={70} color="green" />
-              <Text className="text-xl">
-                {" "}
-                {Math.floor((userDoc?.recyclableScanned || 0) * 0.6)} pieces of
-                plastic
-              </Text>
-            </View>
-
-            <View className="flex-row items-center pb-10 ml-12">
-              <Ionicons name="bus" size={70} color="green" />
-              <Text className="text-xl">
-                {" "}
-                {Math.floor((userDoc?.recyclableScanned || 0) * 0.3)} pieces
-                metals
-              </Text>
-            </View>
-
-            <View className="flex-row items-center pb-10 ml-12">
-              <Ionicons name="earth" size={70} color="green" />
-              <Text className="text-xl">
-                {" "}
-                {Math.floor((userDoc?.recyclableScanned || 0) * 0.1)} pieces of
-                cardboard
-              </Text>
-            </View>
-          </View>
+          <MaterialTypeDisplay materials={calculateMaterials()} />
+          
         </SafeAreaView>
       </ScrollView>
     </LinearGradient>
