@@ -229,6 +229,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
               setImage(null);
             }}
             wasteObjects={wasteObjects}
+            image={image}
           />
       </BottomSheetModalProvider>
   );
