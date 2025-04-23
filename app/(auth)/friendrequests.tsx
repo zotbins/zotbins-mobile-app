@@ -22,10 +22,10 @@ const FriendRequests = () => {
         }}
       />
       <SafeAreaView className="flex-row mb-5">
-        <View className="flex items-center py-1 flex-row shadow-md mt-2 bg-green-100 rounded-lg border border-green-200 mx-5 w-11/12">
+        <View className="flex items-center py-1 flex-row shadow-sm mt-2 bg-green-100 rounded-xl border border-green-200 mx-5 w-11/12">
           {/* sent requests tabs */}
         <Pressable
-        className={`flex-1 mx-2 rounded-md py-1 ${activeTab === "sent" ? "bg-brightGreen2 " : ""}`}
+        className={`flex-1 mx-2 rounded-xl py-1 ${activeTab === "sent" ? "bg-brightGreen2" : ""}`}
           onPress={() => setActiveTab("sent")}
         >
           <Text
@@ -40,7 +40,7 @@ const FriendRequests = () => {
 
         {/* received requests tab */}
         <Pressable
-          className={`flex-1 mx-2 rounded-md py-1 ${activeTab === "received" ? "bg-brightGreen2 " : ""}`}
+          className={`flex-1 mx-2 rounded-xl py-1 ${activeTab === "received" ? "bg-brightGreen2 " : ""}`}
           onPress={() => setActiveTab("received")}
         >
           <Text

@@ -51,7 +51,7 @@ const Profile = () => {
   const [userDoc, setUserDoc] = useState<any>(null);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [friendListSize, setFriendListSize] = useState(0);
-  const [friendProfileImages, setFriendProfileImages] = useState<FriendProfile[]>([]);
+  const [friendProfileImages, setFriendProfileImages] = useState<[]>([]);
 
   // on user change, fetch user document from firestore
   useEffect(() => {
