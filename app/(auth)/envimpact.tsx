@@ -1,5 +1,6 @@
 import BackButton from "@/components/Reusables/BackButton";
 import CO2SavedCard from "@/components/EnvImpact/CO2SavedCard";
+import WasteTypeCard from "@/components/EnvImpact/WasteTypeCard";
 import { Stack } from "expo-router";
 import React, { useState, useEffect } from "react";
 import { Alert, SafeAreaView, View, Text, Pressable, ScrollView } from "react-native";
@@ -106,6 +107,15 @@ const envimpact = () => {
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
+         <Stack.Screen
+        options={{
+          headerShadowVisible: false,
+          headerBackVisible: false,
+          headerTransparent: true,
+          headerLeft: () => <BackButton />,
+          headerTitle: "",
+        }}
+      />
         <Text>Loading...</Text>
       </View>
     );
@@ -126,7 +136,7 @@ const envimpact = () => {
         }}
       />
       <ScrollView>
-        <SafeAreaView className="px-6 pt-24 mt-8 justify-center flex-1 bg-lightBackground">
+        <SafeAreaView className="px-6 pt-24 mt-8 justify-center flex-1">
           <Text className="text-4xl font-bold text-darkGreen">
             Your Impact
           </Text>
@@ -135,42 +145,10 @@ const envimpact = () => {
             <CO2SavedCard co2Saved={calculateCO2Saved()} />
           </View>
 
-          <View className="flex-row justify-center mb-5">
-            {/* carbon footprint stats*/}
-            <View className="flex items-center justify-center mx-10">
-              <Text className="text-5xl font-bold">{calculateCO2Saved()}</Text>
-              <Text className="">CO2 saved!</Text>
-            </View>
-
-            {/* vertical divider */}
-            <View className="w-px h-5/6 bg-gray-300 self-center"></View>
-
-            {/* scanned, landfill, recycle, compost stats*/}
-            <View className="mx-10 flex">
-              <Text className="text-2xl mt-3 font-bold">
-                {userDoc?.landfillScanned || 0} items
-              </Text>
-              <View className="flex-row">
-                <Ionicons name="trash-outline" size={23} color="green" />
-                <Text className="text-lg"> discarded</Text>
-              </View>
-
-              <Text className="text-2xl mt-3 font-bold">
-                {userDoc?.recyclableScanned || 0} items
-              </Text>
-              <View className="flex-row">
-                <Ionicons name="refresh" size={23} color="green" />
-                <Text className="text-lg"> recycled</Text>
-              </View>
-
-              <Text className="text-2xl mt-3 font-bold">
-                {userDoc?.compostScanned || 0} items
-              </Text>
-              <View className="flex-row">
-                <Ionicons name="leaf-outline" size={23} color="green" />
-                <Text className="text-lg"> composted</Text>
-              </View>
-            </View>
+          <View className="flex-row justify-center flex-wrap my-8 gap-4">
+            <WasteTypeCard count={userDoc?.recyclableScanned || 0} type="Recycled" />
+            <WasteTypeCard count={userDoc?.compostScanned || 0} type="Composted" />
+            <WasteTypeCard count={userDoc?.landfillScanned || 0} type="Landfill" />
           </View>
 
           <View>

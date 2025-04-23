@@ -9,7 +9,7 @@ interface CO2SavedCardProps {
 const CO2SavedCard: React.FC<CO2SavedCardProps> = ({ co2Saved }) => {
   return (
     <View className="bg-primaryGreen rounded-2xl p-1">
-      <View className="bg-lightBackground rounded-xl p-5 flex-row items-center justify-center">
+      <View className="bg-white rounded-xl p-5 flex-row items-center justify-center">
         <MaterialCommunityIcons name="tree-outline" size={36} color="#48BB78" className="mr-2" />
         <Text className="text-4xl text-center font-bold text-primaryGreen">
           {co2Saved}
