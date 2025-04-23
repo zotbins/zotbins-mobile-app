@@ -29,7 +29,7 @@ import StreakIcon from "@/components/Profile/streakIcon.svg";
 import StatusBar from "@/components/Profile/statusBar.svg";
 import FriendsIcon from "@/components/Profile/friendsIcon.svg";
 import Achievements from "../achievements";
-import EnvImpactPreview from "../envImpactPreview";
+import EnvImpactPreview from "@/components/Reusables/EnvImpactPreview";
 
 const Profile = () => {
   const router = useRouter();
