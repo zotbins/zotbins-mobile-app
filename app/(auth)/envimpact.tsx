@@ -1,5 +1,5 @@
 import BackButton from "@/components/Reusables/BackButton";
-import { CO2SavedCard } from "@/components/EnvImpact";
+import CO2SavedCard from "@/components/EnvImpact/CO2SavedCard";
 import { Stack } from "expo-router";
 import React, { useState, useEffect } from "react";
 import { Alert, SafeAreaView, View, Text, Pressable, ScrollView } from "react-native";
