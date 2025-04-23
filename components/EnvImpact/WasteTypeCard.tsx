@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { FontAwesome5, Feather, Ionicons } from "@expo/vector-icons";
+import PlantIcon from "@/assets/icons/plant.svg";
 
 interface ItemTypeCardProps {
   count: number;
@@ -42,13 +43,13 @@ const WasteTypeCard: React.FC<ItemTypeCardProps> = ({ count, type }) => {
       </Text>
       <View className="bg-white rounded-xl p-4 flex-row items-center justify-center">
         {iconType === "ionicons" ? (
-          <Ionicons name={icon} size={30} color="#48BB78" className="mr-2" />
+          <PlantIcon size={30} color="#48BB78" />
         ) : iconType === "fontawesome5" ? (
-          <FontAwesome5 name={icon} size={24} color="#48BB78" className="mr-2" />
+          <FontAwesome5 name={icon} size={24} color="#48BB78" />
         ) : (
-          <Feather name={icon} size={24} color="#48BB78" className="mr-2" />
+          <Feather name={icon} size={24} color="#48BB78" />
         )}
-        <Text className="text-3xl text-center font-bold text-primaryGreen">
+        <Text className="text-3xl text-center font-bold text-primaryGreen ml-2">
           {count}
         </Text>
       </View>

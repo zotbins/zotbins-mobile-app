@@ -11,6 +11,7 @@ import storage from "@react-native-firebase/storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { LinearGradient } from "react-native-linear-gradient";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import PlantIcon from "@/assets/icons/plant.svg";
 
 const envimpact = () => {
   const user = getAuth().currentUser;
