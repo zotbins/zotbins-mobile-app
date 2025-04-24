@@ -6,7 +6,7 @@ const XPBar = ({ xp, requiredXP }: { xp: number; requiredXP: number }) => {
   const progress = Math.min(xp / requiredXP, 1) * 100;
 
   return (
-    <View className="relative w-full h-3 bg-white border border-mediumGreen rounded-full overflow-hidden">
+    <View className="w-[110px] h-[8px] bg-white border-[0.8px] border-mediumGreen rounded-full overflow-hidden">
       {/* main green filling part */}
       <View
         style={{ width: `${progress}%` }}
