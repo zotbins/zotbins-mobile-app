@@ -41,8 +41,6 @@ const Profile = () => {
   const requiredXP = 50 * level;
   const streak = userDoc?.dailyStreak ?? 0;
   const spiritTrash = userDoc?.spiritTrash ?? 0;
-  // take the minimum to ensure xp progress does not exceed 100% when rendering progress bar
-  const progress = Math.min(xp / requiredXP, 1);
 
   // set profile picture to user's photoURL or placeholder image
   const [profilePic, setProfilePic] = useState<string | ImageSourcePropType>(
