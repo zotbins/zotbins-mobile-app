@@ -1,5 +1,4 @@
-import { getAuth } from "@react-native-firebase/auth";
-import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
+import { useUserContext } from "@/context/UserProvider"
 import {
   getStorage,
   ref,
@@ -28,13 +27,21 @@ import SpiritIcon from "@/components/Profile/spiritIcon.svg";
 import StreakIcon from "@/components/Profile/streakIcon.svg";
 import StatusBar from "@/components/Profile/statusBar.svg";
 import FriendsIcon from "@/components/Profile/friendsIcon.svg";
+import XPBar from "@/components/Profile/XPBar";
 import Achievements from "../achievements";
 import EnvImpactPreview from "@/components/Reusables/EnvImpactPreview";
 
 const Profile = () => {
   const router = useRouter();
+  const { user, userDoc } = useUserContext();
+  
+  // user document data
+  const level = userDoc?.level ?? 1;
+  const xp = userDoc?.xp ?? 0;
+  const requiredXP = 50 * level;
+  const streak = userDoc?.dailyStreak ?? 0;
+  const spiritTrash = userDoc?.spiritTrash ?? 0;
 
-  const user = getAuth().currentUser;
   // set profile picture to user's photoURL or placeholder image
   const [profilePic, setProfilePic] = useState<string | ImageSourcePropType>(
     user?.photoURL || require("@/assets/images/default_profile_picture.png")
@@ -46,34 +53,6 @@ const Profile = () => {
     }
     return source;
   };
-
-  const [userDoc, setUserDoc] = useState<any>(null);
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
-
-  // on user change, fetch user document from firestore
-  useEffect(() => {
-    const fetchUserDoc = async () => {
-      const uid = user?.uid;
-      if (!uid) {
-        return;
-      }
-
-      try {
-        const db = getFirestore();
-        const userDocRef = doc(db, "users", uid);
-        const userDocSnap = await getDoc(userDocRef);
-        if (!userDocSnap.exists) {
-          throw new Error("User document does not exist");
-        }
-        setUserDoc(userDocSnap.data());
-      } catch (error) {
-        console.error("Error fetching user document: ", error);
-        Alert.alert("Error", "Failed to fetch user document");
-      }
-    };
-
-    fetchUserDoc();
-  });
 
   // request permission to access camera roll
   const requestPermission = async () => {
@@ -177,25 +156,26 @@ const Profile = () => {
                     <View className="flex flex-col items-center w-1/4 pl-4">
                       <SpiritIcon />
                       <Text className="font-medium text-xs text-mediumGreen text-center">
-                        {userDoc?.spiritTrash}
+                        {spiritTrash}
                       </Text>
                     </View>
 
                     <View className="flex flex-col items-center w-2/4 gap-y-1">
                       <Text className="font-semibold text-mediumGreen">
-                        Level 4
+                        Level {level}
                       </Text>
-                      <StatusBar />
+
+                      <XPBar xp={xp} requiredXP={requiredXP} />
 
                       <Text className="text-[9px] text-center text-mediumGreen font-light">
-                        20/100 XP to reach Level 5
+                        {xp}/{requiredXP} XP to reach Level {level + 1}
                       </Text>
                     </View>
 
                     <View className="flex flex-col items-center w-1/4">
                       <View className="flex flex-row items-center gap-x-1">
                         <Text className="text-mediumGreen font-light text-sm">
-                          16
+                          {streak}
                         </Text>
                         <StreakIcon />
                       </View>
