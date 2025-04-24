@@ -13,4 +13,6 @@ const XPBar = ({ xp, requiredXP }: { xp: number; requiredXP: number }) => {
       </View>
     );
   };
+
+export default XPBar;
   

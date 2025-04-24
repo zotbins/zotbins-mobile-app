@@ -27,6 +27,7 @@ import SpiritIcon from "@/components/Profile/spiritIcon.svg";
 import StreakIcon from "@/components/Profile/streakIcon.svg";
 import StatusBar from "@/components/Profile/statusBar.svg";
 import FriendsIcon from "@/components/Profile/friendsIcon.svg";
+import XPBar from "@/components/Profile/XPBar";
 import Achievements from "../achievements";
 import EnvImpactPreview from "../envImpactPreview";
 
@@ -166,12 +167,7 @@ const Profile = () => {
                         Level {level}
                       </Text>
 
-                    <View className="w-full h-2 bg-gray-300 rounded-full overflow-hidden">
-                      <View
-                        style={{ width: `${progress * 100}%` }}
-                        className="h-full bg-primaryGreen rounded-full"
-                      />
-                    </View>
+                      <XPBar xp={xp} requiredXP={requiredXP} />
 
                       <Text className="text-[9px] text-center text-mediumGreen font-light">
                         {xp}/{requiredXP} XP to reach Level {level + 1}
