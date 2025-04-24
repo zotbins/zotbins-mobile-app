@@ -1,5 +1,4 @@
-import { getAuth } from "@react-native-firebase/auth";
-import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
+import { useUserContext } from "@/context/UserProvider"
 import {
   getStorage,
   ref,
@@ -33,8 +32,8 @@ import EnvImpactPreview from "../envImpactPreview";
 
 const Profile = () => {
   const router = useRouter();
+  const { user, userDoc } = useUserContext();
 
-  const user = getAuth().currentUser;
   // set profile picture to user's photoURL or placeholder image
   const [profilePic, setProfilePic] = useState<string | ImageSourcePropType>(
     user?.photoURL || require("@/assets/images/default_profile_picture.png")
@@ -46,34 +45,6 @@ const Profile = () => {
     }
     return source;
   };
-
-  const [userDoc, setUserDoc] = useState<any>(null);
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
-
-  // on user change, fetch user document from firestore
-  useEffect(() => {
-    const fetchUserDoc = async () => {
-      const uid = user?.uid;
-      if (!uid) {
-        return;
-      }
-
-      try {
-        const db = getFirestore();
-        const userDocRef = doc(db, "users", uid);
-        const userDocSnap = await getDoc(userDocRef);
-        if (!userDocSnap.exists) {
-          throw new Error("User document does not exist");
-        }
-        setUserDoc(userDocSnap.data());
-      } catch (error) {
-        console.error("Error fetching user document: ", error);
-        Alert.alert("Error", "Failed to fetch user document");
-      }
-    };
-
-    fetchUserDoc();
-  });
 
   // request permission to access camera roll
   const requestPermission = async () => {
@@ -183,7 +154,7 @@ const Profile = () => {
 
                     <View className="flex flex-col items-center w-2/4 gap-y-1">
                       <Text className="font-semibold text-mediumGreen">
-                        Level 4
+                        Level {userDoc?.level ?? "N/A"}
                       </Text>
                       <StatusBar />
 
@@ -195,7 +166,7 @@ const Profile = () => {
                     <View className="flex flex-col items-center w-1/4">
                       <View className="flex flex-row items-center gap-x-1">
                         <Text className="text-mediumGreen font-light text-sm">
-                          16
+                          {userDoc?.dailyStreak ?? 0}
                         </Text>
                         <StreakIcon />
                       </View>
