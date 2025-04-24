@@ -33,6 +33,12 @@ import EnvImpactPreview from "../envImpactPreview";
 const Profile = () => {
   const router = useRouter();
   const { user, userDoc } = useUserContext();
+  
+  const level = userDoc?.level ?? 1;
+  const xp = userDoc?.xp ?? 0;
+  const requiredXP = 50 * level;
+  const streak = userDoc?.dailyStreak ?? 0;
+  const spiritTrash = userDoc?.spiritTrash ?? 0;
 
   // set profile picture to user's photoURL or placeholder image
   const [profilePic, setProfilePic] = useState<string | ImageSourcePropType>(
@@ -148,25 +154,25 @@ const Profile = () => {
                     <View className="flex flex-col items-center w-1/4 pl-4">
                       <SpiritIcon />
                       <Text className="font-medium text-xs text-mediumGreen text-center">
-                        {userDoc?.spiritTrash}
+                        {spiritTrash}
                       </Text>
                     </View>
 
                     <View className="flex flex-col items-center w-2/4 gap-y-1">
                       <Text className="font-semibold text-mediumGreen">
-                        Level {userDoc?.level ?? "N/A"}
+                        Level {level}
                       </Text>
                       <StatusBar />
 
                       <Text className="text-[9px] text-center text-mediumGreen font-light">
-                        20/100 XP to reach Level 5
+                        {xp}/{requiredXP} XP to reach Level {level + 1}
                       </Text>
                     </View>
 
                     <View className="flex flex-col items-center w-1/4">
                       <View className="flex flex-row items-center gap-x-1">
                         <Text className="text-mediumGreen font-light text-sm">
-                          {userDoc?.dailyStreak ?? 0}
+                          {streak}
                         </Text>
                         <StreakIcon />
                       </View>
