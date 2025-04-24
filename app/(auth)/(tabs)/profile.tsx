@@ -34,11 +34,14 @@ const Profile = () => {
   const router = useRouter();
   const { user, userDoc } = useUserContext();
   
+  // user document data
   const level = userDoc?.level ?? 1;
   const xp = userDoc?.xp ?? 0;
   const requiredXP = 50 * level;
   const streak = userDoc?.dailyStreak ?? 0;
   const spiritTrash = userDoc?.spiritTrash ?? 0;
+  // take the minimum to ensure xp progress does not exceed 100% when rendering progress bar
+  const progress = Math.min(xp / requiredXP, 1);
 
   // set profile picture to user's photoURL or placeholder image
   const [profilePic, setProfilePic] = useState<string | ImageSourcePropType>(
@@ -162,7 +165,13 @@ const Profile = () => {
                       <Text className="font-semibold text-mediumGreen">
                         Level {level}
                       </Text>
-                      <StatusBar />
+
+                    <View className="w-full h-2 bg-gray-300 rounded-full overflow-hidden">
+                      <View
+                        style={{ width: `${progress * 100}%` }}
+                        className="h-full bg-primaryGreen rounded-full"
+                      />
+                    </View>
 
                       <Text className="text-[9px] text-center text-mediumGreen font-light">
                         {xp}/{requiredXP} XP to reach Level {level + 1}
