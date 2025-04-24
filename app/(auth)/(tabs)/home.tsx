@@ -14,7 +14,6 @@ import EnvImpactPreview from "@/components/Reusables/EnvImpactPreview";
 
 const Home = () => {
   const { userDoc } = useUserContext();
-  const user = getAuth().currentUser;
 
   return (
     <>
