@@ -1,11 +1,17 @@
 import BackButton from "@/components/Reusables/BackButton";
+import CO2SavedCard from "@/components/EnvImpact/CO2SavedCard";
+import WasteTypeCard from "@/components/EnvImpact/WasteTypeCard";
+import MaterialTypeDisplay from "@/components/EnvImpact/MaterialTypeDisplay";
 import { Stack } from "expo-router";
 import React, { useState, useEffect } from "react";
-import { Alert, SafeAreaView, View, Text, Pressable } from "react-native";
+import { Alert, SafeAreaView, View, Text, Pressable, ScrollView } from "react-native";
 import { getAuth } from "@react-native-firebase/auth";
 import { getFirestore, doc, getDoc, updateDoc } from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { LinearGradient } from "react-native-linear-gradient";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import PlantIcon from "@/assets/icons/plant.svg";
 
 const envimpact = () => {
   const user = getAuth().currentUser;
@@ -100,16 +106,50 @@ const envimpact = () => {
     return `${co2Saved}g`;
   };
 
+  // calculate materials breakdown
+  const calculateMaterials = () => {
+    if (!userDoc) return [];
+    
+    const recyclableScanned = userDoc.recyclableScanned || 0;
+    
+    return [
+      {
+        label: "Plastics",
+        count: Math.floor(recyclableScanned * 0.6)
+      },
+      {
+        label: "Metals",
+        count: Math.floor(recyclableScanned * 0.3)
+      },
+      {
+        label: "Cardboard",
+        count: Math.floor(recyclableScanned * 0.1)
+      }
+    ];
+  };
+
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
+         <Stack.Screen
+        options={{
+          headerShadowVisible: false,
+          headerBackVisible: false,
+          headerTransparent: true,
+          headerLeft: () => <BackButton />,
+          headerTitle: "",
+        }}
+      />
         <Text>Loading...</Text>
       </View>
     );
   }
 
   return (
-    <View className="bg-white flex-1">
+    <LinearGradient
+      colors={["#F5FFF5", "#DBFFD8"]}
+      style={{ flex: 1 }}
+    >
       <Stack.Screen
         options={{
           headerShadowVisible: false,
@@ -119,90 +159,27 @@ const envimpact = () => {
           headerTitle: "",
         }}
       />
-      <SafeAreaView className="">
-        <Text className="text-4xl text-center font-bold">
-          Hi {userDoc?.username || "there"},
-        </Text>
-        <Text className="text-3xl text-center mb-5 w-10/12 mx-auto">
-          This month you scanned a total of {totalItemsDiscarded()} items...
-        </Text>
-
-        <View className="flex-row justify-center mb-5">
-          {/* carbon footprint stats*/}
-          <View className="flex items-center justify-center mx-10">
-            <Text className="text-5xl font-bold">{calculateCO2Saved()}</Text>
-            <Text className="">CO2 saved!</Text>
-          </View>
-
-          {/* vertical divider */}
-          <View className="w-px h-5/6 bg-gray-300 self-center"></View>
-
-          {/* scanned, landfill, recycle, compost stats*/}
-          <View className="mx-10 flex">
-            <Text className="text-2xl mt-3 font-bold">
-              {userDoc?.landfillScanned || 0} items
-            </Text>
-            <View className="flex-row">
-              <Ionicons name="trash-outline" size={23} color="green" />
-              <Text className="text-lg"> discarded</Text>
-            </View>
-
-            <Text className="text-2xl mt-3 font-bold">
-              {userDoc?.recyclableScanned || 0} items
-            </Text>
-            <View className="flex-row">
-              <Ionicons name="refresh" size={23} color="green" />
-              <Text className="text-lg"> recycled</Text>
-            </View>
-
-            <Text className="text-2xl mt-3 font-bold">
-              {userDoc?.compostScanned || 0} items
-            </Text>
-            <View className="flex-row">
-              <Ionicons name="leaf-outline" size={23} color="green" />
-              <Text className="text-lg"> composted</Text>
-            </View>
-          </View>
-        </View>
-
-        <View>
-          <Text className="text-lg text-center mb-8">
-            for a total of {calculateTotalPoints()} points earned!
+      <ScrollView>
+        <SafeAreaView className="px-6 pt-24 mt-8 justify-center flex-1">
+          <Text className="text-4xl font-bold text-darkGreen">
+            Your Impact
           </Text>
-        </View>
 
-        <View className="bg-tintColor h-full rounded-3xl mx-5">
-          <Text className="text-3xl text-center font-bold py-6">Materials</Text>
-
-          <View className="flex-row items-center pb-10 ml-12">
-            <Ionicons name="fast-food-outline" size={70} color="green" />
-            <Text className="text-xl">
-              {" "}
-              {Math.floor((userDoc?.recyclableScanned || 0) * 0.6)} pieces of
-              plastic
-            </Text>
+          <View className="flex-row justify-center mt-12 mb-5">
+            <CO2SavedCard co2Saved={calculateCO2Saved()} />
           </View>
 
-          <View className="flex-row items-center pb-10 ml-12">
-            <Ionicons name="bus" size={70} color="green" />
-            <Text className="text-xl">
-              {" "}
-              {Math.floor((userDoc?.recyclableScanned || 0) * 0.3)} pieces
-              metals
-            </Text>
+          <View className="flex-row justify-center flex-wrap my-8 gap-4">
+            <WasteTypeCard count={userDoc?.recyclableScanned || 0} type="Recycled" />
+            <WasteTypeCard count={userDoc?.compostScanned || 0} type="Composted" />
+            <WasteTypeCard count={userDoc?.landfillScanned || 0} type="Landfill" />
           </View>
 
-          <View className="flex-row items-center pb-10 ml-12">
-            <Ionicons name="earth" size={70} color="green" />
-            <Text className="text-xl">
-              {" "}
-              {Math.floor((userDoc?.recyclableScanned || 0) * 0.1)} pieces of
-              cardboard
-            </Text>
-          </View>
-        </View>
-      </SafeAreaView>
-    </View>
+          <MaterialTypeDisplay materials={calculateMaterials()} />
+          
+        </SafeAreaView>
+      </ScrollView>
+    </LinearGradient>
   );
 };
 

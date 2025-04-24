@@ -4,27 +4,83 @@ import { View, Text, Pressable, Alert } from 'react-native'
 import WasteItemResult, { WasteObject } from './WasteItemResult'
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import storage from '@react-native-firebase/storage';
+import { getAuth } from '@react-native-firebase/auth';
+import { getFirestore, collection, addDoc, serverTimestamp } from '@react-native-firebase/firestore';
 
 interface ScanBottomSheetModalProps {
   onClose: () => void;
   wasteObjects: WasteObject[];
+  image: string | null;
 }
-const handleScanSubmit = () => {
-  router.back();
-  Alert.alert(
-    "Scan Submitted",
-    "Your scan has been submitted successfully.",
-    [{ text: "OK" }],
-    { cancelable: false }
-  );
-}
+
 const ScanBottomSheetModal = forwardRef<BottomSheetModal, ScanBottomSheetModalProps>(
-  ({ onClose, wasteObjects }, ref) => {
+  ({ onClose, wasteObjects, image }, ref) => {
+    
+    const handleScanSubmit = async () => {
+      try {
+        if (image) {
+          const user = getAuth().currentUser;
+          
+          if (user) {
+            const timestamp = new Date().getTime();
+            const filename = `waste-scan-${timestamp}.jpg`;
+            const storageRef = storage().ref(`zotbins-waste-images/${user.uid}/${filename}`);
+            
+            Alert.alert("Uploading Image", "Please wait while we upload your scan...");
+            
+            await storageRef.putFile(image);
+            
+            const downloadURL = await storageRef.getDownloadURL();
+            
+            const db = getFirestore();
+            const wasteImageData = {
+              userId: user.uid,
+              imageUrl: downloadURL,
+              timestamp: serverTimestamp(),
+              fileName: filename,
+              wasteObjects: wasteObjects.map(item => ({
+                name: item.name,
+                material: item.material,
+                category: item.category
+              })),
+              location: {
+                latitude: null,
+                longitude: null
+              }
+            };
+
+            await addDoc(collection(db, 'waste-images'), wasteImageData);
+            
+            console.log('Image uploaded and metadata stored successfully');
+            
+            router.back();
+            Alert.alert(
+              "Scan Submitted",
+              "Your scan has been submitted successfully.",
+              [{ text: "OK" }],
+              { cancelable: false }
+            );
+          } else {
+            Alert.alert("Error", "Log in failed.");
+          }
+        } else {
+          Alert.alert("Error", "No image to upload.");
+        }
+      } catch (error) {
+        console.error("Upload error:", error);
+        Alert.alert(
+          "Upload Failed",
+          "There was an error uploading your scan. Please try again."
+        );
+      }
+    };
+    
     return (
       <BottomSheetModal
         ref={ref}
         index={0}
-        snapPoints={[]}
+        snapPoints={['50%']}
         enablePanDownToClose
         onDismiss={onClose}
         backgroundStyle={{ backgroundColor: '#F0FFF4' }}

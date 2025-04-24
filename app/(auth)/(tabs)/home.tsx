@@ -9,17 +9,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ScanWidget from "@/components/Home/ScanWidget";
 import DailyQuizWidget from "@/components/Home/DailyQuizWidget";
 import MissionsWidget from "@/components/Home/MissionsWidget";
+import QuizData from "@/data/QuizData";
+import EnvImpactPreview from "@/components/Reusables/EnvImpactPreview";
 
 const Home = () => {
   const { userDoc } = useUserContext();
   const user = getAuth().currentUser;
-
-  // temp test to see if user info is being populated
-  useEffect(() => {
-    if (userDoc) {
-      console.log("Live User Document Update:", userDoc);
-    }
-  }, [userDoc]);
 
   return (
     <>
@@ -33,9 +28,12 @@ const Home = () => {
         colors={["#F5FFF5", "#DBFFD8"]}
         style={{ flex: 1 }}
       >
-        <ScrollView>
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 45 }}
+          >
           <SafeAreaView className="flex-1 px-5 gap-2 pb-24">
             <Header username={userDoc?.username || "User"} />
+            <EnvImpactPreview />
             <ScanWidget scans={3 - userDoc?.dailyScans || 0} />
             <DailyQuizWidget />
 
