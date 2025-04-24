@@ -26,7 +26,8 @@ import ProfileBanner from "@/components/Profile/profile-banner.svg";
 import SpiritIcon from "@/components/Profile/spiritIcon.svg";
 import StreakIcon from "@/components/Profile/streakIcon.svg";
 import StatusBar from "@/components/Profile/statusBar.svg";
-import FriendsIcon from "@/components/Profile/friendsIcon.svg";
+import AddFriendsIcon from "@/components/Profile/friendsIcon.svg";
+import FriendIcons from "@/components/Profile/friendIcons";
 import XPBar from "@/components/Profile/XPBar";
 import Achievements from "../achievements";
 import EnvImpactPreview from "@/components/Reusables/EnvImpactPreview";
@@ -135,9 +136,10 @@ const Profile = () => {
                 </View>
                 <View className="absolute left-24 top-24">
                   <Pressable onPress={() => router.push("/friendrequests")}>
-                    <FriendsIcon />
+                    <AddFriendsIcon />
                   </Pressable>
                 </View>
+                <FriendIcons />
               </View>
 
               <View className="w-[95%] shadow-sm">
@@ -193,7 +195,7 @@ const Profile = () => {
               <Text className="text-xl font-bold text-primaryGreen">Achievements</Text>
               <Text className="text-sm text-primaryGreen underline ml-2">See all</Text>
             </View>
-            <Achievements/>
+            <Achievements />
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>

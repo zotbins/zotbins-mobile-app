@@ -19,7 +19,7 @@ module.exports = {
         mediumGreen: "#00762B",
         brightGreen: "#C9FFE2",
         lightestGreen: "#E8FFEB",
-        brightGreen2: "#89FF99",
+        brightGreen2: "#9CFFA9",
         brightGreen3: "#00BF1A",
         highlightGreen: "#BDFFC6",
         highlightGreen2: "#BDFFC4",
