@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, Pressable } from 'react-native';
+import { View, Text, ScrollView, Image, Pressable, Alert } from 'react-native';
 import { Stack } from 'expo-router';
 import { getFirestore, doc, getDoc, getDocs, where, query, collection, updateDoc, arrayRemove } from '@react-native-firebase/firestore';
 import { getAuth } from '@react-native-firebase/auth';
 import { getDownloadURL, getStorage, ref } from '@react-native-firebase/storage';
 import LinearGradient from 'react-native-linear-gradient';
 import StreakIcon from '@/components/Profile/streakIcon.svg';
+import CloseButton from '@/components/Reusables/close-button.svg';
 
 interface Friend {
     username: string;
@@ -18,6 +19,8 @@ interface Friend {
 
 const FriendsList = () => {
     const [friends, setFriends] = useState<Friend[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [username, setUsername] = useState<string>("");
     useEffect(() => {
         const fetchFriendsData = async () => {
             const user = getAuth().currentUser;
@@ -25,7 +28,13 @@ const FriendsList = () => {
                 const db = getFirestore();
                 const userRef = doc(db, "users", user?.uid || "");
                 const userSnapshot = await getDoc(userRef);
+                setUsername(userSnapshot.data()?.username);
                 const friendList = userSnapshot.data()?.friendsList || [];
+                if (friendList.length === 0) {
+                    setFriends([]);
+                    return;
+                }
+
                 const allUsersRef = collection(db, "users");
                 const q = query(allUsersRef, where("username", "in", friendList));
                 const querySnapshot = await getDocs(q);
@@ -53,30 +62,32 @@ const FriendsList = () => {
             }
         }
         fetchFriendsData();
-    }, [friends]);
+        setLoading(false);
+    }, [loading]);
 
     const onRemoveFriend = async (friendUsername: string, friendUid: string) => {
         const user = getAuth().currentUser;
         if (user) {
             const db = getFirestore();
             const userRef = doc(db, "users", user?.uid || "");
-            const friendRef = doc(db, "users", friendUsername);
+            const friendRef = doc(db, "users", friendUid);
             await updateDoc(userRef, {
                 friendsList: arrayRemove(friendUsername)
             });
             await updateDoc(friendRef, {
-                friendsList: arrayRemove(user?.uid)
+                friendsList: arrayRemove(username)
             });
-            setFriends(friends.filter(friend => friend.uid !== friendUid));
+            Alert.alert("Friend Deleted", `You removed ${friendUsername} as a friend.`);
+            setLoading(true);
         }    
     }
 
     return (
         <ScrollView>
-            <View className="mx-6">
-                <View className="flex-col items-left mb-5 gap-4">
-                    <Text className="text-darkGreen text-4xl font-semibold mt-3">Friends List</Text>
-                    {friends.map((friend, index) => (
+            <View className="mx-6 mt-6">
+                <View className="flex-col items-left mb-20 gap-4">
+                    <Text className="text-darkGreen text-3xl font-semibold mt-3">Friends List</Text>
+                    {friends.length > 0 ? (friends.map((friend, index) => (
                         <View key={index} className="shadow-sm">
                             <LinearGradient
                                 colors={['#004c18', '#DFFFE3', '#DFFFE3', '#004c18']}
@@ -89,12 +100,6 @@ const FriendsList = () => {
                                 locations={[0, 0.07, 0.93, 1]}
                             >
                                 <View style={{ borderRadius: 28 }} className="flex-row items-center p-2 pl-4 bg-lightBackground gap-4">
-                                    <Pressable
-                                        onPress={() => onRemoveFriend(friend.username, friend.uid || "")}
-                                        className="absolute top-2 right-2 flex flex-row items-center justify-center z-10"
-                                    >
-                                        <Text className="text-darkestGreen text-md font-semibold mr-2 mt-2">X</Text>
-                                    </Pressable>
                                     {friend.profilePic ? (
                                         <Image
                                             source={{ uri: friend.profilePic }}
@@ -118,9 +123,15 @@ const FriendsList = () => {
                                         <Text className="text-gray-500  text-sm ml-2">{friend.spiritTrash}</Text>
                                     </View>
                                 </View>
+                                <Pressable
+                                        onPress={() => onRemoveFriend(friend.username, friend.uid || "")}
+                                        className="absolute top-4 right-4 flex flex-row items-center justify-center"
+                                    >
+                                       <CloseButton/>
+                                    </Pressable>
                             </LinearGradient>
                         </View>
-                    ))}
+                    ))) :<Text className="text-gray-600 text-md">No friends right now.</Text>}
                 </View>
             </View>
         </ScrollView>
