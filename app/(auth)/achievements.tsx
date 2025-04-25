@@ -1,4 +1,5 @@
 import React from "react";
+import { View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
 import BackButton from "@/components/Reusables/BackButton";
@@ -9,12 +10,23 @@ const AchievementsScreen = () => {
     <SafeAreaView className="flex-1 bg-lightBackground">
       <Stack.Screen
         options={{
-          headerShown: true,
+          headerShadowVisible: false,
+          headerBackVisible: false,
+          headerTransparent: true,
+          headerTitle: "",
           headerLeft: () => <BackButton />,
-          headerTitle: "Achievements",
         }}
       />
-      <AchievementsList />
+
+      <View className="flex-1 px-8">
+        <View className="mt-24 mb-8">
+          <Text className="text-5xl font-bold text-darkGreen">Achievements</Text>
+        </View>
+        
+        <AchievementsList 
+          containerStyle="pb-24" 
+        />
+      </View>
     </SafeAreaView>
   );
 };
