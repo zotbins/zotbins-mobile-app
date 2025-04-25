@@ -27,8 +27,7 @@ module.exports = {
         darkGray: "#33363F",
         gray: "#878787",
         textGray: "#555555",
-        gradientGreen1: "#DFFFE3",
-        gradientGreen2: "#B4FABD"
+        mainTextGray: "#575050",
       },
     },
   },
