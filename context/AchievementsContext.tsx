@@ -4,6 +4,7 @@ import {
     doc,
     collection,
     getDocs,
+    Timestamp,
 } from "@react-native-firebase/firestore";
 import { getAuth } from "@react-native-firebase/auth";
 
@@ -12,8 +13,13 @@ interface Achievement {
     name: string;
     description: string;
     reward: string;
+    rewardAmount: number;
+    rewardType: string;
     actionAmount: number;
+    actionType: string;
     progress: number;
+    userStatus?: 'completed' | 'in-progress'; // we either have completed or in progress achievements
+    dateAchieved?: Timestamp | null;
 }
 
 interface AchievementsContextType {
@@ -53,8 +59,13 @@ export const AchievementsProvider = ({ children }: { children: ReactNode }) => {
                         name: data.name,
                         description: data.description,
                         reward: data.reward,
+                        rewardAmount: data.rewardAmount,
+                        rewardType: data.rewardType,
                         actionAmount: data.actionAmount,
+                        actionType: data.actionType,
                         progress: data.progress,
+                        userStatus: data.userStatus || 'in-progress', // default to in-progress if not set
+                        dateAchieved: data.dateAchieved || null, // default to null if not set
                     };
                 }
             );
