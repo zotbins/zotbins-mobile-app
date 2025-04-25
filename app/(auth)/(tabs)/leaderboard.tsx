@@ -312,6 +312,7 @@ const Leaderboard = () => {
           <ScrollView
             contentContainerStyle={{ flexGrow: 1 }}
             className=""
+            showsVerticalScrollIndicator={false}
             automaticallyAdjustsScrollIndicatorInsets={true}
           >
             <Stack.Screen

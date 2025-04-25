@@ -189,9 +189,7 @@ const Profile = () => {
                 </LinearGradient>
               </View>
             </View>
-
-            <EnvImpactPreview />
-            <View className="flex flex-row items-center ml-6 mb-4">
+            <View className="flex flex-row items-center ml-6 mb-4 mt-6">
               <Text className="text-xl font-bold text-primaryGreen">Achievements</Text>
               <Text className="text-sm text-primaryGreen underline ml-2">See all</Text>
             </View>

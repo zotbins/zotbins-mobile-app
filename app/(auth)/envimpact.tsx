@@ -159,8 +159,8 @@ const envimpact = () => {
           headerTitle: "",
         }}
       />
-      <ScrollView>
-        <SafeAreaView className="px-6 pt-24 mt-8 justify-center flex-1">
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <SafeAreaView className="px-6 pt-24 mt-32 justify-center flex-1 mb-20 mx-4">
           <Text className="text-4xl font-bold text-darkGreen">
             Your Impact
           </Text>

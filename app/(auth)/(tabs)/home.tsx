@@ -29,6 +29,7 @@ const Home = () => {
       >
         <ScrollView
           contentContainerStyle={{ paddingBottom: 45 }}
+          showsVerticalScrollIndicator={false}
           >
           <SafeAreaView className="flex-1 px-5 gap-2 pb-24">
             <Header username={userDoc?.username || "User"} />
