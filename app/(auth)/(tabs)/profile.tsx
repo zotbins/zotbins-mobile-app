@@ -192,9 +192,9 @@ const Profile = () => {
             </View>
 
             <View className="flex flex-row items-center mt-6 ml-6 mb-4">
-              <Text className="text-xl font-bold text-primaryGreen">Achievements</Text>
+              <Text className="text-xl font-bold text-darkGreen">Achievements</Text>
               <Pressable onPress={() => router.push("/achievements")}>
-                <Text className="text-sm text-primaryGreen underline ml-2">See all</Text>
+                <Text className="text-sm text-darkGreen underline ml-2">See all</Text>
               </Pressable>
             </View>
             <AchievementsList limit={5} containerStyle="px-4 w-full mb-24" />
