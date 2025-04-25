@@ -191,8 +191,7 @@ const Profile = () => {
               </View>
             </View>
 
-            <EnvImpactPreview />
-            <View className="flex flex-row items-center ml-6 mb-4">
+            <View className="flex flex-row items-center mt-6 ml-6 mb-4">
               <Text className="text-xl font-bold text-primaryGreen">Achievements</Text>
               <Pressable onPress={() => router.push("/achievements")}>
                 <Text className="text-sm text-primaryGreen underline ml-2">See all</Text>
