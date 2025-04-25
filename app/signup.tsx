@@ -28,6 +28,8 @@ import LeftCircle from "@/assets/images/left-bg-circle.png"
 import RightCircle from "@/assets/images/right-bg-circle.png"
 import BottomCircle from "@/assets/images/bottom-bg-circle.png"
 
+import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+
 GoogleSignin.configure({
   webClientId: process.env.EXPO_PUBLIC_GOOGLEWEBCLIENTID,
   offlineAccess: true,
@@ -291,32 +293,58 @@ const Signup = () => {
           Create Account
         </Text>
         
-        <View className="flex-1 justify-center space-y-4">
-          <TextInput
-            className="my-1 h-14 border-b border-white rounded-md p-2 text-[16px]"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            placeholder="Email"
-            placeholderTextColor="#fff"
-          />
-          <TextInput
-            className="my-1 h-14 border-b border-white rounded-md p-2 text-[16px]"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            placeholder="Password"
-            placeholderTextColor="#fff"
-          />
-          <TextInput
-            className="my-1 h-14 border-b border-white rounded-md p-2 text-[16px]"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry
-            placeholder="Confirm Password"
-            placeholderTextColor="#fff"
-          />
+        <View className="flex-1 justify-center">
+          <View className="flex-row justify-center items-center">
+            <TextInput
+              className="flex-1 pl-10 my-1 h-14 border-b border-white rounded-md p-2 text-[16px]"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              placeholder="Email"
+              placeholderTextColor="#fff"
+            />
+            <FontAwesome
+              name="envelope-open"
+              size={19}
+              color="white"
+              className="absolute left-2"
+            />
+          </View>
+          
+          <View className="flex-row justify-center items-center">
+            <TextInput
+              className="flex-1 pl-10 my-1 h-14 border-b border-white rounded-md p-2 text-[16px]"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              placeholder="Password"
+              placeholderTextColor="#fff"
+            />
+            <FontAwesome
+              name="lock"
+              size={26}
+              color="white"
+              className="absolute left-2"
+            />
+          </View>
+
+          <View className="flex-row justify-center items-center">
+            <TextInput
+              className="flex-1 pl-10 my-1 h-14 border-b border-white rounded-md p-2 text-[16px]"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry
+              placeholder="Confirm Password"
+              placeholderTextColor="#fff"
+            />
+            <FontAwesome
+              name="lock"
+              size={26}
+              color="white"
+              className="absolute left-2"
+            />
+          </View>
           {loading ? (
             <ActivityIndicator size={"small"} className="m-7" />
           ) : (
