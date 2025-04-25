@@ -31,6 +31,9 @@ import {
 } from "@react-native-firebase/firestore";
 import LinearGradient from "react-native-linear-gradient";
 import ZotbinsLogo from "../assets/images/zotbins_logo.png";
+import LeftCircle from '@/assets/images/left-bg-circle.png';
+import RightCircle from '@/assets/images/right-bg-circle.png';
+import BottomCircle from '@/assets/images/bottom-bg-circle.png';
 
 // initialize user doc in firestore
 const createUserDocument = async (
@@ -219,6 +222,13 @@ const Login = () => {
 
   return (
     <LinearGradient colors={["#48BB78", "#009838"]} style={{ flex: 1 }}>
+      <Image source={LeftCircle} className="absolute" />
+      <Image source={RightCircle} className="absolute top-56 right-0" />
+      <Image
+        source={BottomCircle}
+        className="absolute bottom-0 left-1/2 -translate-x-1/2"
+      />
+
       <View className="flex-1 justify-center items-center px-5">
         {/* ZotBins Logo */}
         <View
