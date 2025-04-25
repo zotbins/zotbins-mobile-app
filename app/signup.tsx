@@ -3,6 +3,7 @@ import { getFirestore, doc, setDoc, getDocs, writeBatch, serverTimestamp, query,
 import { Link, useRouter } from "expo-router";
 import { FirebaseError } from "firebase/app";
 import React, { useState } from "react";
+import LinearGradient from "react-native-linear-gradient";
 import {
   ActivityIndicator,
   Alert,
@@ -12,6 +13,8 @@ import {
   TextInput,
   View,
   Platform,
+  SafeAreaView,
+  Image
 } from "react-native";
 // import * as AppleAuthentication from "expo-apple-authentication";
 import {
@@ -21,6 +24,9 @@ import {
 } from "@react-native-google-signin/google-signin";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import LeftCircle from "@/assets/images/left-bg-circle.png"
+import RightCircle from "@/assets/images/right-bg-circle.png"
+import BottomCircle from "@/assets/images/bottom-bg-circle.png"
 
 GoogleSignin.configure({
   webClientId: process.env.EXPO_PUBLIC_GOOGLEWEBCLIENTID,
@@ -257,84 +263,127 @@ const Signup = () => {
   };
 
   return (
-    <View className="mx-5 flex-1 justify-center">
-      <KeyboardAvoidingView behavior="padding">
-        <TextInput
-          className="my-1 h-14 border rounded-md p-2 bg-white"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          placeholder="Email"
+    <LinearGradient
+        colors={["#48BB78", "#009838"]}
+        style={{ flex: 1 }}
+      >
+        <Image
+          source={LeftCircle}
+          className="absolute"
         />
-        <TextInput
-          className="my-1 h-14 border rounded-md p-2 bg-white"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          placeholder="Password"
+        <Image
+          source={RightCircle}
+          className="absolute top-56 right-0"
         />
-        <TextInput
-          className="my-1 h-14 border rounded-md p-2 bg-white"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-          placeholder="Confirm Password"
+        <Image
+          source={BottomCircle}
+          className="absolute bottom-0 left-1/2 -translate-x-1/2"
         />
-        {loading ? (
-          <ActivityIndicator size={"small"} className="m-7" />
-        ) : (
-          <>
-            <Pressable
-              className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50"
-              onPress={signUp}
-            >
-              <Text className="text-white text-xl">Sign Up</Text>
-            </Pressable>
-            <View className="items-center justify-center pt-2">
-              <Link href="/login">
-                <Text className="text-blue">I already have an account</Text>
-              </Link>
-            </View>
-            {/* Google and Apple sign in buttons */}
-            <View className="flex-row items-center justify-center p-3">
-              <View className="flex-1 border-t border-1 mr-4 border-grey" />
-              <Text className="text-lg text-grey ">or</Text>
-              <View className="flex-1 border-t border-1 ml-4 text-grey" />
-            </View>
-            <Pressable
-              className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50 flex-row"
-              onPress={handleGoogleSignIn}
-            >
-              <Ionicons name="logo-google" size={24} color="white" />
-              <Text className="ml-2 text-white text-xl">
-                Sign Up with Google
-              </Text>
-            </Pressable>
-            {/* Apple sign in is only available on iOS, but currently set to always show for testing purposes */}
-            {(true || Platform.OS === "ios") && (
-              <Pressable
-                className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50 flex-row"
-                onPress={handleAppleSignIn}
+
+  
+      <KeyboardAvoidingView  behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
+      // style={{ flex: 1 }}
+      className="flex-1"
+      >
+      <SafeAreaView className="mx-5 pt-10 flex-1">
+        <Text className="text-white text-4xl font-semibold mt-28">
+          Create Account
+        </Text>
+        
+        <View className="flex-1 justify-center space-y-4">
+          <TextInput
+            className="my-1 h-14 border-b border-white rounded-md p-2 text-[16px]"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            placeholder="Email"
+            placeholderTextColor="#fff"
+          />
+          <TextInput
+            className="my-1 h-14 border-b border-white rounded-md p-2 text-[16px]"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            placeholder="Password"
+            placeholderTextColor="#fff"
+          />
+          <TextInput
+            className="my-1 h-14 border-b border-white rounded-md p-2 text-[16px]"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            placeholder="Confirm Password"
+            placeholderTextColor="#fff"
+          />
+          {loading ? (
+            <ActivityIndicator size={"small"} className="m-7" />
+          ) : (
+            <>
+              {/* <Pressable
+                className="items-center justify-center py-3 rounded-full bg-lightestGreen mt-10 active:opacity-50"
+                onPress={signUp}
               >
-                <Ionicons name="logo-apple" size={24} color="white" />
-                <Text className="ml-2 text-white text-xl">
-                  Sign Up with Apple
+                <Text className="text-mediumGreen text-xl font-semibold">Sign Up</Text>
+              </Pressable> */}
+
+              <Pressable
+                onPress={signUp}
+                className="h-14 bg-lightestGreen rounded-full items-center justify-center mt-4"
+              >
+                <Text className="text-mediumGreen text-xl font-semibold">
+                  Sign Up
                 </Text>
               </Pressable>
-            )}
-          </>
-        )}
+
+              {/* <View className="items-center justify-center pt-2">
+                <Link href="/login">
+                  <Text className="text-blue t">I already have an account</Text>
+                </Link>
+              </View> */}
+              {/* Google and Apple sign in buttons */}
+              {/* <View className="flex-row items-center justify-center p-3">
+                <View className="flex-1 border-t border-1 mr-4 border-grey" />
+                <Text className="text-lg text-grey ">or</Text>
+                <View className="flex-1 border-t border-1 ml-4 text-grey" />
+              </View>
+              <Pressable
+                className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50 flex-row"
+                onPress={handleGoogleSignIn}
+              >
+                <Ionicons name="logo-google" size={24} color="white" />
+                <Text className="ml-2 text-white text-xl">
+                  Sign Up with Google
+                </Text>
+              </Pressable> */}
+              {/* Apple sign in is only available on iOS, but currently set to always show for testing purposes */}
+              {/* {(true || Platform.OS === "ios") && (
+                <Pressable
+                  className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50 flex-row"
+                  onPress={handleAppleSignIn}
+                >
+                  <Ionicons name="logo-apple" size={24} color="white" />
+                  <Text className="ml-2 text-white text-xl">
+                    Sign Up with Apple
+                  </Text>
+                </Pressable>
+              )} */}
+            </>
+          )}
+        
+        {/* <View className="absolute bottom-12 left-5 z-10">
+          <Pressable
+            className="bg-tintColor w-12 h-12 rounded-full justify-center items-center active:opacity-50"
+            onPress={() => router.push("/onboarding")}
+          >
+            <Text className="text-white text-3xl">?</Text>
+          </Pressable>
+        </View> */}
+        </View>
+      </SafeAreaView>
       </KeyboardAvoidingView>
-      <View className="absolute bottom-12 left-5 z-10">
-        <Pressable
-          className="bg-tintColor w-12 h-12 rounded-full justify-center items-center active:opacity-50"
-          onPress={() => router.push("/onboarding")}
-        >
-          <Text className="text-white text-3xl">?</Text>
-        </Pressable>
-      </View>
-    </View>
+    </LinearGradient>
   );
 };
 
