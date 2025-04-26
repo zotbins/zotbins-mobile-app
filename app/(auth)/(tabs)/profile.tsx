@@ -31,11 +31,12 @@ import FriendIcons from "@/components/Profile/friendIcons";
 import XPBar from "@/components/Profile/XPBar";
 import Achievements from "../achievements";
 import EnvImpactPreview from "@/components/Reusables/EnvImpactPreview";
+import AchievementsList from "@/components/Achievements/AchievementsList";
 
 const Profile = () => {
   const router = useRouter();
   const { user, userDoc } = useUserContext();
-  
+
   // user document data
   const level = userDoc?.level ?? 1;
   const xp = userDoc?.xp ?? 0;
@@ -189,11 +190,14 @@ const Profile = () => {
                 </LinearGradient>
               </View>
             </View>
-            <View className="flex flex-row items-center ml-6 mb-4 mt-6">
-              <Text className="text-xl font-bold text-primaryGreen">Achievements</Text>
-              <Text className="text-sm text-primaryGreen underline ml-2">See all</Text>
+
+            <View className="flex flex-row items-center mt-6 ml-6 mb-4">
+              <Text className="text-xl font-bold text-darkGreen">Achievements</Text>
+              <Pressable onPress={() => router.push("/achievements")}>
+                <Text className="text-sm text-darkGreen underline ml-2">See all</Text>
+              </Pressable>
             </View>
-            <Achievements />
+            <AchievementsList limit={5} containerStyle="px-4 w-full mb-24" />
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>
