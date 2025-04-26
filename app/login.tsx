@@ -220,6 +220,12 @@ const Login = () => {
     }
   };
 
+  const [hidePassword, setHidePassword] = useState(true);
+
+  const togglePasswordVisibility = () => {
+    setHidePassword(!hidePassword);
+  };
+
   return (
     <LinearGradient colors={["#48BB78", "#009838"]} style={{ flex: 1 }}>
       <Image source={LeftCircle} className="absolute" />
@@ -266,7 +272,7 @@ const Login = () => {
               marginBottom: 10,
               marginTop: 50,
               fontSize: 16,
-              color: "#white",
+              color: "white",
             }}
           />
           <View
@@ -282,7 +288,7 @@ const Login = () => {
           <TextInput
             value={password}
             onChangeText={setPassword}
-            secureTextEntry
+            secureTextEntry={hidePassword}
             placeholder="Password"
             placeholderTextColor="white"
             style={{
@@ -293,6 +299,16 @@ const Login = () => {
               color: "white",
             }}
           />
+          <Pressable 
+        onPress={togglePasswordVisibility}
+      >
+        <Ionicons 
+          name={hidePassword ? 'eye-off' : 'eye'} 
+          size={24} 
+          color="white" 
+          className="absolute right-6 bottom-2"
+        />
+      </Pressable>
           <View
             style={{
               height: 1.5,
@@ -316,7 +332,7 @@ const Login = () => {
                   marginHorizontal: 20,
                   marginVertical: 15,
                   alignItems: "center",
-                  borderWidth: 2,
+                  borderWidth: 1,
                   borderColor: "#82FFAD",
                 }}
               >
@@ -365,7 +381,8 @@ const Login = () => {
               <View
                 style={{
                   flexDirection: "row",
-                  justifyContent: "space-evenly",
+                  justifyContent: "center",
+                  gap: 20,
                   width: "100%",
                   marginBottom: 20,
                 }}
@@ -374,25 +391,17 @@ const Login = () => {
                 <Pressable
                   onPress={handleGoogleSignIn}
                   style={{
-                    width: 150,
+                    width: 50,
                     height: 50,
                     borderRadius: 50,
-                    backgroundColor: "#e8ffe8",
                     justifyContent: "center",
                     alignItems: "center",
-                    borderWidth: 2,
-                    borderColor: "#82FFAD",
                   }}
                 >
-                  <Text
-                    style={{
-                      color: "#00762B",
-                      fontSize: 18,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Google
-                  </Text>
+                  <Image
+                    source={require("../assets/images/google_signin.png")}
+                    style={{ width: 50, height: 50  }}
+                    />
                 </Pressable>
 
                 {/* Apple Sign In */}
@@ -400,25 +409,17 @@ const Login = () => {
                   <Pressable
                     onPress={handleAppleSignIn}
                     style={{
-                      width: 150,
+                      width: 50,
                       height: 50,
                       borderRadius: 50,
-                      backgroundColor: "#e8ffe8",
                       justifyContent: "center",
                       alignItems: "center",
-                      borderWidth: 2,
-                      borderColor: "#82FFAD",
                     }}
                   >
-                    <Text
-                      style={{
-                        color: "#00762B",
-                        fontSize: 18,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Apple
-                    </Text>
+                    <Image
+                      source={require("../assets/images/apple_signin.png")}
+                      style={{ width: 50, height: 50 }}
+                    />
                   </Pressable>
                 )}
               </View>
@@ -432,7 +433,7 @@ const Login = () => {
                     fontWeight: "semibold",
                   }}
                 >
-                  Don’t have an account?{"  "}
+                  Don’t have an account?{" "}
                 </Text>
 
                 <Link href="/signup">
