@@ -29,11 +29,12 @@ interface AchievementProps {
         progress: number;
         userStatus?: boolean;
         dateAchieved?: Timestamp | null;
+        actionType: string;
     };
 }
 
 const Achievement = ({ achievement }: AchievementProps) => {
-    const { progress, actionAmount, name, dateAchieved, userStatus, description } = achievement;
+    const { progress, actionAmount, name, dateAchieved, userStatus, description, actionType } = achievement;
     const isCompleted = userStatus;
 
     const fraction = `(${progress}/${actionAmount})`;
@@ -59,7 +60,7 @@ const Achievement = ({ achievement }: AchievementProps) => {
     const formattedDateString = getFormattedDate();
 
     // display random icon for now since i'm not sure how we are going to specify which achievement gets which icon
-    const getRandomIcon = () => {
+    const getIcon = (actionType: string) => {
         const icons = isCompleted ? [
             <ArrowIcon width={60} height={60} />,
             <CheckIcon width={40} height={40} />,
@@ -73,8 +74,8 @@ const Achievement = ({ achievement }: AchievementProps) => {
             <ScannerIconGray width={40} height={40} />,
             <StarIconGray width={40} height={40} />
         ];
-
-        return icons[Math.floor(Math.random() * icons.length)];
+        const actionMap: { [key: string]: number } = {"level": 0, "mission": 1, "quiz": 2, "scan": 3, "points": 4};
+        return icons[actionMap[actionType]];
     };
 
     return (
@@ -98,7 +99,7 @@ const Achievement = ({ achievement }: AchievementProps) => {
                 {/* Achievement Content */}
                 <View className={`${isCompleted ? "bg-lightBackground" : "bg-[#e5ebe6]"} p-4 rounded-[33] flex flex-row items-center`}>
                     <View className="w-24 h-24 flex items-center justify-center">
-                        {getRandomIcon()}
+                        {getIcon(actionType)}
                     </View>
                     <View className="ml-4 flex-1 mr-2">
                         <Text className={`text-2xl font-bold ${isCompleted ? "text-darkestGreen" : "text-mainTextGray"}`}>

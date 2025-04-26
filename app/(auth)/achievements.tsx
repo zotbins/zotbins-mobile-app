@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
 import BackButton from "@/components/Reusables/BackButton";
@@ -17,7 +17,7 @@ const AchievementsScreen = () => {
           headerLeft: () => <BackButton />,
         }}
       />
-
+      <ScrollView className="flex-1 bg-lightBackground" showsVerticalScrollIndicator={false}>
       <View className="flex-1 px-8">
         <View className="mt-24 mb-8">
           <Text className="text-5xl font-bold text-darkGreen">Achievements</Text>
@@ -27,6 +27,7 @@ const AchievementsScreen = () => {
           containerStyle="pb-24" 
         />
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
