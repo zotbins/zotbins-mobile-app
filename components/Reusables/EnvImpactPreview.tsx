@@ -4,6 +4,8 @@ import { Alert, View, Text, Pressable } from "react-native";
 import { getAuth } from "@react-native-firebase/auth";
 import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
 import { Ionicons } from "@expo/vector-icons";
+import LinearGradient from "react-native-linear-gradient";
+import ChevronRight from "@/assets/icons/chevron-right.svg";
 
 const EnvImpactPreview = () => {
   const router = useRouter();
@@ -100,50 +102,59 @@ const EnvImpactPreview = () => {
   };
 
   return (
-    <Pressable
-    style={{ padding: 1, borderRadius: 35, shadowColor: '#000', shadowOffset: { width: 0, height: 7 }, shadowOpacity: 0.4, shadowRadius: 3.84 }}
-    className="flex-row my-6 py-8 rounded-[35px] justify-evenly mb-4 shadow-lg bg-lightBackground"
-      onPress={() => router.push("/envimpact")}
+    <LinearGradient
+      colors={['#004c18', '#DFFFE3', '#DFFFE3', '#004c18']}
+      style={{ padding: 1, borderRadius: 35, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4, shadowRadius: 3.84 }}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      className="mb-4 shadow-lg"
+      locations={[0, 0.1, 0.9, 1]}
     >
-      <View className="absolute top-4 right-4">
-        <Ionicons name="chevron-forward" size={20} color="#00762b" />
+      <Pressable
+        style={{ padding: 1, borderRadius: 35, shadowColor: '#000', shadowOffset: { width: 0, height: 7 }, shadowOpacity: 0.4, shadowRadius: 3.84 }}
+        className="flex-row py-8 rounded-[33px] justify-evenly bg-lightBackground"
+        onPress={() => router.push("/envimpact")}
+      >
+        <View className="absolute top-4 right-4">
+          <ChevronRight/>
         </View>
-      {/* carbon footprint stats*/}
-      <View className="flex-col items-center justify-center px-3">
-        <Text className="text-darkestGreen text-xl font-semibold">
-          {calculateCO2Saved()}
-        </Text>
-        <Text className="text-darkestGreen text-xl font-semibold">
-          CO2 saved
-        </Text>
-      </View>
+        {/* carbon footprint stats*/}
+        <View className="flex-col items-center justify-center px-3">
+          <Text className="text-darkestGreen text-lg font-semibold">
+            {calculateCO2Saved()}
+          </Text>
+          <Text className="text-darkestGreen text-lg font-semibold">
+            CO2 saved
+          </Text>
+        </View>
 
-      {/* vertical divider */}
-      <View className="w-px h-full bg-gray-200 self-center"></View>
+        {/* vertical divider */}
+        <View className="w-px h-full bg-gray-200 self-center"></View>
 
-      <View className="flex-col justify-center items-center px-3">
-        <Text className="text-darkestGreen text-xl font-semibold">
-          {userDoc?.landfillScanned || 0} items
-        </Text>
-        <Text className="text-darkestGreen text-xl font-semibold">
-          {" "}
-          discarded
-        </Text>
-      </View>
+        <View className="flex-col justify-center items-center px-3">
+          <Text className="text-darkestGreen text-lg font-semibold">
+            {userDoc?.landfillScanned || 0} items
+          </Text>
+          <Text className="text-darkestGreen text-lg font-semibold">
+            {" "}
+            discarded
+          </Text>
+        </View>
 
-      {/* vertical divider */}
-      <View className="w-px h-full bg-gray-200 self-center"></View>
+        {/* vertical divider */}
+        <View className="w-px h-full bg-gray-200 self-center"></View>
 
-      <View className="flex-col justify-center items-center px-3">
-        <Text className="text-darkestGreen text-xl font-semibold">
-          {userDoc?.recyclableScanned || 0} items
-        </Text>
-        <Text className="text-darkestGreen text-xl font-semibold">
-          {" "}
-          recycled
-        </Text>
-      </View>
-    </Pressable>
+        <View className="flex-col justify-center items-center px-3 mr-4">
+          <Text className="text-darkestGreen text-lg font-semibold">
+            {userDoc?.recyclableScanned || 0} items
+          </Text>
+          <Text className="text-darkestGreen text-lg font-semibold">
+            {" "}
+            recycled
+          </Text>
+        </View>
+      </Pressable>
+    </LinearGradient>
   );
 };
 
