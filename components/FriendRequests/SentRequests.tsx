@@ -176,7 +176,7 @@ const SentRequests = () => {
           <Text className="text-darkGreen text-3xl font-semibold mt-3">Add Friends</Text>
           {/* search username in search box and add friend */}
           <TextInput
-            className="border border-gray-400 rounded-full bg-white px-3 h-12"
+            className="border border-gray rounded-full bg-white px-3 h-12"
             placeholder="Enter username"
             value={usernameInput}
             onChangeText={setUsernameInput}
