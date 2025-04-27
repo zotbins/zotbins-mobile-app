@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:ZotZeroMobile.xcodeproj">
+      location = "developer:../../../../Users/sophiatran/Documents/Workspace/school/zotzero-mobile/ios/ZotZeroMobile.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

@@ -5,20 +5,38 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  KeyboardAvoidingView,
   Platform,
   Pressable,
   Text,
   TextInput,
   View,
+  Image,
+  KeyboardAvoidingView,
+  ImageBackground,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
   GoogleSignin,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
-// import * as AppleAuthentication from "expo-apple-authentication";
-import { getFirestore, doc, setDoc, writeBatch, collection, where, query, getDocs, serverTimestamp } from "@react-native-firebase/firestore";
+import * as AppleAuthentication from "expo-apple-authentication";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  writeBatch,
+  collection,
+  where,
+  query,
+  getDocs,
+  serverTimestamp,
+} from "@react-native-firebase/firestore";
+import LinearGradient from "react-native-linear-gradient";
+import ZotbinsLogo from "../assets/images/zotbins_logo.png";
+import LeftCircle from '@/assets/images/left-bg-circle.png';
+import RightCircle from '@/assets/images/right-bg-circle.png';
+import BottomCircle from '@/assets/images/bottom-bg-circle.png';
+import Background from '@/assets/images/background.png';
 
 // initialize user doc in firestore
 const createUserDocument = async (
@@ -113,80 +131,78 @@ const Login = () => {
     const userMissionsRef = collection(db, "users", uid, "missions");
 
     const batch = writeBatch(db);
-      missionsSnapshot.forEach((document) => {
-        const userMissionRef = doc(userMissionsRef, document.id);
-        batch.set(userMissionRef, {
-            ...document.data(),
-            id: document.id,
-            progress: 0,
-            userStatus: false,
-            assignedAt: serverTimestamp(),
-        });
+    missionsSnapshot.forEach((document) => {
+      const userMissionRef = doc(userMissionsRef, document.id);
+      batch.set(userMissionRef, {
+        ...document.data(),
+        id: document.id,
+        progress: 0,
+        userStatus: false,
+        assignedAt: serverTimestamp(),
+      });
     });
 
     await batch.commit();
   }
 
-  async function populateAchievements(uid: string) { 
+  async function populateAchievements(uid: string) {
     const db = getFirestore();
     const achievementsRef = collection(db, "achievements");
     const achievementsSnapshot = await getDocs(achievementsRef);
     const userAchievementsRef = collection(db, "users", uid, "achievements");
 
     const batch = writeBatch(db);
-      achievementsSnapshot.forEach((document) => {
-        const userAchievementRef = doc(userAchievementsRef, document.id);
-        batch.set(userAchievementRef, {
-            ...document.data(),
-            id: document.id,
-            progress: 0,
-            userStatus: false,
-        });
+    achievementsSnapshot.forEach((document) => {
+      const userAchievementRef = doc(userAchievementsRef, document.id);
+      batch.set(userAchievementRef, {
+        ...document.data(),
+        id: document.id,
+        progress: 0,
+        userStatus: false,
+      });
     });
 
     await batch.commit();
   }
+
   // function to handle apple sign in
   const handleAppleSignIn = async () => {
-    // temporarily disabling functionality until apple dev account is created
-    return;
+    setLoading(true);
+    try {
+      // opens apple sign in prompt
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
 
-    // setLoading(true);
-    // try {
-    //   // opens apple sign in prompt
-    //   const credential = await AppleAuthentication.signInAsync({
-    //     requestedScopes: [
-    //       AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-    //       AppleAuthentication.AppleAuthenticationScope.EMAIL,
-    //     ],
-    //   });
+      if (credential) {
+        const { identityToken } = credential;
+        if (!identityToken) {
+          throw new Error("No identity token found");
+        }
+        // creates apple credential
+        const appleCredential = auth.AppleAuthProvider.credential(identityToken);
 
-    //   if (credential) {
-    //     const { identityToken } = credential;
-    //     if (!identityToken) {
-    //       throw new Error("No identity token found");
-    //     }
-    //     // creates apple credential
-    //     const appleCredential = auth.AppleAuthProvider.credential(identityToken);
+        const response = await auth().signInWithCredential(appleCredential);
 
-    //     const response = await auth().signInWithCredential(appleCredential);
-
-    //     // if user is new, create user doc in firestore
-    //     if (response.additionalUserInfo?.isNewUser) {
-    //       const uid = response.user.uid;
-    //       const email = response.user.email;
-    //       if (uid && email) {
-    //         await createUserDocument(uid, email, "", "", "");
-    //         await populateMissions(uid);
-    //         await populateAchievements(uid);
-    //       }
-    //     }
-    //   }
-    // } catch (e: any) {
-    //   console.error(e);
-    // } finally{
-    //   setLoading(false);
-    // }
+        // if user is new, create user doc in firestore
+        if (response.additionalUserInfo?.isNewUser) {
+          const uid = response.user.uid;
+          const email = response.user.email;
+          if (uid && email) {
+            await createUserDocument(uid, email, "", "", "");
+            await populateMissions(uid);
+            await populateAchievements(uid);
+          }
+        }
+      }
+    } catch (e: any) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // sign in the user or alert if error occures
@@ -207,76 +223,249 @@ const Login = () => {
     }
   };
 
+  const [hidePassword, setHidePassword] = useState(true);
+
+  const togglePasswordVisibility = () => {
+    setHidePassword(!hidePassword);
+  };
+
   return (
-    <View className="flex-1 justify-center mx-5">
-      <KeyboardAvoidingView behavior="padding">
-        <TextInput
-          className="my-1 h-14 border rounded-md p-2 bg-white"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          placeholder="Email"
-        />
-        <TextInput
-          className="my-1 h-14 border rounded-md p-2 bg-white"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          placeholder="Password"
-        />
-        {loading ? (
-          <ActivityIndicator size={"small"} className="my-7" />
-        ) : (
-          <>
+    <ImageBackground
+      source={Background}
+      style={{ flex: 1 }}
+      resizeMode="cover"
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
+        className="flex-1">
+
+        <View className="flex-1 justify-center items-center px-5">
+          {/* ZotBins Logo */}
+          <View
+            style={{
+              width: 250,
+              height: 250,
+              borderRadius: 360,
+              backgroundColor: "#e8ffe8",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: 50,
+              borderWidth: 10,
+              marginTop: 50,
+              borderColor: "#66b679",
+            }}
+          >
+            <Image
+              source={ZotbinsLogo}
+              resizeMode="contain"
+              style={{ width: 150, height: 150 }}
+            />
+          </View>
+          {/* Email*/}
+          <View className="w-full max-w-md">
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              placeholder="Email"
+              placeholderTextColor="white"
+              style={{
+                marginHorizontal: 20,
+                marginBottom: 10,
+                marginTop: 50,
+                fontSize: 16,
+                color: "white",
+              }}
+            />
+            <View
+              style={{
+                height: 1.5,
+                backgroundColor: "white",
+                marginBottom: 15,
+                marginHorizontal: 20,
+              }}
+            />
+
+            {/* Password */}
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={hidePassword}
+              placeholder="Password"
+              placeholderTextColor="white"
+              style={{
+                marginHorizontal: 20,
+                marginBottom: 10,
+                marginTop: 10,
+                fontSize: 16,
+                color: "white",
+              }}
+            />
             <Pressable
-              onPress={signIn}
-              className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50"
+              onPress={togglePasswordVisibility}
             >
-              <Text className="text-white text-xl">Login</Text>
+              <Ionicons
+                name={hidePassword ? 'eye-off' : 'eye'}
+                size={24}
+                color="white"
+                className="absolute right-6 bottom-2"
+              />
             </Pressable>
-            <View className="items-center justify-center pt-2">
-              <Link href="/signup">
-                <Text className="text-blue">I don't have an account</Text>
-              </Link>
-            </View>
-            {/*Google and Apple Sign In*/}
-            <View className="flex-row items-center justify-center p-3">
-              <View className="flex-1 border-t border-1 mr-4 border-grey" />
-              <Text className="text-lg text-grey ">or</Text>
-              <View className="flex-1 border-t border-1 ml-4 text-grey" />
-            </View>
-            <Pressable
-              className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50 flex-row"
-              onPress={handleGoogleSignIn}
-            >
-              <Ionicons name="logo-google" size={24} color="white" />
-              <Text className="ml-2 text-white text-xl">Login with Google</Text>
-            </Pressable>
-            {/* Apple sign in is only available on iOS, but currently set to always show for testing purposes */}
-            {(true || Platform.OS === "ios") && (
-              <Pressable
-                className="items-center justify-center py-5 rounded-md bg-tintColor mt-2 active:opacity-50 flex-row"
-                onPress={handleAppleSignIn}
-              >
-                <Ionicons name="logo-apple" size={24} color="white" />
-                <Text className="ml-2 text-white text-xl">
-                  Login with Apple
-                </Text>
-              </Pressable>
+            <View
+              style={{
+                height: 1.5,
+                backgroundColor: "white",
+                marginBottom: 15,
+                marginHorizontal: 20,
+              }}
+            />
+
+            {loading ? (
+              <ActivityIndicator size={"large"} className="my-7" color="white" />
+            ) : (
+              <>
+                {/* Login Button */}
+                <Pressable
+                  onPress={signIn}
+                  style={{
+                    backgroundColor: "#DDEEDD",
+                    borderRadius: 100,
+                    paddingVertical: 15,
+                    marginHorizontal: 20,
+                    marginVertical: 15,
+                    alignItems: "center",
+                    borderWidth: 1,
+                    borderColor: "#82FFAD",
+                  }}
+                >
+                  <Text
+                    style={{ color: "#00762B", fontSize: 20, fontWeight: "bold" }}
+                  >
+                    Log in
+                  </Text>
+                </Pressable>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginVertical: 15,
+                  }}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      height: 1,
+                      backgroundColor: "white",
+                      marginHorizontal: 20,
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: "white",
+                      fontWeight: "bold",
+                      fontSize: 14,
+                    }}
+                  >
+                    Or login with
+                  </Text>
+                  <View
+                    style={{
+                      flex: 1,
+                      height: 1,
+                      backgroundColor: "white",
+                      marginHorizontal: 20,
+                    }}
+                  />
+                </View>
+
+                {/* Google and Apple Sign In */}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    gap: 20,
+                    width: "100%",
+                    marginBottom: 20,
+                  }}
+                >
+                  {/* Google Sign In */}
+                  <Pressable
+                    onPress={handleGoogleSignIn}
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 50,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      source={require("../assets/images/google_signin.png")}
+                      style={{ width: 50, height: 50 }}
+                    />
+                  </Pressable>
+
+                  {/* Apple Sign In */}
+                  {(true || Platform.OS === "ios") && (
+                    <Pressable
+                      onPress={handleAppleSignIn}
+                      style={{
+                        width: 50,
+                        height: 50,
+                        borderRadius: 50,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Image
+                        source={require("../assets/images/apple_signin.png")}
+                        style={{ width: 50, height: 50 }}
+                      />
+                    </Pressable>
+                  )}
+                </View>
+
+                {/* Sign Up Link */}
+                <View style={{ flexDirection: "row", justifyContent: "center" }}>
+                  <Text
+                    style={{
+                      color: "white",
+                      fontSize: 16,
+                      fontWeight: "semibold",
+                    }}
+                  >
+                    Don’t have an account?{" "}
+                  </Text>
+
+                  <Link href="/signup">
+                    <Text
+                      style={{
+                        color: "#A4F0FF",
+                        fontWeight: "bold",
+                        fontSize: 16,
+                      }}
+                    >
+                      Sign up
+                    </Text>
+                  </Link>
+                </View>
+              </>
             )}
-          </>
-        )}
+          </View>
+          {/* <View className="absolute bottom-12 left-5 z-10">
+          <Pressable
+            className="bg-tintColor w-12 h-12 rounded-full justify-center items-center active:opacity-50"
+            onPress={() => router.push("/onboarding")}
+          >
+            <Text className="text-white text-3xl">?</Text>
+          </Pressable>
+        </View> */}
+        </View>
       </KeyboardAvoidingView>
-      <View className="absolute bottom-12 left-5 z-10">
-        <Pressable
-          className="bg-tintColor w-12 h-12 rounded-full justify-center items-center active:opacity-50"
-          onPress={() => router.push("/onboarding")}
-        >
-          <Text className="text-white text-3xl">?</Text>
-        </Pressable>
-      </View>
-    </View>
+    </ImageBackground>
   );
 };
 
