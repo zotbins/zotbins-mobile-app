@@ -152,7 +152,7 @@ export default function SignupCredentials() {
         );
         await populateMissions(uid);
         await populateAchievements(uid);
-        router.replace('/home');
+        router.replace('/spirittrash');
       } else {
         Alert.alert('Info', 'Account already exists.');
       }

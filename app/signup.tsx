@@ -10,12 +10,11 @@ import {
   Platform,
   SafeAreaView,
   Image,
+  ImageBackground,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import LinearGradient from 'react-native-linear-gradient';
-import LeftCircle from '@/assets/images/left-bg-circle.png';
-import RightCircle from '@/assets/images/right-bg-circle.png';
-import BottomCircle from '@/assets/images/bottom-bg-circle.png';
+import Background from '@/assets/images/background.png';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function Signup() {
@@ -38,13 +37,11 @@ export default function Signup() {
   };
 
   return (
-    <LinearGradient colors={['#48BB78', '#009838']} style={{ flex: 1 }}>
-      <Image source={LeftCircle} className="absolute" />
-      <Image source={RightCircle} className="absolute top-56 right-0" />
-      <Image
-        source={BottomCircle}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2"
-      />
+    <ImageBackground
+      source={Background}
+      resizeMode="cover"
+      className="flex-1"
+    >
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -112,18 +109,18 @@ export default function Signup() {
             {/* {loading ? (
               <ActivityIndicator size="small" className="m-7" />
             ) : ( */}
-              <Pressable
-                onPress={goNext}
-                className="h-14 bg-lightestGreen rounded-full items-center justify-center mt-4"
-              >
-                <Text className="text-mediumGreen text-xl font-semibold">
-                  Next
-                </Text>
-              </Pressable>
+            <Pressable
+              onPress={goNext}
+              className="h-14 bg-lightestGreen rounded-full items-center justify-center mt-4"
+            >
+              <Text className="text-mediumGreen text-xl font-semibold">
+                Next
+              </Text>
+            </Pressable>
             {/* )} */}
           </View>
         </SafeAreaView>
       </KeyboardAvoidingView>
-    </LinearGradient>
+    </ImageBackground>
   );
 }

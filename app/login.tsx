@@ -11,6 +11,8 @@ import {
   TextInput,
   View,
   Image,
+  KeyboardAvoidingView,
+  ImageBackground,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -34,6 +36,7 @@ import ZotbinsLogo from "../assets/images/zotbins_logo.png";
 import LeftCircle from '@/assets/images/left-bg-circle.png';
 import RightCircle from '@/assets/images/right-bg-circle.png';
 import BottomCircle from '@/assets/images/bottom-bg-circle.png';
+import Background from '@/assets/images/background.png';
 
 // initialize user doc in firestore
 const createUserDocument = async (
@@ -197,7 +200,7 @@ const Login = () => {
       }
     } catch (e: any) {
       console.error(e);
-    } finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -227,187 +230,170 @@ const Login = () => {
   };
 
   return (
-    <LinearGradient colors={["#48BB78", "#009838"]} style={{ flex: 1 }}>
-      <Image source={LeftCircle} className="absolute" />
-      <Image source={RightCircle} className="absolute top-56 right-0" />
-      <Image
-        source={BottomCircle}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2"
-      />
+    <ImageBackground
+      source={Background}
+      style={{ flex: 1 }}
+      resizeMode="cover"
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
+        className="flex-1">
 
-      <View className="flex-1 justify-center items-center px-5">
-        {/* ZotBins Logo */}
-        <View
-          style={{
-            width: 250,
-            height: 250,
-            borderRadius: 360,
-            backgroundColor: "#e8ffe8",
-            justifyContent: "center",
-            alignItems: "center",
-            marginBottom: 50,
-            borderWidth: 10,
-            marginTop: 50,
-            borderColor: "#66b679",
-          }}
-        >
-          <Image
-            source={ZotbinsLogo}
-            resizeMode="contain"
-            style={{ width: 150, height: 150 }}
-          />
-        </View>
-
-        {/* Email*/}
-        <View className="w-full max-w-md">
-          <TextInput
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            placeholder="Email"
-            placeholderTextColor="white"
+        <View className="flex-1 justify-center items-center px-5">
+          {/* ZotBins Logo */}
+          <View
             style={{
-              marginHorizontal: 20,
-              marginBottom: 10,
+              width: 250,
+              height: 250,
+              borderRadius: 360,
+              backgroundColor: "#e8ffe8",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: 50,
+              borderWidth: 10,
               marginTop: 50,
-              fontSize: 16,
-              color: "white",
+              borderColor: "#66b679",
             }}
-          />
-          <View
-            style={{
-              height: 1.5,
-              backgroundColor: "white",
-              marginBottom: 15,
-              marginHorizontal: 20,
-            }}
-          />
+          >
+            <Image
+              source={ZotbinsLogo}
+              resizeMode="contain"
+              style={{ width: 150, height: 150 }}
+            />
+          </View>
+          {/* Email*/}
+          <View className="w-full max-w-md">
+            <TextInput
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              placeholder="Email"
+              placeholderTextColor="white"
+              style={{
+                marginHorizontal: 20,
+                marginBottom: 10,
+                marginTop: 50,
+                fontSize: 16,
+                color: "white",
+              }}
+            />
+            <View
+              style={{
+                height: 1.5,
+                backgroundColor: "white",
+                marginBottom: 15,
+                marginHorizontal: 20,
+              }}
+            />
 
-          {/* Password */}
-          <TextInput
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={hidePassword}
-            placeholder="Password"
-            placeholderTextColor="white"
-            style={{
-              marginHorizontal: 20,
-              marginBottom: 10,
-              marginTop: 10,
-              fontSize: 16,
-              color: "white",
-            }}
-          />
-          <Pressable 
-        onPress={togglePasswordVisibility}
-      >
-        <Ionicons 
-          name={hidePassword ? 'eye-off' : 'eye'} 
-          size={24} 
-          color="white" 
-          className="absolute right-6 bottom-2"
-        />
-      </Pressable>
-          <View
-            style={{
-              height: 1.5,
-              backgroundColor: "white",
-              marginBottom: 15,
-              marginHorizontal: 20,
-            }}
-          />
+            {/* Password */}
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={hidePassword}
+              placeholder="Password"
+              placeholderTextColor="white"
+              style={{
+                marginHorizontal: 20,
+                marginBottom: 10,
+                marginTop: 10,
+                fontSize: 16,
+                color: "white",
+              }}
+            />
+            <Pressable
+              onPress={togglePasswordVisibility}
+            >
+              <Ionicons
+                name={hidePassword ? 'eye-off' : 'eye'}
+                size={24}
+                color="white"
+                className="absolute right-6 bottom-2"
+              />
+            </Pressable>
+            <View
+              style={{
+                height: 1.5,
+                backgroundColor: "white",
+                marginBottom: 15,
+                marginHorizontal: 20,
+              }}
+            />
 
-          {loading ? (
-            <ActivityIndicator size={"large"} className="my-7" color="white" />
-          ) : (
-            <>
-              {/* Login Button */}
-              <Pressable
-                onPress={signIn}
-                style={{
-                  backgroundColor: "#DDEEDD",
-                  borderRadius: 100,
-                  paddingVertical: 15,
-                  marginHorizontal: 20,
-                  marginVertical: 15,
-                  alignItems: "center",
-                  borderWidth: 1,
-                  borderColor: "#82FFAD",
-                }}
-              >
-                <Text
-                  style={{ color: "#00762B", fontSize: 20, fontWeight: "bold" }}
-                >
-                  Log in
-                </Text>
-              </Pressable>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginVertical: 15,
-                }}
-              >
-                <View
-                  style={{
-                    flex: 1,
-                    height: 1,
-                    backgroundColor: "white",
-                    marginHorizontal: 20,
-                  }}
-                />
-                <Text
-                  style={{
-                    color: "white",
-                    fontWeight: "bold",
-                    fontSize: 14,
-                  }}
-                >
-                  Or login with
-                </Text>
-                <View
-                  style={{
-                    flex: 1,
-                    height: 1,
-                    backgroundColor: "white",
-                    marginHorizontal: 20,
-                  }}
-                />
-              </View>
-
-              {/* Google and Apple Sign In */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  gap: 20,
-                  width: "100%",
-                  marginBottom: 20,
-                }}
-              >
-                {/* Google Sign In */}
+            {loading ? (
+              <ActivityIndicator size={"large"} className="my-7" color="white" />
+            ) : (
+              <>
+                {/* Login Button */}
                 <Pressable
-                  onPress={handleGoogleSignIn}
+                  onPress={signIn}
                   style={{
-                    width: 50,
-                    height: 50,
-                    borderRadius: 50,
-                    justifyContent: "center",
+                    backgroundColor: "#DDEEDD",
+                    borderRadius: 100,
+                    paddingVertical: 15,
+                    marginHorizontal: 20,
+                    marginVertical: 15,
                     alignItems: "center",
+                    borderWidth: 1,
+                    borderColor: "#82FFAD",
                   }}
                 >
-                  <Image
-                    source={require("../assets/images/google_signin.png")}
-                    style={{ width: 50, height: 50  }}
-                    />
+                  <Text
+                    style={{ color: "#00762B", fontSize: 20, fontWeight: "bold" }}
+                  >
+                    Log in
+                  </Text>
                 </Pressable>
 
-                {/* Apple Sign In */}
-                {(true || Platform.OS === "ios") && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginVertical: 15,
+                  }}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      height: 1,
+                      backgroundColor: "white",
+                      marginHorizontal: 20,
+                    }}
+                  />
+                  <Text
+                    style={{
+                      color: "white",
+                      fontWeight: "bold",
+                      fontSize: 14,
+                    }}
+                  >
+                    Or login with
+                  </Text>
+                  <View
+                    style={{
+                      flex: 1,
+                      height: 1,
+                      backgroundColor: "white",
+                      marginHorizontal: 20,
+                    }}
+                  />
+                </View>
+
+                {/* Google and Apple Sign In */}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    gap: 20,
+                    width: "100%",
+                    marginBottom: 20,
+                  }}
+                >
+                  {/* Google Sign In */}
                   <Pressable
-                    onPress={handleAppleSignIn}
+                    onPress={handleGoogleSignIn}
                     style={{
                       width: 50,
                       height: 50,
@@ -417,42 +403,59 @@ const Login = () => {
                     }}
                   >
                     <Image
-                      source={require("../assets/images/apple_signin.png")}
+                      source={require("../assets/images/google_signin.png")}
                       style={{ width: 50, height: 50 }}
                     />
                   </Pressable>
-                )}
-              </View>
 
-              {/* Sign Up Link */}
-              <View style={{ flexDirection: "row", justifyContent: "center" }}>
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 16,
-                    fontWeight: "semibold",
-                  }}
-                >
-                  Don’t have an account?{" "}
-                </Text>
+                  {/* Apple Sign In */}
+                  {(true || Platform.OS === "ios") && (
+                    <Pressable
+                      onPress={handleAppleSignIn}
+                      style={{
+                        width: 50,
+                        height: 50,
+                        borderRadius: 50,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Image
+                        source={require("../assets/images/apple_signin.png")}
+                        style={{ width: 50, height: 50 }}
+                      />
+                    </Pressable>
+                  )}
+                </View>
 
-                <Link href="/signup">
+                {/* Sign Up Link */}
+                <View style={{ flexDirection: "row", justifyContent: "center" }}>
                   <Text
                     style={{
-                      color: "#A4F0FF",
-                      fontWeight: "bold",
+                      color: "white",
                       fontSize: 16,
+                      fontWeight: "semibold",
                     }}
                   >
-                    Sign up
+                    Don’t have an account?{" "}
                   </Text>
-                </Link>
-              </View>
-            </>
-          )}
-        </View>
 
-        {/* <View className="absolute bottom-12 left-5 z-10">
+                  <Link href="/signup">
+                    <Text
+                      style={{
+                        color: "#A4F0FF",
+                        fontWeight: "bold",
+                        fontSize: 16,
+                      }}
+                    >
+                      Sign up
+                    </Text>
+                  </Link>
+                </View>
+              </>
+            )}
+          </View>
+          {/* <View className="absolute bottom-12 left-5 z-10">
           <Pressable
             className="bg-tintColor w-12 h-12 rounded-full justify-center items-center active:opacity-50"
             onPress={() => router.push("/onboarding")}
@@ -460,8 +463,9 @@ const Login = () => {
             <Text className="text-white text-3xl">?</Text>
           </Pressable>
         </View> */}
-      </View>
-    </LinearGradient>
+        </View>
+      </KeyboardAvoidingView>
+    </ImageBackground>
   );
 };
 
