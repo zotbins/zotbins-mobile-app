@@ -1,5 +1,5 @@
 import BackButton from "@/components/Reusables/BackButton";
-import { Stack } from "expo-router";
+import { Link, Stack } from "expo-router";
 import React, { useState } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -41,17 +41,23 @@ const FAQ = () => {
             headerTitle: "",
           }}
         />
-        <ScrollView>
-          <View className="flex justify-center items-center">
-            <Text className="text-3xl font-bold text-center p-2 text-tintColor">
-              Frequently Asked Questions
+        <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 45 }}
+        className="px-6"
+        >
+          <View className="flex justify-center mt-16">
+            <Text className="text-4xl font-bold text-darkGreen p-1">
+              FAQ
             </Text>
             {/* TODO: make zotbins.org and zotbins@uci.edu pressable links */}
-            <Text className="text-center p-8">
-              Can't find what you're looking for? Visit zotbins.org or send us a
-              message at zotbins@uci.edu!
+            <Text className="p-1 text-darkGreen text-lg">
+              Can't find your question? 
+              Please email us at{" "} <Link href="mailto:zotbins@uci.edu" className="text-darkGreen font-semibold"> zotbins@uci.edu</Link> 
+              , or checkout our socials: zotbins!
             </Text>
           </View>
+          <View className="border-b-2 border-darkGreen my-4" />
           <Accordion questions={questions} />
         </ScrollView>
       </SafeAreaView>
