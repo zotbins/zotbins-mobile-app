@@ -1,7 +1,7 @@
 import { Entypo } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { View, TouchableOpacity, Text } from "react-native";
-
+import { View, TouchableOpacity, Text, Pressable } from "react-native";
+import {LinearGradient} from "expo-linear-gradient";
 interface AccordionItemProps {
   question: string;
   answer: string;
@@ -15,35 +15,35 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
-    <View>
-      <TouchableOpacity
-        className={
-          row == 0 && isOpen
-            ? "border-t-2"
-            : row == 0
-            ? "border-y-2"
-            : isOpen
-            ? ""
-            : "border-b-2"
-        }
-        onPress={() => setIsOpen(!isOpen)}
-      >
-        <View className="flex flex-row justify-between items-center p-4">
-          <Text className="font-semibold text-xl w-5/6">{question}</Text>
 
-          {isOpen ? (
-            <Entypo name="chevron-up" size={24} color="black" />
+        <LinearGradient
+            colors={['#004c18', '#DFFFE3', '#DFFFE3', '#004c18']}
+            style={{ padding: 1, borderRadius: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4, shadowRadius: 3.84 }}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            className="mb-4 shadow-lg rounded-lg"
+            locations={[0, 0.1, 0.9, 1]}
+        >
+      <Pressable
+        onPress={() => setIsOpen(!isOpen)}
+        className="bg-lightBackground rounded-xl p-4"
+      >
+        <View className="flex flex-row items-center ">
+        {isOpen ? (
+            <Entypo name="chevron-down" size={24} color="#00762B" />
           ) : (
-            <Entypo name="chevron-down" size={24} color="black" />
+            <Entypo name="chevron-right" size={24} color="#00762B" />
           )}
+          <Text className="ml-4 font-bold text-xl text-darkGreen w-5/6">{question}</Text>
         </View>
-      </TouchableOpacity>
-      {isOpen && (
-        <View className="flex flex-row border-b-2 items-center p-4">
-          <Text>{answer}</Text>
+        {isOpen && (
+        <View className=" flex flex-row items-center p-2 pb-0">
+          <Text className=" text-darkGreen">{answer}</Text>
         </View>
       )}
-    </View>
+      </Pressable>
+      
+    </LinearGradient>
   );
 };
 

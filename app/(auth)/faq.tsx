@@ -44,20 +44,19 @@ const FAQ = () => {
         <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 45 }}
-        className="px-6"
         >
-          <View className="flex justify-center mt-16">
+          <View className="flex justify-center mt-16 px-6">
             <Text className="text-4xl font-bold text-darkGreen p-1">
               FAQ
             </Text>
-            {/* TODO: make zotbins.org and zotbins@uci.edu pressable links */}
             <Text className="p-1 text-darkGreen text-lg">
               Can't find your question? 
               Please email us at{" "} <Link href="mailto:zotbins@uci.edu" className="text-darkGreen font-semibold"> zotbins@uci.edu</Link> 
               , or checkout our socials: zotbins!
             </Text>
+            <View className="border-b-2 border-darkGreen my-4" />
           </View>
-          <View className="border-b-2 border-darkGreen my-4" />
+
           <Accordion questions={questions} />
         </ScrollView>
       </SafeAreaView>
