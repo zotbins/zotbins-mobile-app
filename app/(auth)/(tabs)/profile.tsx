@@ -191,13 +191,13 @@ const Profile = () => {
               </View>
             </View>
 
-            <View className="flex flex-row items-center mt-6 ml-6 mb-4">
+            <View className="flex flex-row items-center mt-6 ml-4 mb-4">
               <Text className="text-2xl font-bold text-darkGreen">Achievements</Text>
               <Pressable onPress={() => router.push("/achievements")}>
                 <Text className="text-md text-darkGreen underline mt-1 ml-2">See all</Text>
               </Pressable>
             </View>
-            <AchievementsList limit={5} containerStyle="px-4 w-full mb-24" />
+            <AchievementsList limit={5} containerStyle="px-2 w-full mb-24" />
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>
