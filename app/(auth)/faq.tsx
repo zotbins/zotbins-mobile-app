@@ -43,7 +43,7 @@ const FAQ = () => {
         />
         <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 45 }}
+        contentContainerStyle={{ paddingBottom: 15 }}
         >
           <View className="flex justify-center mt-16 px-6">
             <Text className="text-4xl font-bold text-darkGreen p-1">
