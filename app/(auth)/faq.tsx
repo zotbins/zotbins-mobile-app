@@ -1,7 +1,7 @@
 import BackButton from "@/components/Reusables/BackButton";
 import { Link, Stack } from "expo-router";
 import React, { useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Accordion from "@/components/Reusables/Accordion";
 import { LinearGradient } from "react-native-linear-gradient";
@@ -42,17 +42,23 @@ const FAQ = () => {
           }}
         />
         <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 15 }}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 15 }}
         >
           <View className="flex justify-center mt-20 px-6 mb-4">
             <Text className="text-4xl font-bold text-darkGreen p-1">
               FAQ
             </Text>
             <Text className="p-1 text-darkGreen text-lg">
-              Can't find your question? 
-              Please email us at{" "} <Link href="mailto:zotbins@uci.edu" className="text-darkGreen font-semibold"> zotbins@uci.edu</Link> 
-              , or checkout our socials: zotbins!
+              Can't find your question?
+              Please email us at{" "}
+              <Text
+                className="text-darkGreen font-semibold"
+                onPress={() => Linking.openURL('mailto:zotbins@uci.edu')}
+              >
+                zotbins@uci.edu
+              </Text>
+              , or checkout our socials: @zotbins!
             </Text>
             <View className="border-b-2 border-darkGreen my-4" />
           </View>

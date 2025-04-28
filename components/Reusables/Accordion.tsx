@@ -10,7 +10,7 @@ interface AccordionProps {
 // accepts a list of list of strings: questions[[q, a]]
 const Accordion: React.FC<AccordionProps> = ({ questions }) => {
   return questions.map((question: string[], index: number) => (
-    <View className="px-6" key={index}>
+    <View className="px-6 py-2" key={index}>
       <AccordionItem question={question[0]} answer={question[1]} row={index} />
     </View>
   ));
