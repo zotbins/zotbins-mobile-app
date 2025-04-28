@@ -124,7 +124,7 @@ const EnvImpactPreview = () => {
             {calculateCO2Saved()}
           </Text>
           <Text className="text-darkestGreen text-lg font-semibold">
-            CO2 saved
+            CO₂ saved
           </Text>
         </View>
 
