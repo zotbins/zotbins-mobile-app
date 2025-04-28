@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Accordion from "@/components/Reusables/Accordion";
+import { LinearGradient } from "react-native-linear-gradient";
+
 const FAQ = () => {
   // list of FAQ
   const questions = [
@@ -25,30 +27,35 @@ const FAQ = () => {
     ],
   ];
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <Stack.Screen
-        options={{
-          headerShadowVisible: false,
-          headerBackVisible: false,
-          headerTransparent: true,
-          headerLeft: () => <BackButton />,
-          headerTitle: "",
-        }}
-      />
-      <ScrollView>
-        <View className="flex justify-center items-center">
-          <Text className="text-3xl font-bold text-center p-2 text-tintColor">
-            Frequently Asked Questions
-          </Text>
-          {/* TODO: make zotbins.org and zotbins@uci.edu pressable links */}
-          <Text className="text-center p-8">
-            Can't find what you're looking for? Visit zotbins.org or send us a
-            message at zotbins@uci.edu!
-          </Text>
-        </View>
-        <Accordion questions={questions} />
-      </ScrollView>
-    </SafeAreaView>
+    <LinearGradient
+      colors={["#F5FFF5", "#DBFFD8"]}
+      style={{ flex: 1 }}
+    >
+      <SafeAreaView className="flex-1">
+        <Stack.Screen
+          options={{
+            headerShadowVisible: false,
+            headerBackVisible: false,
+            headerTransparent: true,
+            headerLeft: () => <BackButton />,
+            headerTitle: "",
+          }}
+        />
+        <ScrollView>
+          <View className="flex justify-center items-center">
+            <Text className="text-3xl font-bold text-center p-2 text-tintColor">
+              Frequently Asked Questions
+            </Text>
+            {/* TODO: make zotbins.org and zotbins@uci.edu pressable links */}
+            <Text className="text-center p-8">
+              Can't find what you're looking for? Visit zotbins.org or send us a
+              message at zotbins@uci.edu!
+            </Text>
+          </View>
+          <Accordion questions={questions} />
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
