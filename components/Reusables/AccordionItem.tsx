@@ -57,11 +57,11 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           <Animated.View style={animatedStyle}>
             <Entypo name="chevron-right" size={24} color="#00762B" />
           </Animated.View>
-          <Text className="ml-4 font-bold text-xl text-darkGreen w-5/6">{question}</Text>
+          <Text className="ml-4 font-bold text-xl text-mediumGreen w-5/6">{question}</Text>
         </View>
         {isOpen && (
           <View className=" flex flex-row items-center p-2 pb-0">
-            <Text className=" text-darkGreen">{answer}</Text>
+            <Text className=" text-mediumGreen">{answer}</Text>
           </View>
         )}
       </Pressable>
