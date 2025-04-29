@@ -11,7 +11,7 @@ import {
   Image,
   ImageSourcePropType,
 } from "react-native";
-import { useUserContext } from "@/context/UserProvider";
+import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
 import BackButton from "@/components/Reusables/back-button.svg";
 import SimpleLogoSvg from "@/components/Reusables/SimpleLogoSVG";
 import { FontAwesome } from "@expo/vector-icons";
@@ -28,7 +28,8 @@ import {
 
 const Settings = () => {
   const router = useRouter();
-  const { user, userDoc } = useUserContext();
+
+  const user = getAuth().currentUser;
   // set profile picture to user's photoURL or placeholder image
   const [profilePic, setProfilePic] = useState<string | ImageSourcePropType>(
     user?.photoURL || require("@/assets/images/default_profile_picture.png")
@@ -41,7 +42,33 @@ const Settings = () => {
     return source;
   };
 
+  const [userDoc, setUserDoc] = useState<any>(null);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+
+  // on user change, fetch user document from firestore
+  useEffect(() => {
+    const fetchUserDoc = async () => {
+      const uid = user?.uid;
+      if (!uid) {
+        return;
+      }
+
+      try {
+        const db = getFirestore();
+        const userDocRef = doc(db, "users", uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (!userDocSnap.exists) {
+          throw new Error("User document does not exist");
+        }
+        setUserDoc(userDocSnap.data());
+      } catch (error) {
+        console.error("Error fetching user document: ", error);
+        Alert.alert("Error", "Failed to fetch user document");
+      }
+    };
+
+    fetchUserDoc();
+  });
 
   // request permission to access camera roll
   const requestPermission = async () => {
