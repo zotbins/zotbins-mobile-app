@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { FirebaseAuthTypes, getAuth } from "@react-native-firebase/auth";
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
-import { getAuth } from "@react-native-firebase/auth";
+import { getStorage, getDownloadURL, ref } from "@react-native-firebase/storage";
 import { 
   getFirestore, 
   doc, 
@@ -133,13 +133,30 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   useEffect(() => {
     if (user?.uid) {
       const db = getFirestore();
+      const storage = getStorage();
       const userRef = doc(db, "users", user.uid);
 
       //listen for realtime updates
-      const unsubscribeFirestore = onSnapshot(userRef, (docSnapshot) => {
-        if (docSnapshot.exists) {
-          setUserDoc(docSnapshot.data() || null);
+
+      const unsubscribeFirestore = onSnapshot(userRef, async (docSnapshot) => {
+        if (!docSnapshot.exists) {
+          setUserDoc(null);
+          return;
         }
+  
+        const userData = docSnapshot.data();
+        let profilePicURL: string | null = null;
+  
+        try {
+          const profilePicRef = ref(storage, `zotzero-user-profile-pics/${user.uid}`);
+          profilePicURL = await getDownloadURL(profilePicRef);
+        } catch (error: any) {
+          if (error.code !== "storage/object-not-found") {
+            console.error("Error fetching profile picture from snapshot:", error);
+          }
+        }
+  
+        setUserDoc({ ...userData, profilePic: profilePicURL });
       });
 
       return unsubscribeFirestore;
