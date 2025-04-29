@@ -156,7 +156,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           }
         }
   
-        setUserDoc({ ...userData, profilePic: profilePicURL });
+        setUserDoc({ ...userData, photoURL: profilePicURL });
       });
 
       return unsubscribeFirestore;
