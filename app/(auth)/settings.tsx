@@ -134,7 +134,9 @@ const Settings = () => {
         <SafeAreaView className="flex-1 px-5 gap-2 pb-24">
           <View className="flex justify-center items-center w-full">
             <View className="w-11/12 flex flex-row justify-between items-baseline h-16 ml-[5%]">
-              <SimpleLogoSvg width={100} height={100} />
+              <Pressable onPress={() => router.push("/(auth)/profile")}>
+                <BackButton />
+              </Pressable>
 
               {/* <Pressable onPress={() => router.push("/settings")}>
               <SettingsButton width={50} />
@@ -143,11 +145,6 @@ const Settings = () => {
 
             <View className="relative mb-5">
               <ProfileBanner />
-              <View className="absolute left-4 top-4">
-                <Pressable onPress={() => router.push("/(auth)/profile")}>
-                <BackButton />
-                </Pressable>
-              </View>
 
               <View className="absolute left-0 right-0 bottom-3 flex items-center justify-center">
                 <Pressable onPress={pickImage}>
