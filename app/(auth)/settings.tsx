@@ -199,11 +199,21 @@ const Settings = () => {
 
           <View className="flex justify-center items-center ">
             <Pressable
+              //TODO ~ Link to email change page
               onPress={() => router.push("/faq")}
-              className="bg-brightGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-9/12 mt-6"
+              className="bg-brightGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-9/12 mt-5"
             >
               <Text className="text-darkGreen text-center font-bold text-xl">
-                FAQ
+                Change Email
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => router.push("/passwordchange")}
+              className="bg-brightGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-9/12"
+            >
+              <Text className="text-darkGreen text-center font-bold text-xl">
+                Change Password
               </Text>
             </Pressable>
             <Pressable
@@ -216,19 +226,19 @@ const Settings = () => {
             </Pressable>
 
             <Pressable
-              onPress={() => router.push("/passwordchange")}
+              onPress={() => router.replace("/faq")}
               className="bg-brightGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-9/12"
             >
               <Text className="text-darkGreen text-center font-bold text-xl">
-                Change Password
+                FAQ
               </Text>
             </Pressable>
 
             <Pressable
               onPress={() => getAuth().signOut()}
-              className="bg-primaryGreen py-3 rounded-full my-2 active:opacity-50 border border-green-700 w-1/4 mt-6"
+              className="bg-primaryGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-2/5 mt-5"
             >
-              <Text className="text-white text-center font-bold text-md">
+              <Text className="text-white text-center font-bold text-xl">
                 Sign Out
               </Text>
             </Pressable>
