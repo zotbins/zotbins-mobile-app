@@ -1,25 +1,45 @@
 import { router } from "expo-router";
 import React, { useEffect, useState, useRef } from "react";
-import { ImageBackground, StyleSheet, View, Animated, Dimensions, Text } from "react-native";
+import {
+  ImageBackground,
+  StyleSheet,
+  View,
+  Animated,
+  Dimensions,
+  Text,
+} from "react-native";
 import ImageEditor from "@react-native-community/image-editor";
-import { getFirestore, getDoc, doc, increment, updateDoc } from "@react-native-firebase/firestore";
+import {
+  getFirestore,
+  getDoc,
+  doc,
+  increment,
+  updateDoc,
+} from "@react-native-firebase/firestore";
 import { getAuth } from "@react-native-firebase/auth";
-import { updateAchievementProgress, updateMissionProgress } from "@/functions/src/updateProgress";
+import {
+  updateAchievementProgress,
+  updateMissionProgress,
+} from "@/functions/src/updateProgress";
 import ScanBottomSheetModal from "./ScanBottomSheetModal";
 import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { WasteObject } from './WasteItemResult';
+import { WasteObject } from "./WasteItemResult";
 import { LinearGradient } from "expo-linear-gradient";
 import ScanIndicator from "./ScanIndicator";
 
 interface ScanResultsProps {
   image: string | null;
-  imageDimensions: [number, number] | null;  
+  imageDimensions: [number, number] | null;
   setImage: (image: string | null) => void;
 }
 
-const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setImage }) => {
+const ScanResults: React.FC<ScanResultsProps> = ({
+  image,
+  imageDimensions,
+  setImage,
+}) => {
   const [base64Image, setBase64Image] = useState<string>("");
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const [wasteObjects, setWasteObjects] = useState<WasteObject[]>([]);
@@ -28,7 +48,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
   const screenHeight = Dimensions.get("window").height;
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
-  useEffect(() => { 
+  useEffect(() => {
     const fetchData = async () => {
       const user = getAuth().currentUser;
       if (user) {
@@ -92,6 +112,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
 
   useEffect(() => {
     classifyWaste();
+    // work here for adding llava output
   }, [croppedImage, base64Image]);
 
   useEffect(() => {
@@ -99,8 +120,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
       if (wasteObjects.length > 0) {
         bottomSheetRef.current?.present();
         setIsScanning(false);
-      }
-      else {
+      } else {
         setIsScanning(true);
       }
     }
@@ -110,8 +130,16 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
   useEffect(() => {
     const animation = Animated.loop(
       Animated.sequence([
-        Animated.timing(scanPosition, { toValue: 1, duration: 1500, useNativeDriver: true }),
-        Animated.timing(scanPosition, { toValue: 0, duration: 1500, useNativeDriver: true }),
+        Animated.timing(scanPosition, {
+          toValue: 1,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scanPosition, {
+          toValue: 0,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
       ])
     );
     if (isScanning) animation.start();
@@ -151,6 +179,9 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
       });
   };
 
+  const later =
+    "Is this object classified as a landfill, recyclable, or compostable object? Please put this in a JSON format: {category: string}";
+
   // send image to waste recognition model and get returned results
   const classifyWaste = async () => {
     if (croppedImage && base64Image) {
@@ -163,8 +194,38 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
         type: "image/jpeg",
         data: base64Image,
       });
+      
+      // fix image to pull from base64 string
+      // format JSON to include all attributes from the actual waste rec JSON output
+      const input = {
+        image:
+          "https://thumbs.dreamstime.com/b/spilled-water-fallen-bottle-wooden-laminate-floor-plastic-213715820.jpg",
+        prompt: "You are a waste recognition model. Classify the object in the image as landfill, recyclable, or compostable. Return as a JSON object in the format that follows: {category: string}",
+      };
+
+      const prediction = await fetch(
+        "https://api.replicate.com/v1/predictions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${process.env.EXPO_PUBLIC_REPLICATE_API_TOKEN}`,
+            "Content-Type": "application/json",
+            prefer: "wait"
+          },
+          body: JSON.stringify({
+            version:
+              "80537f9eead1a5bfa72d5ac6ea6414379be41d4d4f6679fd776e9535d1eb58bb",
+            stream: true,
+            input,
+          }),
+        }
+      );
+
+      const data = await prediction.json();
+
+      console.log("Bin classification", data.output);
+
       setTimeout(() => {
-        
         setWasteObjects([
           {
             name: "Plastic Bottle",
@@ -175,9 +236,9 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
             name: "Aluminum Can",
             material: "Metal",
             category: "Recyclable",
-          }
-        ])
-    }, 2000); // Simulate a delay for the scan result
+          },
+        ]);
+      }, 2000); // Simulate a delay for the scan result
 
       /*
       fetch(`http://${process.env.EXPO_PUBLIC_IPADDRESS}:8000/classify_img`, {
@@ -194,7 +255,6 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
         });
       */
     }
-        
   };
 
   if (!image || !imageDimensions || !croppedImage) {
@@ -202,36 +262,33 @@ const ScanResults: React.FC<ScanResultsProps> = ({ image, imageDimensions, setIm
       <View className="flex-1 items-center justify-center bg-white">
         <Text className="text-lg font-bold">Loading...</Text>
       </View>
-    )
+    );
   }
 
   return (
+    <BottomSheetModalProvider>
+      <ImageBackground
+        source={{ uri: image }}
+        resizeMode="cover"
+        style={{ width: "100%", height: "100%", flex: 1 }}
+      ></ImageBackground>
 
-      <BottomSheetModalProvider>
-        <ImageBackground
-          source={{ uri: image }}
-          resizeMode="cover"
-          style={{width: "100%", height: "100%", flex: 1}}
-        >
+      {isScanning && (
+        <ScanIndicator
+          scanPosition={scanPosition}
+          screenHeight={screenHeight}
+        />
+      )}
 
-        </ImageBackground>
-
-        {isScanning && (
-          <ScanIndicator
-            scanPosition={scanPosition}
-            screenHeight={screenHeight}
-          />
-        )}
-
-        <ScanBottomSheetModal
-            ref={bottomSheetRef}
-            onClose={() => {
-              setImage(null);
-            }}
-            wasteObjects={wasteObjects}
-            image={image}
-          />
-      </BottomSheetModalProvider>
+      <ScanBottomSheetModal
+        ref={bottomSheetRef}
+        onClose={() => {
+          setImage(null);
+        }}
+        wasteObjects={wasteObjects}
+        image={image}
+      />
+    </BottomSheetModalProvider>
   );
 };
 
