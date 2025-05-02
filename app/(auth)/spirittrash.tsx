@@ -17,6 +17,7 @@ import {
 } from "@react-native-firebase/firestore";
 import { getAuth } from "@react-native-firebase/auth";
 import Background from "@/assets/images/quizBackground.png";
+import { Ionicons } from "@expo/vector-icons";
 
 // update spiritTrash in firestore
 const updateSpiritTrash = async (spiritTrash: string) => {
@@ -47,6 +48,7 @@ const SpiritTrash = () => {
     "Cardboard Box": 0,
   });
   const [showResult, setShowResult] = useState(false);
+  const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(null);
 
   const questions = [
     {
@@ -168,7 +170,15 @@ const SpiritTrash = () => {
     setScores(newScores);
 
     // proceed to next question, else if reached last question, show spirit trash result
-    if (currentQuestion < questions.length - 1) {
+    // if (currentQuestion < questions.length - 1) {
+    //   setCurrentQuestion(currentQuestion + 1);
+    // } else {
+    //   setShowResult(true);
+    // }
+  };
+
+  const handleNext = () => {
+    if (currentQuestion + 1 < questions.length) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       setShowResult(true);
@@ -203,6 +213,10 @@ const SpiritTrash = () => {
     }
   }, [showResult]);
 
+  useEffect(() => {
+    setSelectedAnswerIndex(null);
+  }, [currentQuestion]);
+
   return (
     <ImageBackground source={Background} style={{ flex: 1 }} resizeMode="cover">
       <SafeAreaView className="flex-1 items-center mt-40">
@@ -217,23 +231,33 @@ const SpiritTrash = () => {
 
         {/* while there are questions to answer, show questions */}
         {!showResult ? (
-          <View className="items-center justify-center w-5/6">
+          <View className="items-center justify-center w-4/5">
             <Text className="text-2xl text-center mt-12 mb-5 text-white font-semibold">
               {questions[currentQuestion].question}
             </Text>
 
             <View className="w-full">
               {questions[currentQuestion].answers.map((answer, index) => (
-                <Pressable key={index}>
+                <Pressable
+                  key={index}
+                  onPress={() => {
+                    setSelectedAnswerIndex(index);
+                    handleAnswer(answer.scores); // If needed here
+                  }}
+                >
                   {({ pressed }) => (
                     <View
                       className={`border border-brightGreen2 my-3 rounded-full py-2.5 ${
-                        pressed ? "bg-brightGreen4" : "bg-primaryGreen"
+                        selectedAnswerIndex === index
+                          ? "bg-brightGreen4"
+                          : "bg-primaryGreen"
                       }`}
                     >
                       <Text
                         className={`text-lg text-center p-2 ${
-                          pressed ? "text-mediumGreen" : "text-white"
+                          selectedAnswerIndex === index
+                            ? "text-mediumGreen"
+                            : "text-white"
                         }`}
                       >
                         {answer.text}
@@ -242,11 +266,25 @@ const SpiritTrash = () => {
                   )}
                 </Pressable>
               ))}
+
+              {/* next button */}
+              <View className="flex items-end mt-52">
+                <Pressable
+                  onPress={handleNext}
+                  className="w-[132px] rounded-xl bg-brightGreen py-2 flex flex-row 
+          items-center justify-between px-3 shadow-sm border border-brightGreen2"
+                >
+                  <Text className="text-mediumGreen font-semibold text-xl px-3">
+                    Next
+                  </Text>
+                  <Ionicons name="arrow-forward" size={20} color="#008229" />
+                </Pressable>
+              </View>
             </View>
           </View>
         ) : (
           // else, show spirit trash results
-          <View className="h-screen items-center mt-40 w-5/6">
+          <View className="h-screen items-center mt-40 w-4/5">
             <Text className="text-3xl text-center">
               Your spirit trash is...
             </Text>
@@ -255,12 +293,12 @@ const SpiritTrash = () => {
               Category: {spiritCategory}
             </Text>
             <Pressable
-              className="border-2 rounded-3xl border-green-600 bg-tintColor my-2 text-2xl px-5"
+              className="w-[132px] rounded-xl bg-brightGreen py-2 flex flex-row 
+          items-center justify-between px-3 shadow-sm border border-brightGreen2"
               onPress={() => router.replace("/(auth)/(tabs)/home")}
             >
-              <Text className="text-2xl text-center text-black">
-                Back to Home
-              </Text>
+              <Text className="text-2xl text-center text-black">Awesome</Text>
+              <Ionicons name="arrow-forward" size={20} color="#008229" />
             </Pressable>
           </View>
         )}
