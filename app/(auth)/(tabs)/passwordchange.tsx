@@ -142,17 +142,26 @@ const PasswordChange: React.FC = () => {
 
           {/* New Password Field */}
           <View className="mb-4">
-            <Text className="text-sm font-medium text-green-800 mb-2">
-              New Password
-            </Text>
-            <TextInput
-              className="px-4 py-3 rounded-full bg-white border border-gray-300"
-              placeholder="Enter new password"
-              secureTextEntry
-              value={newPassword}
-              onChangeText={setNewPassword}
-              editable={!loading}
-            />
+            <Text className="text-sm font-medium text-green-800 mb-2">New Password</Text>
+
+            <View className="relative">
+              <TextInput
+                className="px-4 py-3 pr-36 rounded-full bg-white border border-gray-300"
+                placeholder="Enter new password"
+                secureTextEntry
+                value={newPassword}
+                onChangeText={setNewPassword}
+                editable={!loading}
+                style={{
+                  textAlignVertical: "center",
+                }}
+              />
+              {confirmPassword.length > 0 && confirmPassword !== newPassword && (
+                <Text className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-[#B22222] underline">
+                  Passwords do not match.
+                </Text>
+              )}
+            </View>
           </View>
 
           {/* Confirm New Password Field */}
