@@ -284,22 +284,32 @@ const SpiritTrash = () => {
           </View>
         ) : (
           // else, show spirit trash results
-          <View className="h-screen items-center mt-40 w-4/5">
-            <Text className="text-3xl text-center">
+          <View className="h-screen items-center mt-16 w-4/5">
+            <Text className="text-3xl text-center text-white font-semibold">
               Your spirit trash is...
             </Text>
-            <Text className="text-4xl font-bold my-4">{spiritResult}!</Text>
-            <Text className="text-xl text-center">
+            <View className="rounded-sm bg-white p-20 py-28 my-5">
+              <Text>placeholder</Text>
+            </View>
+            <Text className="text-4xl font-bold my-3 text-white">
+              {spiritResult}
+            </Text>
+            <Text className="text-xl text-center text-white">
               Category: {spiritCategory}
             </Text>
-            <Pressable
-              className="w-[132px] rounded-xl bg-brightGreen py-2 flex flex-row 
-          items-center justify-between px-3 shadow-sm border border-brightGreen2"
-              onPress={() => router.replace("/(auth)/(tabs)/home")}
-            >
-              <Text className="text-2xl text-center text-black">Awesome</Text>
-              <Ionicons name="arrow-forward" size={20} color="#008229" />
-            </Pressable>
+
+            <View className="w-full flex items-end mt-52">
+              <Pressable
+                className="w-[132px] rounded-xl bg-brightGreen py-2 flex flex-row 
+    items-center justify-between px-3 shadow-sm border border-brightGreen2"
+                onPress={() => router.replace("/(auth)/(tabs)/home")}
+              >
+                <Text className="text-mediumGreen font-semibold text-xl px-1">
+                  Awesome
+                </Text>
+                <Ionicons name="arrow-forward" size={20} color="#008229" />
+              </Pressable>
+            </View>
           </View>
         )}
       </SafeAreaView>
