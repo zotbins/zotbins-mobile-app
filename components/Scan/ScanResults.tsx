@@ -194,13 +194,23 @@ const ScanResults: React.FC<ScanResultsProps> = ({
         type: "image/jpeg",
         data: base64Image,
       });
-      
       // fix image to pull from base64 string
       // format JSON to include all attributes from the actual waste rec JSON output
+      const prompt = `You are a waste recognition model.
+      1. Identify the main object in the image.
+      2. Identify the primary material of the object.
+      3. Classify that object as 'Landfill', 'Recyclable', or 'Compostable'.
+      Return ONLY a JSON object containing the identified object name, its material, and its classification using the following structure and rules:
+      - The JSON object must contain the keys: "object", "material", and "class".
+      - The value for "object" should be the identified object name (string).
+      - The value for "class" should be the classification ('Landfill', 'Recyclable', or 'Compostable').
+      - If the "class" is "Recyclable", the value for "material" should be the identified primary material (string). If the "class" is 'Landfill' or 'Compostable', the value for "material" must be \`null\` (the JSON null value, not the string "null").
+      The final output must only be the JSON object. Example structure: {"object": "...", "material": ..., "class": "..."}`;
+
       const input = {
         image:
           "https://thumbs.dreamstime.com/b/spilled-water-fallen-bottle-wooden-laminate-floor-plastic-213715820.jpg",
-        prompt: "You are a waste recognition model. Classify the object in the image as landfill, recyclable, or compostable. Return as a JSON object in the format that follows: {category: string}",
+        prompt: prompt,
       };
 
       const prediction = await fetch(
@@ -215,7 +225,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({
           body: JSON.stringify({
             version:
               "80537f9eead1a5bfa72d5ac6ea6414379be41d4d4f6679fd776e9535d1eb58bb",
-            stream: true,
+              stream: true,
             input,
           }),
         }
@@ -225,17 +235,15 @@ const ScanResults: React.FC<ScanResultsProps> = ({
 
       console.log("Bin classification", data.output);
 
+      const output = data.output.join('');
+      const parsedOutput = JSON.parse(output);
+
       setTimeout(() => {
         setWasteObjects([
           {
-            name: "Plastic Bottle",
-            material: "Plastic",
-            category: "Recyclable",
-          },
-          {
-            name: "Aluminum Can",
-            material: "Metal",
-            category: "Recyclable",
+            name: parsedOutput.object,
+            material: parsedOutput.material,
+            category: parsedOutput.class,
           },
         ]);
       }, 2000); // Simulate a delay for the scan result
