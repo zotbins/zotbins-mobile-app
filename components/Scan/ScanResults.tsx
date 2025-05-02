@@ -191,8 +191,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({
         type: "image/jpeg",
         data: base64Image,
       });
-      // fix image to pull from base64 string
-      // format JSON to include all attributes from the actual waste rec JSON output
+
       const prompt = `You are a waste recognition model.
       1. Identify the main object in the image.
       2. Identify the primary material of the object.
