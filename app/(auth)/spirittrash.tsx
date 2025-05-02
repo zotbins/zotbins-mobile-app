@@ -224,15 +224,22 @@ const SpiritTrash = () => {
 
             <View className="w-full">
               {questions[currentQuestion].answers.map((answer, index) => (
-                <Pressable
-                  key={index}
-                  className="border border-brightGreen2 bg-primaryGreen my-3 rounded-full py-2.5
-                  active:bg-brightGreen4 active:text-mediumGreen "
-                  onPress={() => handleAnswer(answer.scores)}
-                >
-                  <Text className="text-lg text-white text-center p-2 ">
-                    {answer.text}
-                  </Text>
+                <Pressable key={index}>
+                  {({ pressed }) => (
+                    <View
+                      className={`border border-brightGreen2 my-3 rounded-full py-2.5 ${
+                        pressed ? "bg-brightGreen4" : "bg-primaryGreen"
+                      }`}
+                    >
+                      <Text
+                        className={`text-lg text-center p-2 ${
+                          pressed ? "text-mediumGreen" : "text-white"
+                        }`}
+                      >
+                        {answer.text}
+                      </Text>
+                    </View>
+                  )}
                 </Pressable>
               ))}
             </View>
