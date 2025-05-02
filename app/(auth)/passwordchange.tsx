@@ -134,53 +134,66 @@ const PasswordChange: React.FC = () => {
             Password must contain at least 1 letter, 1 number, and 1 symbol. Minimum length is 8 characters.
           </Text>
 
-      {/* Criteria Message */}
-      <Text className="text-sm mb-4" style={{ color: newPassword && !validateNewPassword() ? "red" : "transparent" }}>
-        Password does not meet the criteria.
-      </Text>
+          {/* Criteria Message */}
+          <Text className="text-sm mb-4" style={{ color: newPassword && !validateNewPassword() ? "#B22222" : "transparent", textDecorationLine: "underline",}}>
+            Password does not meet the criteria.
+          </Text>
 
-          {/* Current Password Input */}
-          <TextInput
-            className="px-4 py-3 my-2 rounded-lg bg-slate-100 border-2"
-            placeholder="Current Password"
-            secureTextEntry
-            value={currentPassword}
-            onChangeText={setCurrentPassword}
-            editable={!loading}
-          />
-
-          {/* New Password Input */}
-          <TextInput
-            className="px-4 py-3 my-2 rounded-lg bg-slate-100 border-2"
-            placeholder="New Password"
-            secureTextEntry
-            value={newPassword}
-            onChangeText={setNewPassword}
-            editable={!loading}
-          />
-
-          {/* Confirm New Password Input */}
-          <TextInput
-            className="px-4 py-3 my-2 rounded-lg bg-slate-100 border-2"
-            placeholder="Confirm New Password"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            editable={!loading}
-          />
-
-          {/* Change Password Button */}
-          <Pressable
-            onPress={handleChangePassword}
-            disabled={loading}
-            className={`px-4 py-3 my-2 rounded-lg ${
-              loading ? "bg-blue/50" : "bg-blue"
-            } active:opacity-50`}
-          >
-            <Text className="text-white text-center">
-              {loading ? "Changing Password..." : "Change Password"}
+          {/* Current Password Field */}
+          <View className="mb-4">
+            <Text className="text-sm font-medium text-green-800 mb-2">
+              Current Password
             </Text>
-          </Pressable>
+            <TextInput
+              className="px-4 py-3 rounded-full bg-white border border-gray-300"
+              placeholder="Enter current password"
+              secureTextEntry
+              value={currentPassword}
+              onChangeText={setCurrentPassword}
+              editable={!loading}
+            />
+          </View>
+
+          {/* New Password Field */}
+          <View className="mb-4">
+            <Text className="text-sm font-medium text-green-800 mb-2">
+              New Password
+            </Text>
+            <TextInput
+              className="px-4 py-3 rounded-full bg-white border border-gray-300"
+              placeholder="Enter new password"
+              secureTextEntry
+              value={newPassword}
+              onChangeText={setNewPassword}
+              editable={!loading}
+            />
+          </View>
+
+          {/* Confirm New Password Field */}
+          <View className="mb-4">
+            <Text className="text-sm font-medium text-green-800 mb-2">
+              Confirm New Password
+            </Text>
+            <TextInput
+              className="px-4 py-3 rounded-full bg-white border border-gray-300"
+              placeholder="Confirm new password"
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              editable={!loading}
+            />
+          </View>
+          <View className= "flex justify-center items-center">
+            <Pressable
+              onPress={handleChangePassword}
+              disabled={loading}  
+              className="bg-primaryGreen py-4 rounded-full my-2 active:opacity-50 border border-green-600 w-2/5 mt-5"
+            >
+              <Text className="text-white text-center font-bold text-sm">
+                Change Password
+              </Text>
+            </Pressable>
+          </View>
         </View>
       </SafeAreaView>
     </LinearGradient>
