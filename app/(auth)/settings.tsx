@@ -200,7 +200,7 @@ const Settings = () => {
           <View className="flex justify-center items-center ">
             <Pressable
               //TODO ~ Link to email change page
-              onPress={() => router.push("/faq")}
+              onPress={() => router.push("/emailchange")}
               className="bg-brightGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-9/12 mt-5"
             >
               <Text className="text-darkGreen text-center font-bold text-xl">
