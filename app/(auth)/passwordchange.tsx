@@ -37,48 +37,36 @@ const PasswordChange: React.FC = () => {
 
   //NEED TO SEPARATE VALIDATE PASSWORD AND ALERT LOGIC
 
-  const validatePassword = () => {
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      return 1;
+  const validateNewPassword = () => {
+    if (!newPassword || newPassword.length < 8 || !/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword) || !/[#@$!%*?&]/.test(newPassword))
+      return false;
+    return true;
+  };
+
+  const validateConfirmPassword = () => {
+    if (!confirmPassword || confirmPassword !== newPassword) {
+      return false;
     }
-    if (currentPassword === newPassword) {
-      return 2;
-    }
-    if (newPassword !== confirmPassword) {
-      return 3;
-    }
-    if (newPassword.length < 6) {
-      return 4;
-    }
-    return 0;
+    return true;
   }
 
-  const passwordAlert = () => {
-    const validationResult = validatePassword();
-    switch (validationResult) {
-      case 1:
-        Alert.alert("Error", "Please fill in all fields");
-        break;
-      case 2:
-        Alert.alert(
-          "Error",
-          "New password cannot be the same as the current password"
-        );
-        break;
-      case 3:
-        Alert.alert("Error", "New passwords don't match");
-        break;
-      case 4:
-        Alert.alert("Error", "New password must be at least 6 characters long");
-        break;
-      default:
-        break;
-    }
-
-  }
 
   const handleChangePassword = async () => {
-    if (validatePassword() != 0) return;
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+    if (!validateNewPassword()) {
+      Alert.alert(
+        "Error",
+        "New password must contain at least 1 letter, 1 number, and 1 symbol. Minimum length is 8 characters."
+      );
+      return;
+    }
+    if (!validateConfirmPassword()) {
+      Alert.alert("Error", "New passwords don't match");
+      return;
+    } 
 
     setLoading(true);
     try {
@@ -147,7 +135,7 @@ const PasswordChange: React.FC = () => {
           </Text>
 
       {/* Criteria Message */}
-      <Text className="text-sm mb-4" style={{ color: newPassword && validatePassword() != 0 ? "red" : "transparent" }}>
+      <Text className="text-sm mb-4" style={{ color: newPassword && !validateNewPassword() ? "red" : "transparent" }}>
         Password does not meet the criteria.
       </Text>
 
