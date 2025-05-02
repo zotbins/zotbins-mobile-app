@@ -1,4 +1,4 @@
-import auth from "@react-native-firebase/auth";
+import auth, { getAuth } from "@react-native-firebase/auth";
 import React, { useState } from "react";
 import {
   Alert,
@@ -17,7 +17,7 @@ import ProfileHeader from "@/components/Settings/ProfileHeader";
 import { router, Stack, useRouter} from "expo-router";
 
 const PasswordChange: React.FC = () => {
-  const user = auth().currentUser;
+  const user = getAuth().currentUser;
 
   // Profile picture logic
   const [profilePic, setProfilePic] = useState<string | ImageSourcePropType>(

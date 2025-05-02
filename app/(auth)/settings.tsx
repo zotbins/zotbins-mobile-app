@@ -134,7 +134,7 @@ const Settings = () => {
         <SafeAreaView className="flex-1 px-5 gap-2 pb-24">
           <View className="flex justify-center items-center w-full">
             <View className="w-11/12 flex flex-row justify-between items-baseline h-16 ml-[5%]">
-              <Pressable onPress={() => router.push("/profile")}>
+              <Pressable onPress={() => router.back()}>
                 <BackButton />
               </Pressable>
 
@@ -152,7 +152,7 @@ const Settings = () => {
                     source={getImageSource(profilePic)}
                     className="w-24 h-24 rounded-full"
                   />
-                  <View className="absolute bottom-0 right-2 bg-mediumGreen rounded-full p-2">
+                  <View className="absolute bottom-0 right-2 bg-primaryGreen rounded-full p-2">
                     <FontAwesome name="pencil" size={14} color="white" />
                   </View>
                 </Pressable>

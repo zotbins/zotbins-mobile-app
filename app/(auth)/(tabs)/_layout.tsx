@@ -99,24 +99,6 @@ export default function Layout() {
             ),
           }}
         />
-        <Tabs.Screen
-          name="settings"
-          options={{
-            tabBarButton: () => null, // Hide the settings tab
-          }}
-        />
-        <Tabs.Screen
-          name="passwordchange"
-          options={{
-            tabBarButton: () => null, // Hide the password change tab
-          }}
-        />
-        <Tabs.Screen
-          name="emailchange"
-          options={{
-            tabBarButton: () => null, // Hide the email change tab
-          }}
-        />
 
       </Tabs>
     </>

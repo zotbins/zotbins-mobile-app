@@ -1,4 +1,4 @@
-import auth from "@react-native-firebase/auth";
+import {getAuth} from "@react-native-firebase/auth";
 import React, { useState } from "react";
 import {
   Alert,
@@ -16,7 +16,7 @@ import ProfileBanner from "@/components/Profile/profile-banner.svg";
 import { router, Stack } from "expo-router";
 
 const EmailChange: React.FC = () => {
-  const user = auth().currentUser;
+  const user = getAuth().currentUser;
 
   const [profilePic, setProfilePic] = useState<string | ImageSourcePropType>(
     user?.photoURL || require("@/assets/images/default_profile_picture.png")
