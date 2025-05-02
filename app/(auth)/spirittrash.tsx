@@ -36,6 +36,7 @@ const updateSpiritTrash = async (spiritTrash: string) => {
 
 const SpiritTrash = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [isOptionsDisabled, setIsOptionsDisabled] = useState(true);
   const [scores, setScores] = useState({
     "Candy Wrapper": 0,
     "Chip Bag": 0,
@@ -168,7 +169,7 @@ const SpiritTrash = () => {
       newScores[spiritTrash] += score;
     });
     setScores(newScores);
-
+    setIsOptionsDisabled(false);
     // proceed to next question, else if reached last question, show spirit trash result
     // if (currentQuestion < questions.length - 1) {
     //   setCurrentQuestion(currentQuestion + 1);
@@ -180,6 +181,7 @@ const SpiritTrash = () => {
   const handleNext = () => {
     if (currentQuestion + 1 < questions.length) {
       setCurrentQuestion(currentQuestion + 1);
+      setIsOptionsDisabled(true);
     } else {
       setShowResult(true);
     }
@@ -197,9 +199,29 @@ const SpiritTrash = () => {
       Compost: ["Apple Core", "Banana Peel", "Tea Bag"],
       Recyclable: ["Energy Drink Can", "Lithium Ion Battery", "Cardboard Box"],
     };
-    return Object.entries(categories).find(([_, items]) =>
+    return (Object.entries(categories).find(([_, items]) =>
       items.includes(trash)
-    )[0];
+    ) as [string, string[]])[0];
+  };
+
+  const showNextButton = () => {
+    if (!isOptionsDisabled) {
+      const isLastQuestion = currentQuestion === questions.length - 1;
+      return (
+        <Pressable
+          onPress={handleNext}
+          className="w-[132px] rounded-xl bg-brightGreen py-2 flex flex-row 
+          items-center justify-between px-3 shadow-sm border border-brightGreen2"
+        >
+          <Text className="text-mediumGreen font-semibold text-xl px-3">
+            Next
+          </Text>
+          <Ionicons name="arrow-forward" size={20} color="#008229" />
+        </Pressable>
+      );
+    } else {
+      return null;
+    }
   };
 
   // if all questions have been completed, showResult is set to true
@@ -247,18 +269,16 @@ const SpiritTrash = () => {
                 >
                   {({ pressed }) => (
                     <View
-                      className={`border border-brightGreen2 my-3 rounded-full py-2.5 ${
-                        selectedAnswerIndex === index
+                      className={`border border-brightGreen2 my-3 rounded-full py-2.5 ${selectedAnswerIndex === index
                           ? "bg-brightGreen4"
                           : "bg-primaryGreen"
-                      }`}
+                        }`}
                     >
                       <Text
-                        className={`text-lg text-center p-2 ${
-                          selectedAnswerIndex === index
+                        className={`text-lg text-center p-2 ${selectedAnswerIndex === index
                             ? "text-mediumGreen"
                             : "text-white"
-                        }`}
+                          }`}
                       >
                         {answer.text}
                       </Text>
@@ -269,16 +289,7 @@ const SpiritTrash = () => {
 
               {/* next button */}
               <View className="flex items-end mt-52">
-                <Pressable
-                  onPress={handleNext}
-                  className="w-[132px] rounded-xl bg-brightGreen py-2 flex flex-row 
-          items-center justify-between px-3 shadow-sm border border-brightGreen2"
-                >
-                  <Text className="text-mediumGreen font-semibold text-xl px-3">
-                    Next
-                  </Text>
-                  <Ionicons name="arrow-forward" size={20} color="#008229" />
-                </Pressable>
+              {showNextButton()}
               </View>
             </View>
           </View>

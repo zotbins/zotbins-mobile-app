@@ -43,7 +43,7 @@ async function createUserDocument(
     email,
     uid,
     firstName,
-    LastName: lastName,
+    lastName,
     xp: 0,
     level: 1,
     totalPoints: 0,
