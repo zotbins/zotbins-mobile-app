@@ -194,10 +194,10 @@ const ScanResults: React.FC<ScanResultsProps> = ({
 
       const prompt = `You are a waste recognition model.
       1. Identify the main object in the image.
-      2. Identify the primary material of the object.
-      3. Classify that object as 'Landfill', 'Recyclable', or 'Compostable'.
-      Return ONLY a JSON object containing the identified object name, its material, and its classification using the following structure and rules:
-      - The JSON object must contain the keys: "object", "material", and "class".
+      2. Classify that object as 'Landfill', 'Recyclable', or 'Compostable'.
+      3. If an object is classified as 'Recyclable', identify the primary material of the object.
+      Return ONLY a JSON object containing the identified object name, its classification, and its material (if recyclable) using the following structure and rules:
+      - The JSON object must contain the keys: "object", "class", and "material"
       - The value for "object" should be the identified object name (string).
       - The value for "class" should be the classification ('Landfill', 'Recyclable', or 'Compostable').
       - If the "class" is "Recyclable", the value for "material" should be the identified primary material (string). If the "class" is 'Landfill' or 'Compostable', the value for "material" must be \`null\` (the JSON null value, not the string "null").
