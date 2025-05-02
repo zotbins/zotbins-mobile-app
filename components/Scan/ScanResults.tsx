@@ -179,9 +179,6 @@ const ScanResults: React.FC<ScanResultsProps> = ({
       });
   };
 
-  const later =
-    "Is this object classified as a landfill, recyclable, or compostable object? Please put this in a JSON format: {category: string}";
-
   // send image to waste recognition model and get returned results
   const classifyWaste = async () => {
     if (croppedImage && base64Image) {
@@ -205,11 +202,10 @@ const ScanResults: React.FC<ScanResultsProps> = ({
       - The value for "object" should be the identified object name (string).
       - The value for "class" should be the classification ('Landfill', 'Recyclable', or 'Compostable').
       - If the "class" is "Recyclable", the value for "material" should be the identified primary material (string). If the "class" is 'Landfill' or 'Compostable', the value for "material" must be \`null\` (the JSON null value, not the string "null").
-      The final output must only be the JSON object. Example structure: {"object": "...", "material": ..., "class": "..."}`;
+      The final output must only be the JSON object. Example structure: {"object": "...", "class": "...", "material": ...}`;
 
       const input = {
-        image:
-          "https://thumbs.dreamstime.com/b/spilled-water-fallen-bottle-wooden-laminate-floor-plastic-213715820.jpg",
+        image: `data:image/jpeg;base64,${base64Image}`,
         prompt: prompt,
       };
 
@@ -220,12 +216,12 @@ const ScanResults: React.FC<ScanResultsProps> = ({
           headers: {
             Authorization: `Token ${process.env.EXPO_PUBLIC_REPLICATE_API_TOKEN}`,
             "Content-Type": "application/json",
-            prefer: "wait"
+            prefer: "wait",
           },
           body: JSON.stringify({
             version:
               "80537f9eead1a5bfa72d5ac6ea6414379be41d4d4f6679fd776e9535d1eb58bb",
-              stream: true,
+            stream: true,
             input,
           }),
         }
@@ -233,9 +229,9 @@ const ScanResults: React.FC<ScanResultsProps> = ({
 
       const data = await prediction.json();
 
-      console.log("Bin classification", data.output);
+      console.log("", data.output);
 
-      const output = data.output.join('');
+      const output = data.output.join("");
       const parsedOutput = JSON.parse(output);
 
       setTimeout(() => {
