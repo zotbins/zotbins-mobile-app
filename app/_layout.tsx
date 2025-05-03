@@ -3,8 +3,9 @@ import React, { useEffect, useState } from "react";
 import "react-native-reanimated";
 import { getAuth, FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { View } from "react-native";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, Pressable } from "react-native";
 import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
+import { Ionicons } from '@expo/vector-icons';
 
 export let currentUser: FirebaseAuthTypes.User | null = null;
 export let currentUserUid: string | null = null;
@@ -86,7 +87,60 @@ export default function RootLayout() {
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="login" options={{ headerShown: false }} />
-      <Stack.Screen name="signup" options={{ headerShown: false }} />
+      <Stack.Screen name="signup" options={({ navigation }) => ({
+        headerShown: true,
+        headerTitle: '',
+        headerBackTitleVisible: false,
+        headerTransparent: true,
+        headerShadowVisible: false,
+        headerTintColor: '#fff',
+        headerLeft: () => (
+          <Pressable
+            onPress={() => navigation.goBack()}
+            style={{ paddingLeft: 2 }}
+          >
+            <View
+              style={{
+                backgroundColor: 'rgba(201, 255, 226, 1)',
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons name="arrow-back" size={20} color="#008229" />
+            </View>
+          </Pressable>
+        ),
+      })} />
+      <Stack.Screen name="signupCredentials" options={({ navigation }) => ({
+        headerShown: true,
+        headerTitle: '',
+        headerBackTitleVisible: false,
+        headerTransparent: true,
+        headerShadowVisible: false,
+        headerTintColor: '#fff',
+        headerLeft: () => (
+          <Pressable
+            onPress={() => navigation.goBack()}
+            style={{ paddingLeft: 2 }}
+          >
+            <View
+              style={{
+                backgroundColor: 'rgba(201, 255, 226, 1)',
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons name="arrow-back" size={20} color="#008229" />
+            </View>
+          </Pressable>
+        ),
+      })} />
       <Stack.Screen name="onboarding" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
     </Stack>

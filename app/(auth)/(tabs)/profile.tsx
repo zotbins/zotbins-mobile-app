@@ -1,5 +1,4 @@
-import { getAuth } from "@react-native-firebase/auth";
-import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
+import { useUserContext } from "@/context/UserProvider"
 import {
   getStorage,
   ref,
@@ -27,14 +26,24 @@ import ProfileBanner from "@/components/Profile/profile-banner.svg";
 import SpiritIcon from "@/components/Profile/spiritIcon.svg";
 import StreakIcon from "@/components/Profile/streakIcon.svg";
 import StatusBar from "@/components/Profile/statusBar.svg";
-import FriendsIcon from "@/components/Profile/friendsIcon.svg";
+import AddFriendsIcon from "@/components/Profile/friendsIcon.svg";
+import FriendIcons from "@/components/Profile/friendIcons";
+import XPBar from "@/components/Profile/XPBar";
 import Achievements from "../achievements";
-import EnvImpactPreview from "../envImpactPreview";
+import EnvImpactPreview from "@/components/Reusables/EnvImpactPreview";
+import AchievementsList from "@/components/Achievements/AchievementsList";
 
 const Profile = () => {
   const router = useRouter();
+  const { user, userDoc } = useUserContext();
 
-  const user = getAuth().currentUser;
+  // user document data
+  const level = userDoc?.level ?? 1;
+  const xp = userDoc?.xp ?? 0;
+  const requiredXP = 50 * level;
+  const streak = userDoc?.dailyStreak ?? 0;
+  const spiritTrash = userDoc?.spiritTrash ?? 0;
+
   // set profile picture to user's photoURL or placeholder image
   const [profilePic, setProfilePic] = useState<string | ImageSourcePropType>(
     user?.photoURL || require("@/assets/images/default_profile_picture.png")
@@ -46,34 +55,6 @@ const Profile = () => {
     }
     return source;
   };
-
-  const [userDoc, setUserDoc] = useState<any>(null);
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
-
-  // on user change, fetch user document from firestore
-  useEffect(() => {
-    const fetchUserDoc = async () => {
-      const uid = user?.uid;
-      if (!uid) {
-        return;
-      }
-
-      try {
-        const db = getFirestore();
-        const userDocRef = doc(db, "users", uid);
-        const userDocSnap = await getDoc(userDocRef);
-        if (!userDocSnap.exists) {
-          throw new Error("User document does not exist");
-        }
-        setUserDoc(userDocSnap.data());
-      } catch (error) {
-        console.error("Error fetching user document: ", error);
-        Alert.alert("Error", "Failed to fetch user document");
-      }
-    };
-
-    fetchUserDoc();
-  });
 
   // request permission to access camera roll
   const requestPermission = async () => {
@@ -156,9 +137,10 @@ const Profile = () => {
                 </View>
                 <View className="absolute left-24 top-24">
                   <Pressable onPress={() => router.push("/friendrequests")}>
-                    <FriendsIcon />
+                    <AddFriendsIcon />
                   </Pressable>
                 </View>
+                <FriendIcons />
               </View>
 
               <View className="w-[95%] shadow-sm">
@@ -177,25 +159,26 @@ const Profile = () => {
                     <View className="flex flex-col items-center w-1/4 pl-4">
                       <SpiritIcon />
                       <Text className="font-medium text-xs text-mediumGreen text-center">
-                        {userDoc?.spiritTrash}
+                        {spiritTrash}
                       </Text>
                     </View>
 
                     <View className="flex flex-col items-center w-2/4 gap-y-1">
                       <Text className="font-semibold text-mediumGreen">
-                        Level 4
+                        Level {level}
                       </Text>
-                      <StatusBar />
+
+                      <XPBar xp={xp} requiredXP={requiredXP} />
 
                       <Text className="text-[9px] text-center text-mediumGreen font-light">
-                        20/100 XP to reach Level 5
+                        {xp}/{requiredXP} XP to reach Level {level + 1}
                       </Text>
                     </View>
 
                     <View className="flex flex-col items-center w-1/4">
                       <View className="flex flex-row items-center gap-x-1">
                         <Text className="text-mediumGreen font-light text-sm">
-                          16
+                          {streak}
                         </Text>
                         <StreakIcon />
                       </View>
@@ -208,12 +191,13 @@ const Profile = () => {
               </View>
             </View>
 
-            <EnvImpactPreview />
-            <View className="flex flex-row items-center ml-6 mb-4">
-              <Text className="text-xl font-bold text-primaryGreen">Achievements</Text>
-              <Text className="text-sm text-primaryGreen underline ml-2">See all</Text>
+            <View className="flex flex-row items-center mt-6 ml-4 mb-4">
+              <Text className="text-2xl font-bold text-darkGreen">Achievements</Text>
+              <Pressable onPress={() => router.push("/achievements")}>
+                <Text className="text-md text-darkGreen underline mt-1 ml-2">See all</Text>
+              </Pressable>
             </View>
-            <Achievements/>
+            <AchievementsList limit={5} containerStyle="px-2 w-full mb-24" />
           </ScrollView>
         </SafeAreaView>
       </LinearGradient>
