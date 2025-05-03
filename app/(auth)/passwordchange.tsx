@@ -1,114 +1,100 @@
-import auth from "@react-native-firebase/auth";
+import auth, { getAuth } from "@react-native-firebase/auth";
 import React, { useState } from "react";
-import { Alert, Text, TextInput, Pressable, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import {
+  Alert,
+  Text,
+  TextInput,
+  Pressable,
+  View,
+  Image,
+  ImageSourcePropType,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack } from "expo-router";
 import BackButton from "@/components/Reusables/BackButton";
-
-const isSecure = (password: string) => {
-  const passwordRegex = new RegExp(
-    "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})"
-  );
-  return passwordRegex.test(password);
-};
+import LinearGradient from "react-native-linear-gradient";
+import ProfileBanner from "@/components/Profile/profile-banner.svg";
+import ProfileHeader from "@/components/Settings/ProfileHeader";
+import { router, Stack, useRouter} from "expo-router";
 
 const PasswordChange: React.FC = () => {
-  const navigation = useNavigation();
+  const user = getAuth().currentUser;
+
+  // Profile picture logic
+  const [profilePic, setProfilePic] = useState<string | ImageSourcePropType>(
+    user?.photoURL || require("@/assets/images/default_profile_picture.png")
+  );
+
+  const getImageSource = (source: string | ImageSourcePropType) => {
+    if (typeof source === "string") {
+      return { uri: source };
+    }
+    return source;
+  };
+
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const user = auth().currentUser;
+  //NEED TO SEPARATE VALIDATE PASSWORD AND ALERT LOGIC
 
-  const validatePasswords = () => {
-    // Validate if all fields are filled
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      Alert.alert("Error", "Please fill in all fields");
+  const validateNewPassword = () => {
+    if (!newPassword || newPassword.length < 8 || !/\d/.test(newPassword) || !/[a-zA-Z]/.test(newPassword) || !/[#@$!%*?&]/.test(newPassword))
       return false;
-    }
-
-    // Check if new password is the same as the current password
-    if (
-      currentPassword === newPassword ||
-      currentPassword === confirmPassword
-    ) {
-      Alert.alert(
-        "Error",
-        "Password cannot be the same as your current password"
-      );
-      return false;
-    }
-
-    // Check if new password meets the minimum length requirement
-    if (newPassword.length < 6) {
-      Alert.alert("Error", "New password must be at least 6 characters long");
-      return false;
-    }
-
-    // Check if new passwords match
-    if (newPassword !== confirmPassword) {
-      Alert.alert("Error", "New passwords don't match");
-      return false;
-    }
-
-    // Check if new password meets security requirements
-    if (!isSecure(newPassword)) {
-      Alert.alert(
-        "Error",
-        "New password must contain at least one uppercase letter, one lowercase letter, and one number"
-      );
-      return false;
-    }
-
     return true;
   };
 
+  const validateConfirmPassword = () => {
+    if (!confirmPassword || confirmPassword !== newPassword) {
+      return false;
+    }
+    return true;
+  }
+
+
   const handleChangePassword = async () => {
-    if (!validatePasswords()) return;
-    if (!user || !user.email) return;
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+    if (!validateNewPassword()) {
+      Alert.alert(
+        "Error",
+        "New password must contain at least 1 letter, 1 number, and 1 symbol. Minimum length is 8 characters."
+      );
+      return;
+    }
+    if (!validateConfirmPassword()) {
+      Alert.alert("Error", "New passwords don't match");
+      return;
+    } 
 
     setLoading(true);
     try {
-      // Reauthenticate user with current password
       const credential = auth.EmailAuthProvider.credential(
-        user.email,
+        user?.email || "",
         currentPassword
       );
-
       await user?.reauthenticateWithCredential(credential);
       await user?.updatePassword(newPassword);
 
-      // Show success message and navigate back
-      Alert.alert("Success", "Your password has been updated successfully", [
+      Alert.alert("Success", "Password updated successfully", [
         {
           text: "OK",
           onPress: () => {
             setCurrentPassword("");
             setNewPassword("");
             setConfirmPassword("");
-            navigation.goBack();
           },
         },
       ]);
     } catch (error: any) {
       let errorMessage = "An error occurred while changing your password";
-
-      // Handle specific Firebase error codes
-      switch (error.code) {
-        case "auth/wrong-password":
-          errorMessage = "Current password is incorrect";
-          break;
-        case "auth/weak-password":
-          errorMessage = "New password is too weak";
-          break;
-        case "auth/requires-recent-login":
-          errorMessage =
-            "Please sign out and sign in again before changing your password";
-          break;
+      if (error.code === "auth/wrong-password") {
+        errorMessage = "Current password is incorrect";
+      } else if (error.code === "auth/weak-password") {
+        errorMessage = "New password is too weak";
       }
-
       Alert.alert("Error", errorMessage);
     } finally {
       setLoading(false);
@@ -116,68 +102,96 @@ const PasswordChange: React.FC = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      {/* Stack Screen Header */}
-      <Stack.Screen
-        options={{
-          headerShadowVisible: false,
-          headerBackVisible: false,
-          headerTransparent: true,
-          headerLeft: () => <BackButton />,
-          headerTitle: "",
-        }}
-      />
+    <LinearGradient colors={["#F5FFF5", "#DBFFD8"]} style={{ flex: 1 }}>
+      <Stack.Screen options={{ headerShown: false }} />
 
-      <View className="flex-1 px-4 pt-12">
-        {/* Title */}
-        <Text className="text-2xl font-bold text-gray-800 mb-4">
-          Change Password
-        </Text>
-
-        {/* Current Password Input */}
-        <TextInput
-          className="px-4 py-3 my-2 rounded-lg bg-slate-100 border-2"
-          placeholder="Current Password"
-          secureTextEntry
-          value={currentPassword}
-          onChangeText={setCurrentPassword}
-          editable={!loading}
+      <SafeAreaView className="flex-1 px-5 gap-2 pb-24">
+        <ProfileHeader
+          onBackPress={() => router.back()}
+          profilePic={getImageSource(profilePic)}
         />
 
-        {/* New Password Input */}
-        <TextInput
-          className="px-4 py-3 my-2 rounded-lg bg-slate-100 border-2"
-          placeholder="New Password"
-          secureTextEntry
-          value={newPassword}
-          onChangeText={setNewPassword}
-          editable={!loading}
-        />
-
-        {/* Confirm New Password Input */}
-        <TextInput
-          className="px-4 py-3 my-2 rounded-lg bg-slate-100 border-2"
-          placeholder="Confirm New Password"
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          editable={!loading}
-        />
-
-        {/* Change Password Button */}
-        <Pressable
-          onPress={handleChangePassword}
-          disabled={loading}
-          className={`px-4 py-3 my-2 rounded-lg ${
-            loading ? "bg-blue/50" : "bg-blue"
-          } active:opacity-50`}
-        >
-          <Text className="text-white text-center">
-            {loading ? "Changing Password..." : "Change Password"}
+        {/* Password Change Form */}
+        <View className="flex-1 px-4 pt-4">
+          <Text className="text-2xl font-bold text-gray-800 mb-4">
+            Change Password
           </Text>
-        </Pressable>
-      </View>
-    </SafeAreaView>
+          <Text className="text-sm text-darkGreen mb-4">
+            Password must contain at least 1 letter, 1 number, and 1 symbol. Minimum length is 8 characters.
+          </Text>
+
+          {/* Criteria Message */}
+          <Text className="text-sm mb-4" style={{ color: newPassword && !validateNewPassword() ? "#B22222" : "transparent", textDecorationLine: "underline",}}>
+            Password does not meet the criteria.
+          </Text>
+
+          {/* Current Password Field */}
+          <View className="mb-4">
+            <Text className="text-sm font-medium text-green-800 mb-2">
+              Current Password
+            </Text>
+            <TextInput
+              className="px-4 py-3 rounded-full bg-white border border-gray-300"
+              placeholder="Enter current password"
+              secureTextEntry
+              value={currentPassword}
+              onChangeText={setCurrentPassword}
+              editable={!loading}
+            />
+          </View>
+
+          {/* New Password Field */}
+          <View className="mb-4">
+            <Text className="text-sm font-medium text-green-800 mb-2">New Password</Text>
+
+            <View className="relative">
+              <TextInput
+                className="px-4 py-3 pr-36 rounded-full bg-white border border-gray-300"
+                placeholder="Enter new password"
+                secureTextEntry
+                value={newPassword}
+                onChangeText={setNewPassword}
+                editable={!loading}
+                style={{
+                  textAlignVertical: "center",
+                }}
+              />
+              {confirmPassword.length > 0 && confirmPassword !== newPassword && (
+                <Text className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-[#B22222] underline">
+                  Passwords do not match.
+                </Text>
+              )}
+            </View>
+          </View>
+
+          {/* Confirm New Password Field */}
+          <View className="mb-4">
+            <Text className="text-sm font-medium text-green-800 mb-2">
+              Confirm New Password
+            </Text>
+            <TextInput
+              className="px-4 py-3 rounded-full bg-white border border-gray-300"
+              placeholder="Confirm new password"
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              editable={!loading}
+            />
+          </View>
+          <View className= "flex justify-center items-center">
+            <Pressable
+              onPress={handleChangePassword}
+              disabled={loading}  
+              className="bg-primaryGreen py-4 rounded-full my-2 active:opacity-50 border border-green-600 w-2/5 mt-5"
+            >
+              <Text className="text-white text-center font-bold text-sm">
+                Change Password
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 

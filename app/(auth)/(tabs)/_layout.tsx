@@ -99,8 +99,8 @@ export default function Layout() {
             ),
           }}
         />
-      </Tabs>
 
+      </Tabs>
     </>
   );
 }

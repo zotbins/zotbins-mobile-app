@@ -26,9 +26,7 @@ const ScanBottomSheetModal = forwardRef<BottomSheetModal, ScanBottomSheetModalPr
             const timestamp = new Date().getTime();
             const filename = `waste-scan-${timestamp}.jpg`;
             const storageRef = storage().ref(`zotbins-waste-images/${user.uid}/${filename}`);
-            
-            Alert.alert("Uploading Image", "Please wait while we upload your scan...");
-            
+                        
             await storageRef.putFile(image);
             
             const downloadURL = await storageRef.getDownloadURL();

@@ -29,7 +29,12 @@
     "@react-native-google-signin/google-signin": "^13.2.0",
     "@react-navigation/native": "^6.0.2",
     "@rnmapbox/maps": "^10.1.33",
+<<<<<<< HEAD
     "expo": "53.0.0",
+=======
+    "expo": "~51.0.39",
+    "expo-apple-authentication": "~6.4.2",
+>>>>>>> 5dd35caf4aea5ead10e7c09283665b678569b3e3
     "expo-build-properties": "~0.12.5",
     "expo-constants": "~16.0.2",
     "expo-dev-client": "~4.0.29",
@@ -63,11 +68,15 @@
     "react-native-vision-camera": "^4.6.1",
     "react-native-web": "~0.19.10",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "tailwindcss": "^3.4.14"
 =======
     "tailwindcss": "^3.4.14",
     "expo-apple-authentication": "~6.4.2"
 >>>>>>> 820c884ca4747dd3c128c018952bcfefce9ff5af
+=======
+    "tailwindcss": "^3.4.14"
+>>>>>>> 5dd35caf4aea5ead10e7c09283665b678569b3e3
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

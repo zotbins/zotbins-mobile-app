@@ -42,8 +42,8 @@ import Background from '@/assets/images/background.png';
 const createUserDocument = async (
   uid: string,
   email: string,
-  firstname: string,
-  lastname: string,
+  firstName: string,
+  lastName: string,
   username: string
 ) => {
   // initialize default values for user doc
@@ -62,8 +62,8 @@ const createUserDocument = async (
   await setDoc(userRef, {
     email,
     uid,
-    firstname,
-    lastname,
+    firstName,
+    lastName,
     xp,
     level,
     totalPoints,

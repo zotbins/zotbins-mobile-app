@@ -134,7 +134,9 @@ const Settings = () => {
         <SafeAreaView className="flex-1 px-5 gap-2 pb-24">
           <View className="flex justify-center items-center w-full">
             <View className="w-11/12 flex flex-row justify-between items-baseline h-16 ml-[5%]">
-              <SimpleLogoSvg width={100} height={100} />
+              <Pressable onPress={() => router.back()}>
+                <BackButton />
+              </Pressable>
 
               {/* <Pressable onPress={() => router.push("/settings")}>
               <SettingsButton width={50} />
@@ -143,11 +145,6 @@ const Settings = () => {
 
             <View className="relative mb-5">
               <ProfileBanner />
-              <View className="absolute left-4 top-4">
-                <Pressable onPress={() => router.push("/(auth)/profile")}>
-                <BackButton />
-                </Pressable>
-              </View>
 
               <View className="absolute left-0 right-0 bottom-3 flex items-center justify-center">
                 <Pressable onPress={pickImage}>
@@ -155,7 +152,7 @@ const Settings = () => {
                     source={getImageSource(profilePic)}
                     className="w-24 h-24 rounded-full"
                   />
-                  <View className="absolute bottom-0 right-2 bg-mediumGreen rounded-full p-2">
+                  <View className="absolute bottom-0 right-2 bg-primaryGreen rounded-full p-2">
                     <FontAwesome name="pencil" size={14} color="white" />
                   </View>
                 </Pressable>
@@ -202,11 +199,20 @@ const Settings = () => {
 
           <View className="flex justify-center items-center ">
             <Pressable
-              onPress={() => router.push("/faq")}
-              className="bg-brightGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-9/12 mt-6"
+              onPress={() => router.push("/emailchange")}
+              className="bg-brightGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-9/12 mt-5"
             >
               <Text className="text-darkGreen text-center font-bold text-xl">
-                FAQ
+                Change Email
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => router.push("/passwordchange")}
+              className="bg-brightGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-9/12"
+            >
+              <Text className="text-darkGreen text-center font-bold text-xl">
+                Change Password
               </Text>
             </Pressable>
             <Pressable
@@ -219,19 +225,19 @@ const Settings = () => {
             </Pressable>
 
             <Pressable
-              onPress={() => router.push("/passwordchange")}
+              onPress={() => router.replace("/faq")}
               className="bg-brightGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-9/12"
             >
               <Text className="text-darkGreen text-center font-bold text-xl">
-                Change Password
+                FAQ
               </Text>
             </Pressable>
 
             <Pressable
               onPress={() => getAuth().signOut()}
-              className="bg-primaryGreen py-3 rounded-full my-2 active:opacity-50 border border-green-700 w-1/4 mt-6"
+              className="bg-primaryGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-2/5 mt-5"
             >
-              <Text className="text-white text-center font-bold text-md">
+              <Text className="text-white text-center font-bold text-xl">
                 Sign Out
               </Text>
             </Pressable>
