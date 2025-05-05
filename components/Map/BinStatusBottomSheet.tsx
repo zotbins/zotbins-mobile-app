@@ -51,7 +51,12 @@ const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> = ({
       snapPoints={["35%", "55%"]}
       index={1}
       onDismiss={onClose}
-      animateOnMount={true}
+      enablePanDownToClose={true}
+      onChange={(index) => {
+        if (index === 0) {
+          bottomSheetRef.current?.close();
+        }
+      }}
     >
       {/* Bottom Sheet Content */}
       <BottomSheetView className="items-center justify-center p-8">
