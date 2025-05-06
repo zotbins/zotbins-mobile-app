@@ -71,7 +71,7 @@ export default function RootLayout() {
         }
       
       });
-    } else if (!user && inAuthGroup) {
+    } else if (!user) {
       router.replace("/login");
     }
   }, [user, initializing]);

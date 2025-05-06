@@ -29,12 +29,12 @@ const Home = () => {
 
     if (!initializing) {
       if (!userDoc) {
-        router.push("/login");
+        router.replace("/login");
       } else {
-        router.push("/(auth)/(tabs)/home");
+        router.replace("/(auth)/(tabs)/home");
       }
     }
-  }, [ router, userDoc]);
+  }, [router, userDoc]);
 
   return (
     <View>
