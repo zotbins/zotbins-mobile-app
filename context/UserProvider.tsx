@@ -20,12 +20,14 @@ import { updateAchievementProgress } from "@/functions/src/updateProgress";
 interface UserContextType {
   user: FirebaseAuthTypes.User | null;
   userDoc: FirebaseFirestoreTypes.DocumentData | null;
+  initializing: boolean;
 }
 
 //default to nulls
 const UserContext = createContext<UserContextType>({
   user: null,
   userDoc: null,
+  initializing: true,
 });
 
 export const useUserContext = (): UserContextType => useContext(UserContext);
@@ -60,8 +62,10 @@ interface UserProviderProps {
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [userDoc, setUserDoc] = useState<FirebaseFirestoreTypes.DocumentData | null>(null);
+  const [initializing, setInitializing] = useState(true);
 
   const initUser = async (uid: string) => {
+    setInitializing(true);
     if (!uid) return;
 
     const db = getFirestore();
@@ -115,6 +119,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       });
       updateAchievementProgress("level", 1);
     }
+    setInitializing(false);
+    console.log("User initialized");
   };
 
   useEffect(() => {
@@ -124,6 +130,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       
       if (authUser?.uid) {
         initUser(authUser.uid);
+      }
+      else{
+        setUserDoc(null); //reset user doc if no user
+        setInitializing(false); //set initializing to false if no user
       }
     });
 
@@ -164,7 +174,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   }, [user?.uid]);
 
   return (
-    <UserContext.Provider value={{ user, userDoc }}>
+    <UserContext.Provider value={{ user, userDoc, initializing }}>
       {children}
     </UserContext.Provider>
   );

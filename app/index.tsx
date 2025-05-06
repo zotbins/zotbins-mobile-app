@@ -7,47 +7,37 @@ import "../global.css";
 import { currentUser } from "./_layout";
 import * as SplashScreen from 'expo-splash-screen';
 import SplashScreenImage from "../assets/images/splash-screen.png";
+import { useUserContext } from "@/context/UserProvider";
 
 SplashScreen.preventAutoHideAsync();
 const Home = () => {
-  const [appIsReady, setAppIsReady] = useState(false);
   const router = useRouter();
-  useEffect(() => {
-    function prepare() {
-      try {
-        setTimeout(() => {
-          setAppIsReady(true);
-        }
-        , 2000);
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setAppIsReady(true);
-      }
-    }
-
-    prepare();
-  }, []);
+  const { userDoc, initializing } = useUserContext();
   
-  const onLayoutRootView = useCallback(async () => {
-    if (appIsReady) {
-      await SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
+  
+  useEffect(() => {
+    const hideSplashScreen = async () => {
+      if (!initializing) {
+        await SplashScreen.hideAsync();
+        console.log("Splash screen hidden");
+      }
+    };
+    hideSplashScreen();
+  }, [initializing]);
 
   useEffect(() => {
 
-    if (appIsReady) {
-      if (!currentUser) {
+    if (!initializing) {
+      if (!userDoc) {
         router.push("/login");
       } else {
         router.push("/(auth)/(tabs)/home");
       }
     }
-  }, [appIsReady, currentUser, router]);
+  }, [ router, userDoc]);
 
   return (
-    <View onLayout={onLayoutRootView}>
+    <View>
       <Image 
         source={SplashScreenImage} 
         resizeMode="contain"
