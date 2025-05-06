@@ -17,7 +17,7 @@
         "EXPO_USE_LEGACY_PEER_DEPS": "true"
       },
       "ios": {
-        "image": "macos-sequoia-15.3-xcode-16.2"
+        "image": "latest"
       }
     }
   },
