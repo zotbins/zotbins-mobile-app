@@ -297,11 +297,11 @@ const ZotBinsMap = () => {
       </GestureHandlerRootView>
       {/* Find Nearest Bin Button */}
       { activeBin == null && (
-        <View className="absolute bottom-4 left-0 right-0 p-4 z-10 items-center justify-center">
+        <View className="absolute bottom-36 left-0 right-0 p-4 z-10 items-center justify-center">
         <Pressable
           onPress={openNearestBin}
-          className=" px-4 py-3 z-10 bg-tintColor rounded-lg">
-          <Text className="text-white text-lg">Find Nearest Bin</Text>
+          className=" px-4 py-3 z-10 bg-primaryGreen rounded-lg">
+          <Text className="text-white text-lg font-semibold">Find Nearest Bin</Text>
         </Pressable>
       </View>
       )}

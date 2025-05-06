@@ -57,26 +57,32 @@ const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> = ({
           bottomSheetRef.current?.close();
         }
       }}
+      handleStyle={{
+        backgroundColor: "#F4FFF2",
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20
+      }}
+      backgroundStyle={{backgroundColor: "#F4FFF2",}}
     >
       {/* Bottom Sheet Content */}
-      <BottomSheetView className="items-center justify-center p-8">
-        <View className="flex-row w-full justify-between px-4">
+      <BottomSheetView className="items-center justify-center p-8 bg-lightBackground">
+        <View className="flex-row w-full justify-between">
           <Text className="text-3xl font-extrabold text-black">{name}</Text>
 
           {/* Cancel or Go button depending on if a route is active */}
           {activeRoute ? (
             <Pressable
               onPress={() => setActiveRoute(null)}
-              className="px-6 py-2 bg-tintColor rounded-full flex-row items-center justify-center active:opacity-50"
+              className="px-4 py-2 bg-primaryGreen rounded-full flex-row items-center justify-center active:opacity-50"
             >
               <Ionicons name="close" size={16} color="white" />
-              <Text className="text-white">Cancel</Text>
+              <Text className="text-white"> Cancel</Text>
             </Pressable>
           ) : (
             <Pressable
               onPress={activateRouting}
               disabled={!userLocation}
-              className="px-6 py-2 bg-tintColor rounded-full flex-row items-center justify-center active:opacity-50"
+              className="px-6 py-2 bg-primaryGreen rounded-full flex-row items-center justify-center active:opacity-50"
             >
               <Ionicons name="walk" size={16} color="white" />
               <Text className="text-white ">Go</Text>
@@ -84,9 +90,9 @@ const BinStatusBottomSheet: React.FC<BinStatusBottomSheetProps> = ({
           )}
         </View>
 
-        <View className="w-full border-b border-gray-200 py-3 mx-3" />
+        <View className="w-full border-b border-gray py-3 mx-3" />
         {/* Bin Capacity, Distance, ETA (capacity currently hardcoded) */}
-        <View className="w-full flex-row items-center justify-between px-4 pt-4">
+        <View className="w-full flex-row items-center justify-between pt-4 px-2">
           <View className="flex-col items-start justify-center">
             <Text className="text-black">Bin Capacity</Text>
             <Text className="text-black font-bold">30%</Text>
