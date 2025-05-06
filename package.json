@@ -29,12 +29,7 @@
     "@react-native-google-signin/google-signin": "^13.2.0",
     "@react-navigation/native": "^6.0.2",
     "@rnmapbox/maps": "^10.1.33",
-<<<<<<< HEAD
-    "expo": "53.0.0",
-=======
-    "expo": "~51.0.39",
-    "expo-apple-authentication": "~6.4.2",
->>>>>>> 5dd35caf4aea5ead10e7c09283665b678569b3e3
+    "expo": "^53.0.7",
     "expo-build-properties": "~0.12.5",
     "expo-constants": "~16.0.2",
     "expo-dev-client": "~4.0.29",
@@ -50,7 +45,8 @@
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
     "expo-web-browser": "~13.0.3",
-    "firebase": "^10.14.1",
+    "firebase": "^11.6.1",
+    "metro": "^0.82.0",
     "nativewind": "^4.1.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -67,16 +63,8 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-vision-camera": "^4.6.1",
     "react-native-web": "~0.19.10",
-<<<<<<< HEAD
-<<<<<<< HEAD
-    "tailwindcss": "^3.4.14"
-=======
     "tailwindcss": "^3.4.14",
-    "expo-apple-authentication": "~6.4.2"
->>>>>>> 820c884ca4747dd3c128c018952bcfefce9ff5af
-=======
-    "tailwindcss": "^3.4.14"
->>>>>>> 5dd35caf4aea5ead10e7c09283665b678569b3e3
+    "expo-apple-authentication": "~7.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -88,6 +76,7 @@
     "@types/react-test-renderer": "^18.0.7",
     "jest": "^29.2.1",
     "jest-expo": "~51.0.4",
+    "metro": "^0.82.2",
     "react-native-svg-transformer": "^1.5.0",
     "react-test-renderer": "18.2.0",
     "typescript": "~5.3.3"

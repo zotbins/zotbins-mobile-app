@@ -4,6 +4,5 @@
   "ios.useFrameworks": "static",
   "apple.extraPods": "[]",
   "apple.ccacheEnabled": "false",
-  "apple.privacyManifestAggregationEnabled": "true",
-  "ios.deploymentTarget": "14.0"
+  "apple.privacyManifestAggregationEnabled": "true"
 }

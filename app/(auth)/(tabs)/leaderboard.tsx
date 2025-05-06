@@ -244,12 +244,13 @@ const Leaderboard = () => {
 
         <View className="w-1/2 flex flex-row items-center">
           <Text
-            className={`w-full text-xl ${user.username === username
+            className={`w-full text-xl ${
+              user.username === username
                 ? "text-black font-semibold"
                 : index === 0
-                  ? "text-mediumGreen"
-                  : "text-black"
-              }`}
+                ? "text-mediumGreen"
+                : "text-black"
+            }`}
           >
             {user.username === username ? "You" : user.username}
           </Text>
@@ -268,42 +269,48 @@ const Leaderboard = () => {
           <View className="flex items-center flex-row  mt-2 bg-green-100 rounded-xl border border-green-200 mx-8">
             <TouchableOpacity
               onPress={() => setActiveTab("weekly")}
-              className={`flex-1 mx-2 rounded-xl my-1 ${activeTab === "weekly" ? "bg-brightGreen2 " : ""
-                }`}
+              className={`flex-1 mx-2 rounded-xl my-1 ${
+                activeTab === "weekly" ? "bg-brightGreen2 " : ""
+              }`}
             >
               <Text
-                className={`text-xl text-center -1 ${activeTab === "weekly"
+                className={`text-xl text-center -1 ${
+                  activeTab === "weekly"
                     ? "text-brightGreen3 font-bold"
                     : "text-brightGreen3"
-                  }`}
+                }`}
               >
                 Weekly
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setActiveTab("allRankings")}
-              className={`flex-1 mx-2 rounded-xl my-1 ${activeTab === "allRankings" ? "bg-brightGreen2" : ""
-                }`}
+              className={`flex-1 mx-2 rounded-xl my-1 ${
+                activeTab === "allRankings" ? "bg-brightGreen2" : ""
+              }`}
             >
               <Text
-                className={`text-xl text-center ${activeTab === "allRankings"
+                className={`text-xl text-center ${
+                  activeTab === "allRankings"
                     ? "text-brightGreen3 font-bold"
                     : "text-brightGreen3"
-                  }`}
+                }`}
               >
                 All
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setActiveTab("friends")}
-              className={`flex-1 mx-2 rounded-xl my-1 ${activeTab === "friends" ? "bg-brightGreen2" : ""
-                }`}
+              className={`flex-1 mx-2 rounded-xl my-1 ${
+                activeTab === "friends" ? "bg-brightGreen2" : ""
+              }`}
             >
               <Text
-                className={`text-xl text-center ${activeTab === "friends"
+                className={`text-xl text-center ${
+                  activeTab === "friends"
                     ? "text-brightGreen3 font-bold"
                     : "text-brightGreen3"
-                  }`}
+                }`}
               >
                 Friends
               </Text>

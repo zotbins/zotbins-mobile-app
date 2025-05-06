@@ -224,13 +224,14 @@ const Quiz = () => {
           // award points for correct answers
           await updateDoc(userRef, {
             totalPoints: increment(1),
+            weeklyPoints: increment(1),
           });
           await updateAchievementProgress("points", 1);
           await updateMissionProgress("points", 1);
-          console.log("Added points to totalPoints.");
+          console.log("Added points to totalPoints and weeklyPoints.");
         }
       } catch (error) {
-        console.error("Error updating totalPoints:", error);
+        console.error("Error updating totalPoints/weeklyPoints:", error);
       }
     }
   };
