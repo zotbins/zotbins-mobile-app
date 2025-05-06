@@ -13,9 +13,12 @@ const Home = () => {
   const [appIsReady, setAppIsReady] = useState(false);
   const router = useRouter();
   useEffect(() => {
-    async function prepare() {
+    function prepare() {
       try {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        setTimeout(() => {
+          setAppIsReady(true);
+        }
+        , 2000);
       } catch (e) {
         console.warn(e);
       } finally {
