@@ -6,18 +6,12 @@ import { View } from "react-native";
 import { ActivityIndicator, Pressable } from "react-native";
 import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
 import { Ionicons } from '@expo/vector-icons';
-import { UserProvider } from "@/context/UserProvider";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
-export let currentUser: FirebaseAuthTypes.User | null = null;
+// set user to -1 to indicate that we are checking for user
+export let currentUser: FirebaseAuthTypes.User | null | number = -1;
 export let currentUserUid: string | null = null;
 
 export default function RootLayout() {
-
-  GoogleSignin.configure({
-    webClientId: process.env.EXPO_PUBLIC_GOOGLEWEBCLIENTID,
-    offlineAccess: true,
-  });
 
 
   const [initializing, setInitializing] = useState(true);
@@ -30,12 +24,14 @@ export default function RootLayout() {
     const db = getFirestore();
     const snapshot = await getDoc(doc(db, "users", uid))
 
+
     const data = snapshot.data();    
     const spiritTrash = data ? data.spiritTrash : "";
     const username = data ? data.username : "";
-  
+
     return { spiritTrash, username };
   }
+
 
   const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
     // console.log("onAuthStateChanged", user);
@@ -69,16 +65,14 @@ export default function RootLayout() {
         } else {
           router.replace("/(tabs)/home");
         }
-      
+
       });
-    } else if (!user) {
+    } else if (!user && inAuthGroup) {
       router.replace("/login");
     }
   }, [user, initializing]);
 
-
   return (
-    <UserProvider>
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="login" options={{ headerShown: false }} />
@@ -139,6 +133,5 @@ export default function RootLayout() {
       <Stack.Screen name="onboarding" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
     </Stack>
-    </UserProvider>
   );
 }

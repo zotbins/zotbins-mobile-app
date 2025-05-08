@@ -7,6 +7,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function Layout() {
   return (
+    <UserProvider>
       <MapboxProvider>
         <AchievementsProvider>
           <GestureHandlerRootView>
@@ -16,5 +17,6 @@ export default function Layout() {
           </GestureHandlerRootView>
         </AchievementsProvider>
       </MapboxProvider>
+    </UserProvider>
   );
 }

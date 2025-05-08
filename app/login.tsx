@@ -82,12 +82,14 @@ const createUserDocument = async (
   });
 };
 const Login = () => {
-  const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  GoogleSignin.configure({
+    webClientId: process.env.EXPO_PUBLIC_GOOGLEWEBCLIENTID,
+    offlineAccess: true,
+  });
   // function to handle google sign in
   const handleGoogleSignIn = async () => {
     setLoading(true);
