@@ -11,7 +11,7 @@ import * as SplashScreen from 'expo-splash-screen';
 SplashScreen.preventAutoHideAsync();
 
 // set user to -1 to indicate that we are checking for user
-export let currentUser: FirebaseAuthTypes.User | null | number = -1;
+export let currentUser: FirebaseAuthTypes.User | null;
 export let currentUserUid: string | null = null;
 
 export default function RootLayout() {
@@ -75,6 +75,20 @@ export default function RootLayout() {
       router.replace("/login");
     }
   }, [user, initializing]);
+
+  if (initializing) {
+    return (
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          flex: 1,
+        }}
+      >
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <Stack>

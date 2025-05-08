@@ -90,7 +90,7 @@ const Login = () => {
     webClientId: process.env.EXPO_PUBLIC_GOOGLEWEBCLIENTID,
     offlineAccess: true,
   });
-  
+
   // function to handle google sign in
   const handleGoogleSignIn = async () => {
     setLoading(true);
@@ -100,7 +100,6 @@ const Login = () => {
       const userInfo: any = await GoogleSignin.signIn();
       // gets idToken from google sign in
       const idToken = userInfo.data.idToken;
-
       if (!idToken) {
         throw new Error("No idToken found");
       }
