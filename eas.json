@@ -13,8 +13,8 @@
     },
     "production": {
       "autoIncrement": true,
-      "ios": {
-        "image": "macos-sequoia-15.3-xcode-16.2"
+      "env": {
+        "EXPO_USE_LEGACY_PEER_DEPS": "true"
       }
     }
   },

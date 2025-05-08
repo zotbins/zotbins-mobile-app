@@ -29,3 +29,6 @@ android/gradle.properties
 .expo
 dist/
 web-build/
+
+/android
+/ios

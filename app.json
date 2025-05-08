@@ -13,10 +13,11 @@
       "backgroundColor": "#ffffff",
       "imageResizeMode": "contain",
       "dark": {
-            "image": "./assets/images/splash-screen.png",
-            "backgroundColor": "#000000"
-          }
+        "image": "./assets/images/splash-screen.png",
+        "backgroundColor": "#000000"
+      }
     },
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.zotbins.zotzero",
@@ -60,7 +61,8 @@
       ],
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
-      "expo-apple-authentication"
+      "expo-apple-authentication",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
