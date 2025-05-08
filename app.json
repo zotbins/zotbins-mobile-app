@@ -23,7 +23,10 @@
       "bundleIdentifier": "com.zotbins.zotzero",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "ZotBins requires camera access to scan and identify waste items.",
+        "NSPhotoLibraryUsageDescription": "ZotBins requires access to your photo library to select images of waste for identification.",
+        "NSLocationWhenInUseUsageDescription": "ZotBins requires your location to show nearby smart bins on the map."
       }
     },
     "android": {
@@ -57,7 +60,19 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Show current location on map."
+          "locationWhenInUsePermission": "ZotBins requires your location to show nearby smart bins on the map."
+        }
+      ],
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionLabel": "ZotBins requires camera access to scan and identify waste items."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "ZotBins needs access to upload images from your library for waste identification."
         }
       ],
       "@react-native-firebase/app",
