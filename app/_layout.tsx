@@ -1,8 +1,7 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import React, { useEffect, useState } from "react";
-import "react-native-reanimated";
 import { getAuth, FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import { ActivityIndicator, Pressable } from "react-native";
 import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
 import { Ionicons } from '@expo/vector-icons';
@@ -10,7 +9,7 @@ import * as SplashScreen from 'expo-splash-screen';
 
 SplashScreen.preventAutoHideAsync();
 
-// set user to -1 to indicate that we are checking for user
+
 export let currentUser: FirebaseAuthTypes.User | null;
 export let currentUserUid: string | null = null;
 
@@ -39,7 +38,11 @@ export default function RootLayout() {
   const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
     // console.log("onAuthStateChanged", user);
     setUser(user);
-    if (initializing) setInitializing(false);
+    if (initializing) {
+        SplashScreen.hideAsync();
+        setInitializing(false);
+    }
+
     currentUser = user;
     currentUserUid = user?.uid || null;
   };
@@ -52,27 +55,38 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (initializing) return;
-
+  
     const inAuthGroup = segments[0] === "(auth)";
-    SplashScreen.hideAsync();
-
+  
     if (user && !inAuthGroup) {
-      // check if user has spiritTrash set and account details set
-      getSpiritTrashAndAccountDetails(user.uid).then(({ spiritTrash, username }) => {
-        // if user has no username, redirect to account setup
-        if (username === "") {
-          router.replace("/accountsetup");
-        }
-        // if user has no spiritTrash, redirect to spirit trash quiz
-        else if (spiritTrash === "") {
-          router.replace("/spirittrash");
-        } else {
-          router.replace("/(tabs)/home");
-        }
-
-      });
-    } else if (!user) {
-      router.replace("/login");
+      Alert.alert("Replacing to home");
+      setTimeout(() => {
+        // check if user has spiritTrash set and account details set
+        getSpiritTrashAndAccountDetails(user.uid).then(({ spiritTrash, username }) => {
+          // if user has no username, redirect to account setup
+          if (username === "") {
+            router.replace("/accountsetup");
+          }
+          // if user has no spiritTrash, redirect to spirit trash quiz
+          else if (spiritTrash === "") {
+            router.replace("/spirittrash");
+          } else {
+            router.replace("/(auth)/(tabs)/home");
+          }
+        });
+      }, 500);
+    } else if (!user && inAuthGroup) {
+      Alert.alert("Replacing to login");
+      setTimeout(() => {
+        console.log("Replacing to login")
+        router.replace("/login");
+      }, 500);
+    }
+    else if (!user && !inAuthGroup) {
+      Alert.alert("Pushing to login");
+      setTimeout(() => {
+        router.push("/login");
+      }, 500);
     }
   }, [user, initializing]);
 
