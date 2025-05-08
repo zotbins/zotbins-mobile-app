@@ -90,6 +90,7 @@ const Login = () => {
     webClientId: process.env.EXPO_PUBLIC_GOOGLEWEBCLIENTID,
     offlineAccess: true,
   });
+  
   // function to handle google sign in
   const handleGoogleSignIn = async () => {
     setLoading(true);

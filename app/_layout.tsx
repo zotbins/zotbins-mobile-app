@@ -6,6 +6,9 @@ import { View } from "react-native";
 import { ActivityIndicator, Pressable } from "react-native";
 import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
 import { Ionicons } from '@expo/vector-icons';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 
 // set user to -1 to indicate that we are checking for user
 export let currentUser: FirebaseAuthTypes.User | null | number = -1;
@@ -51,6 +54,7 @@ export default function RootLayout() {
     if (initializing) return;
 
     const inAuthGroup = segments[0] === "(auth)";
+    SplashScreen.hideAsync();
 
     if (user && !inAuthGroup) {
       // check if user has spiritTrash set and account details set
@@ -67,7 +71,7 @@ export default function RootLayout() {
         }
 
       });
-    } else if (!user && inAuthGroup) {
+    } else if (!user) {
       router.replace("/login");
     }
   }, [user, initializing]);
