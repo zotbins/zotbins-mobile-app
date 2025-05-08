@@ -59,7 +59,6 @@ export default function RootLayout() {
     const inAuthGroup = segments[0] === "(auth)";
   
     if (user && !inAuthGroup) {
-      Alert.alert("Replacing to home");
       setTimeout(() => {
         // check if user has spiritTrash set and account details set
         getSpiritTrashAndAccountDetails(user.uid).then(({ spiritTrash, username }) => {
@@ -76,14 +75,12 @@ export default function RootLayout() {
         });
       }, 500);
     } else if (!user && inAuthGroup) {
-      Alert.alert("Replacing to login");
       setTimeout(() => {
         console.log("Replacing to login")
         router.replace("/login");
       }, 500);
     }
     else if (!user && !inAuthGroup) {
-      Alert.alert("Pushing to login");
       setTimeout(() => {
         router.push("/login");
       }, 500);
