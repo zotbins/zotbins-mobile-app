@@ -16,6 +16,13 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({
   bodyText,
   onNext,
 }) => {
+  const router = useRouter();
+
+  const handleSkip = () => {
+    console.log("Skip button pressed");
+    router.replace("/signup");
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -69,8 +76,7 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({
           alignItems: "center",
         }}
       >
-        {/* Skip Button */}
-        <Pressable>
+        <Pressable onPress={handleSkip}>
           <Text
             style={{
               fontSize: 16,
