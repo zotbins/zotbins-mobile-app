@@ -29,6 +29,10 @@ export default function Onboarding() {
     }
   };
 
+  const handleSkip = () => {
+    setCurrentPage(onboardingPages.length - 1);
+  };
+
   return (
     <ImageBackground
       source={require("../assets/images/onboarding/background.png")}
@@ -36,7 +40,7 @@ export default function Onboarding() {
       resizeMode="cover"
     >
       <View style={{ flex: 1 }}>
-        <CurrentPageComponent onNext={handleNext} />
+        <CurrentPageComponent onNext={handleNext} onSkip={handleSkip} />
       </View>
     </ImageBackground>
   );

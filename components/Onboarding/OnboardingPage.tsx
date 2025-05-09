@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
-import { useRouter } from "expo-router";
 import NextButton from "@/components/Onboarding/NextButton";
 
 interface OnboardingPageProps {
@@ -8,6 +7,7 @@ interface OnboardingPageProps {
   headerText: string;
   bodyText: string;
   onNext: () => void;
+  onSkip: () => void;
 }
 
 const OnboardingPage: React.FC<OnboardingPageProps> = ({
@@ -15,13 +15,8 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({
   headerText,
   bodyText,
   onNext,
+  onSkip,
 }) => {
-  const router = useRouter();
-
-  const handleSkip = () => {
-    console.log("Skip button pressed");
-    router.replace("/signup");
-  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -76,7 +71,7 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({
           alignItems: "center",
         }}
       >
-        <Pressable onPress={handleSkip}>
+        <Pressable onPress={onSkip}>
           <Text
             style={{
               fontSize: 16,
