@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
+import { useRouter } from "expo-router";
 import NextButton from "@/components/Onboarding/NextButton";
 
 interface OnboardingPageProps {
@@ -57,14 +58,31 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({
         </View>
       </View>
 
-      {/* Bottom-right Next Button */}
       <View
         style={{
           position: "absolute",
           bottom: 40,
+          left: 20,
           right: 20,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
+        {/* Skip Button */}
+        <Pressable>
+          <Text
+            style={{
+              fontSize: 16,
+              color: "black",
+              textDecorationLine: "underline",
+            }}
+          >
+            Skip
+          </Text>
+        </Pressable>
+
+        {/* Next Button */}
         <NextButton onPress={onNext} />
       </View>
     </View>
