@@ -17,7 +17,6 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({
 }) => {
   return (
     <View style={{ flex: 1 }}>
-      {/* Centered Content */}
       <View
         style={{
           flex: 1,
@@ -27,7 +26,7 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({
         }}
       >
         {/* Icon */}
-        <Icon width={200} height={200} />
+        <Icon width={300} height={300} />
 
         {/* Header Text */}
         <View style={{ marginTop: 20, alignSelf: "flex-start" }}>
