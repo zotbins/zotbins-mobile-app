@@ -137,30 +137,57 @@ const Scan = () => {
     try {
       const db = getFirestore();
       const userRef = doc(db, "users", user.uid);
-      // Set last update to 25 hours ago
+      const userDoc = await getDoc(userRef);
+
+      const currentStreak = userDoc.data()?.dailyStreak || 0;
+      const now = Date.now(); // Get current timestamp
+      const yesterday = now - 30 * 60 * 60 * 1000; // 25 hours ago
+
+      console.log("Current time:", new Date(now).toLocaleString());
+      console.log(
+        "Setting lastUpdate to:",
+        new Date(yesterday).toLocaleString()
+      );
+
+      // Update the document
       await updateDoc(userRef, {
-        lastStreakUpdate: Date.now() - 25 * 60 * 60 * 1000,
+        lastStreakUpdate: yesterday,
         restoresLeft: 1,
       });
 
-      // Check for restore conditions
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists) {
-        const data = userDoc.data() as {
-          lastStreakUpdate: number;
-          restoresLeft: number;
-        };
-        const lastUpdate = data.lastStreakUpdate;
-        const now = Date.now();
-        const hoursSinceLastUpdate = (now - lastUpdate) / (1000 * 60 * 60);
-
-        if (hoursSinceLastUpdate > 24 && data.restoresLeft > 0) {
-          setShowRestorePopup(true);
-        }
-      }
+      setShowRestorePopup(true);
     } catch (error) {
       console.error("Error testing restore:", error);
     }
+    // if (!user) return;
+
+    // try {
+    //   const db = getFirestore();
+    //   const userRef = doc(db, "users", user.uid);
+    //   // Set last update to 25 hours ago
+    //   await updateDoc(userRef, {
+    //     lastStreakUpdate: Date.now() - 25 * 60 * 60 * 1000,
+    //     restoresLeft: 1,
+    //   });
+
+    //   // Check for restore conditions
+    //   const userDoc = await getDoc(userRef);
+    //   if (userDoc.exists) {
+    //     const data = userDoc.data() as {
+    //       lastStreakUpdate: number;
+    //       restoresLeft: number;
+    //     };
+    //     const lastUpdate = data.lastStreakUpdate;
+    //     const now = Date.now();
+    //     const hoursSinceLastUpdate = (now - lastUpdate) / (1000 * 60 * 60);
+
+    //     if (hoursSinceLastUpdate > 24 && data.restoresLeft > 0) {
+    //       setShowRestorePopup(true);
+    //     }
+    //   }
+    // } catch (error) {
+    //   console.error("Error testing restore:", error);
+    // }
   };
 
   return (
@@ -172,6 +199,24 @@ const Scan = () => {
           onClose={() => setShowStreakPopup(false)}
           streakCount={currentStreak}
           type="streak"
+        />
+        <StreakPopup
+          visible={showRestorePopup}
+          onClose={() => setShowRestorePopup(false)}
+          streakCount={userDoc?.dailyStreak || 0}
+          type="restore"
+          onRestore={() => {
+            // Handle restore logic
+            if (userDoc) {
+              const userRef = doc(getFirestore(), "users", userDoc.uid);
+              updateDoc(userRef, {
+                lastStreakUpdate: Date.now(),
+                restoresLeft: (userDoc.restoresLeft || 1) - 1,
+              });
+              setShowRestorePopup(false);
+            }
+          }}
+          restoresLeft={userDoc?.restoresLeft || 0}
         />
         <Pressable
           className="bg-blue px-5 py-4 rounded-lg active:opacity-50"
@@ -195,7 +240,7 @@ const Scan = () => {
         </Pressable>
         <Pressable
           className="bg-blue px-5 py-4 rounded-lg active:opacity-50"
-          onPress={handleTestScan}
+          onPress={handleTestRestore}
         >
           <Text className="text-white">Test Restore</Text>
         </Pressable>

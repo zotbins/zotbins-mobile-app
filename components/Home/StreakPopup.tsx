@@ -81,7 +81,8 @@ const StreakPopup = ({
                   You lost your {streakCount} day streak!
                 </Text>
                 <Text className="text-center text-gray-600 my-6 text-base/7">
-                  You have 1 restore left. Restores will reset{"\n"}
+                  You have {restoresLeft} restore left. Restores will reset
+                  {"\n"}
                   at the end of the month.
                 </Text>
               </View>
