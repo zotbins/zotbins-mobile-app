@@ -9,8 +9,8 @@ import OnboardingEnd from "@/components/Onboarding/OnboardingEnd";
 const onboardingPages = [
   OnboardingSplash,
   OnboardingAbout,
-  OnboardingQuiz,
   OnboardingScanner,
+  OnboardingQuiz,
   OnboardingEnd,
 ];
 
