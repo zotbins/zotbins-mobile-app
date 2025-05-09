@@ -76,8 +76,7 @@ const LogoAnimation = () => {
     <View
       style={{
         justifyContent: "center",
-        alignItems: "center",
-        flex: 1,
+        alignItems: "center"
       }}
     >
       <Animated.View
@@ -87,7 +86,7 @@ const LogoAnimation = () => {
           transform: [{ translateX: slideAnim }],
         }}
       >
-        <CurrentFrame width={200} height={200} />
+        <CurrentFrame width={250} height={250} />
       </Animated.View>
     </View>
   );

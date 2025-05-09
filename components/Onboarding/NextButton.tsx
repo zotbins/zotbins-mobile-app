@@ -14,7 +14,7 @@ const NextButton: React.FC<NextButtonProps> = ({ onPress, style }) => {
       onPress={onPress}
       className="active:opacity-50 shadow-md"
     >
-      <BackIcon width={48} height={48} style = {{transform: [{scaleX: -1}]}}/>
+      <BackIcon width={61} height={61} style = {{transform: [{scaleX: -1}]}}/>
     </Pressable>
 
   );
