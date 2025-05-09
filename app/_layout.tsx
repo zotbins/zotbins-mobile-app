@@ -1,4 +1,4 @@
-import { Stack, useRouter, useSegments } from "expo-router";
+import { router, useSegments, Stack } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { getAuth, FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { Alert, View } from "react-native";
@@ -18,7 +18,6 @@ export default function RootLayout() {
 
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>();
-  const router = useRouter();
   const segments = useSegments();
 
   // checks if user has spiritTrash set and/or account details set
