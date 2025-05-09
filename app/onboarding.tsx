@@ -1,46 +1,47 @@
-import DotIndicator from "@/components/Reusables/DotIndicator";
 import React, { useState } from "react";
-import { ScrollView, View } from "react-native";
-import OnboardingAbout from "../components/Onboarding/OnboardingAbout";
-import OnboardingEnd from "../components/Onboarding/OnboardingEnd";
-import OnboardingQuiz from "../components/Onboarding/OnboardingQuizFeature";
-import OnboardingScanner from "../components/Onboarding/OnboardingScannerFeature";
+import { View, ImageBackground } from "react-native";
+import OnboardingSplash from "@/components/Onboarding/OnboardingSplash";
+import OnboardingAbout from "@/components/Onboarding/OnboardingAbout";
+import OnboardingQuiz from "@/components/Onboarding/OnboardingQuizFeature";
+import OnboardingScanner from "@/components/Onboarding/OnboardingScannerFeature";
+import OnboardingAchievements from "@/components/Onboarding/OnboardingAchievements";
+import OnboardingEnd from "@/components/Onboarding/OnboardingEnd";
+
+const onboardingPages = [
+  OnboardingSplash,
+  OnboardingAbout,
+  OnboardingScanner,
+  OnboardingQuiz,
+  OnboardingAchievements,
+  OnboardingEnd,
+];
 
 export default function Onboarding() {
-  const [currentOffset, setCurrentOffset] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const CurrentPageComponent = onboardingPages[currentPage];
+
+  const handleNext = () => {
+    if (currentPage < onboardingPages.length - 1) {
+      setCurrentPage((prev) => prev + 1);
+    } else {
+      console.log("Onboarding complete. Navigate to signup.");
+    }
+  };
+
+  const handleSkip = () => {
+    setCurrentPage(onboardingPages.length - 1);
+  };
+
   return (
-    <>
-      <ScrollView
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        disableIntervalMomentum={true}
-        className="flex-1"
-        onMomentumScrollEnd={(e) => {
-          // uses the content offset value to update the dot indicator
-          if (e.nativeEvent.contentOffset.x > currentOffset) {
-            setCurrentPage((prevCurrentPage) => prevCurrentPage + 1);
-          } else if (e.nativeEvent.contentOffset.x < currentOffset) {
-            setCurrentPage((prevCurrentPage) => prevCurrentPage - 1);
-          }
-          setCurrentOffset(e.nativeEvent.contentOffset.x);
-        }}
-      >
-        <View className="flex-1 w-screen">
-          <OnboardingAbout />
-        </View>
-        <View className="flex-1 w-screen">
-          <OnboardingQuiz />
-        </View>
-        <View className="flex-1 w-screen">
-          <OnboardingScanner />
-        </View>
-        <View className="flex-1 w-screen">
-          <OnboardingEnd />
-        </View>
-      </ScrollView>
-      <DotIndicator currentPage={currentPage} />
-    </>
+    <ImageBackground
+      source={require("../assets/images/onboarding/background.png")}
+      style={{ flex: 1 }}
+      resizeMode="cover"
+    >
+      <View style={{ flex: 1 }}>
+        <CurrentPageComponent onNext={handleNext} onSkip={handleSkip} />
+      </View>
+    </ImageBackground>
   );
 }
