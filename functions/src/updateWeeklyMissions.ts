@@ -1,4 +1,5 @@
-import * as functions from 'firebase-functions/v1';
+import { onSchedule } from "firebase-functions/v2/scheduler";
+
 import * as admin from 'firebase-admin';
 
 const updateWeeklyMissionsLogic = async () => {
@@ -32,14 +33,15 @@ const updateWeeklyMissionsLogic = async () => {
     } catch (error) {
         console.error("Error updating weekly missions: ", error);
     }
-    return null;
+    return;
 };
 
-export const updateWeeklyMissions = functions.pubsub.schedule('0 0 * * 1') // Runs every Monday at midnight UTC
-  .timeZone('UTC').onRun(updateWeeklyMissionsLogic);
+export const updateWeeklyMissions = onSchedule(
+  {
+    schedule: '0 0 * * 1',    // every Monday at midnight UTC
+    timeZone: 'America/Los_Angeles',
+    region:   'us-west1',
+  },
+  updateWeeklyMissionsLogic
+);
 
-// HTTP function to test weekly missions update
-export const testUpdateWeeklyMissions = functions.https.onRequest(async (req, res) => {
-    await updateWeeklyMissionsLogic();
-    res.send("Weekly missions updated");
-});

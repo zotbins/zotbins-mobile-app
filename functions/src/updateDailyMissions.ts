@@ -1,5 +1,5 @@
-import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
+import { onSchedule } from "firebase-functions/v2/scheduler";
 
 const updateDailyMissionsLogic = async () => {
     const db = admin.firestore();
@@ -32,14 +32,14 @@ const updateDailyMissionsLogic = async () => {
     } catch (error) {
         console.error("Error updating daily missions: ", error);
     }
-    return null;
+    return;
 };
 
-
-export const updateDailyMissions = functions.pubsub.schedule("every day 00:00").onRun(updateDailyMissionsLogic);
-
-// HTTP function to test daily missions update
-export const testUpdateDailyMissions = functions.https.onRequest(async (req, res) => {
-    await updateDailyMissionsLogic();
-    res.send("Daily missions updated");
-});
+export const updateDailyMissions = onSchedule(
+  {
+    schedule: '0 0 * * *',    // every day at midnight UTC
+    timeZone: 'America/Los_Angeles',
+    region:   'us-west1',
+  },
+  updateDailyMissionsLogic
+);
