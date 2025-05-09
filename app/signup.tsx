@@ -12,13 +12,12 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 import LinearGradient from 'react-native-linear-gradient';
 import Background from '@/assets/images/background.png';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function Signup() {
-  const router = useRouter();
   const [username, setUsername] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');

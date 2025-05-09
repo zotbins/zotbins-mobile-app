@@ -1,6 +1,5 @@
 import auth, { getAuth } from "@react-native-firebase/auth";
 import { Link, useRouter } from "expo-router";
-import { FirebaseError } from "firebase/app";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -218,7 +217,7 @@ const Login = () => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
     } catch (e: any) {
-      const err = e as FirebaseError;
+      const err = e as Error;
       alert("Registration failed: " + err.message);
     } finally {
       setLoading(false);
