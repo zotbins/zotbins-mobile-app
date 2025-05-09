@@ -13,6 +13,7 @@ import {
 } from "@react-native-firebase/firestore";
 import { getAuth, FirebaseAuthTypes } from "@react-native-firebase/auth";
 import StreakPopup from "@/components/Home/StreakPopup";
+import { useUserContext } from "@/context/UserProvider";
 
 const Scan = () => {
   const [image, setImage] = useState<string | null>(TestImage);
@@ -22,6 +23,8 @@ const Scan = () => {
   const user = getAuth().currentUser;
   const [showStreakPopup, setShowStreakPopup] = useState(false);
   const [currentStreak, setCurrentStreak] = useState(0);
+  const { userDoc } = useUserContext();
+  const [showRestorePopup, setShowRestorePopup] = useState(false);
 
   const getDailyScanCount = async (user: FirebaseAuthTypes.User) => {
     try {
@@ -83,6 +86,7 @@ const Scan = () => {
 
   // handles the scan button press
   const handleScan = async () => {
+    if (!user) return;
     // Get the daily scan count
     const dailyScanCount = await getDailyScanCount(user);
 
@@ -127,6 +131,38 @@ const Scan = () => {
     }
   };
 
+  const handleTestRestore = async () => {
+    if (!user) return;
+
+    try {
+      const db = getFirestore();
+      const userRef = doc(db, "users", user.uid);
+      // Set last update to 25 hours ago
+      await updateDoc(userRef, {
+        lastStreakUpdate: Date.now() - 25 * 60 * 60 * 1000,
+        restoresLeft: 1,
+      });
+
+      // Check for restore conditions
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists) {
+        const data = userDoc.data() as {
+          lastStreakUpdate: number;
+          restoresLeft: number;
+        };
+        const lastUpdate = data.lastStreakUpdate;
+        const now = Date.now();
+        const hoursSinceLastUpdate = (now - lastUpdate) / (1000 * 60 * 60);
+
+        if (hoursSinceLastUpdate > 24 && data.restoresLeft > 0) {
+          setShowRestorePopup(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error testing restore:", error);
+    }
+  };
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -145,13 +181,23 @@ const Scan = () => {
         </Pressable>
         <Pressable
           className="bg-blue px-5 py-4 rounded-lg active:opacity-50"
-          // onPress={() => {
-          //   // setShowScanResults(!showScanResults);
-
-          // }}
-          onPress={handleTestScan}
+          onPress={() => {
+            setShowScanResults(!showScanResults);
+          }}
         >
           <Text className="text-white">Test Scan Result</Text>
+        </Pressable>
+        <Pressable
+          className="bg-blue px-5 py-4 rounded-lg active:opacity-50"
+          onPress={handleTestScan}
+        >
+          <Text className="text-white">Test Streak</Text>
+        </Pressable>
+        <Pressable
+          className="bg-blue px-5 py-4 rounded-lg active:opacity-50"
+          onPress={handleTestScan}
+        >
+          <Text className="text-white">Test Restore</Text>
         </Pressable>
         {showScanResults && (
           <ScanResults
