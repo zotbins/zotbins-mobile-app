@@ -132,7 +132,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         initUser(authUser.uid);
       }
       else{
-        setUserDoc(null); //reset user doc if no user
         setInitializing(false); //set initializing to false if no user
       }
     });
@@ -150,23 +149,15 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
       const unsubscribeFirestore = onSnapshot(userRef, async (docSnapshot) => {
         if (!docSnapshot.exists) {
+          console.log("User document does not exist");
           setUserDoc(null);
           return;
         }
+        
   
         const userData = docSnapshot.data();
-        let profilePicURL: string | null = null;
-  
-        try {
-          const profilePicRef = ref(storage, `zotzero-user-profile-pics/${user.uid}`);
-          profilePicURL = await getDownloadURL(profilePicRef);
-        } catch (error: any) {
-          if (error.code !== "storage/object-not-found") {
-            console.error("Error fetching profile picture from snapshot:", error);
-          }
-        }
-  
-        setUserDoc({ ...userData, photoURL: profilePicURL });
+
+        if (userData) setUserDoc(userData);
       });
 
       return unsubscribeFirestore;
