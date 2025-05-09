@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { View, ImageBackground } from "react-native";
 import OnboardingSplash from "@/components/Onboarding/OnboardingSplash";
+import OnboardingAbout from "@/components/Onboarding/OnboardingAbout";
 import OnboardingQuiz from "@/components/Onboarding/OnboardingQuizFeature";
 import OnboardingScanner from "@/components/Onboarding/OnboardingScannerFeature";
 import OnboardingEnd from "@/components/Onboarding/OnboardingEnd";
 
 const onboardingPages = [
   OnboardingSplash,
+  OnboardingAbout,
   OnboardingQuiz,
   OnboardingScanner,
   OnboardingEnd,
