@@ -1,6 +1,7 @@
 import React from "react";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import BackIcon from "@/assets/icons/BackIcon.svg";
 
 interface NextButtonProps {
   onPress: () => void;
@@ -11,21 +12,10 @@ const NextButton: React.FC<NextButtonProps> = ({ onPress, style }) => {
   return (
     <Pressable
       onPress={onPress}
-      style={[
-        {
-          position: "absolute",
-          bottom: 20,
-          right: 20,
-          backgroundColor: "#48BB78",
-          borderRadius: 50,
-          padding: 12,
-          elevation: 5,
-        },
-        style,
-      ]}
     >
-      <Ionicons name="arrow-forward" size={24} color="white" />
+      <BackIcon width={48} height={48} style = {{transform: [{scaleX: -1}]}}/>
     </Pressable>
+
   );
 };
 
