@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { FirebaseAuthTypes, getAuth } from "@react-native-firebase/auth";
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
-import { getStorage, getDownloadURL, ref } from "@react-native-firebase/storage";
 import { 
   getFirestore, 
   doc, 
@@ -142,7 +141,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   useEffect(() => {
     if (user?.uid) {
       const db = getFirestore();
-      const storage = getStorage();
       const userRef = doc(db, "users", user.uid);
 
       //listen for realtime updates
