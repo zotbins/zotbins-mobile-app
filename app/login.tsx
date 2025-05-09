@@ -82,8 +82,6 @@ const createUserDocument = async (
   });
 };
 const Login = () => {
-  const router = useRouter();
-  router.push("/onboarding");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
