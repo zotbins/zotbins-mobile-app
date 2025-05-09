@@ -4,6 +4,7 @@ import OnboardingSplash from "@/components/Onboarding/OnboardingSplash";
 import OnboardingAbout from "@/components/Onboarding/OnboardingAbout";
 import OnboardingQuiz from "@/components/Onboarding/OnboardingQuizFeature";
 import OnboardingScanner from "@/components/Onboarding/OnboardingScannerFeature";
+import OnboardingAchievements from "@/components/Onboarding/OnboardingAchievements";
 import OnboardingEnd from "@/components/Onboarding/OnboardingEnd";
 
 const onboardingPages = [
@@ -11,6 +12,7 @@ const onboardingPages = [
   OnboardingAbout,
   OnboardingScanner,
   OnboardingQuiz,
+  OnboardingAchievements,
   OnboardingEnd,
 ];
 
