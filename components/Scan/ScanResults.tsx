@@ -33,12 +33,14 @@ interface ScanResultsProps {
   image: string | null;
   imageDimensions: [number, number] | null;
   setImage: (image: string | null) => void;
+  onSuccessfulScan: () => Promise<void>;
 }
 
 const ScanResults: React.FC<ScanResultsProps> = ({
   image,
   imageDimensions,
   setImage,
+  onSuccessfulScan,
 }) => {
   const [base64Image, setBase64Image] = useState<string>("");
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
@@ -290,6 +292,7 @@ const ScanResults: React.FC<ScanResultsProps> = ({
         }}
         wasteObjects={wasteObjects}
         image={image}
+        onSuccessfulScan={onSuccessfulScan}
       />
     </BottomSheetModalProvider>
   );
