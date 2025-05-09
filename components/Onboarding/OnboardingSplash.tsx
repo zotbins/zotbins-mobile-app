@@ -2,7 +2,7 @@ import React from "react";
 import { ScrollView, Text, Image, View, SafeAreaView } from "react-native";
 import LogoAnimation from "@/components/Onboarding/LogoAnimation";
 
-const OnboardingAbout = () => {
+const OnboardingSplash = () => {
   return (
     <View style = {{position: "absolute", top: 0, left: 0, right: 0, bottom: 0}}>
       <ScrollView
@@ -20,4 +20,4 @@ const OnboardingAbout = () => {
   );
 };
 
-export default OnboardingAbout;
+export default OnboardingSplash;
