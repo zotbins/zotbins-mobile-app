@@ -1,8 +1,9 @@
 
 import * as admin from "firebase-admin";
-import {updateDailyMissions, testUpdateDailyMissions} from "./updateDailyMissions";
+import {updateDailyMissions} from "./updateDailyMissions";
+import {updateWeeklyMissions} from "./updateWeeklyMissions";
 
 admin.initializeApp();
 
 exports.updateDailyMissions = updateDailyMissions;
-exports.testUpdateDailyMissions = testUpdateDailyMissions;
+exports.updateWeeklyMissions = updateWeeklyMissions;
