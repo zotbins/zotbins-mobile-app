@@ -83,7 +83,7 @@ export default function RootLayout() {
     if (initializing || isFirstLaunch === null) return;
 
     // if it's the first launch -> onboarding slides
-    if (isFirstLaunch) {
+    if (isFirstLaunch && !user) {
       router.replace("/onboarding");
       AsyncStorage.setItem('hasLaunched', 'true');
       return;
