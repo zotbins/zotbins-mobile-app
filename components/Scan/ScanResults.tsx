@@ -82,13 +82,14 @@ const ScanResults: React.FC<ScanResultsProps> = ({
                 await updateDoc(userRef, {
                   lastScanDate: todayDateString,
                   totalPoints: increment(10),
+                  weeklyPoints: increment(10),
                   dailyStreak: increment(1),
                   lastStreakUpdate: Date.now(),
                 });
                 // Check if dailyStreak is greater than 1 to award extra points for daily streak
                 const dailyStreak = docSnapshot.data()?.dailyStreak || 0;
                 if (dailyStreak > 1) {
-                  await updateDoc(userRef, { totalPoints: increment(2) });
+                  await updateDoc(userRef, { totalPoints: increment(2), weeklyPoints: increment(2) });
                   updateAchievementProgress("points", 12);
                   updateMissionProgress("points", 12);
                 } else {

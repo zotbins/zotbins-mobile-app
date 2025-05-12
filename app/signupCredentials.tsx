@@ -47,6 +47,7 @@ async function createUserDocument(
     xp: 0,
     level: 1,
     totalPoints: 0,
+    weeklyPoints: 0,
     dailyStreak: 0,
     dailyScans: 0,
     totalScans: 0,

@@ -32,6 +32,7 @@ export default function Layout() {
   const windowHeight = Dimensions.get('window').height; 
   return (
     <>
+      <StatusBar style="dark" />
       <Tabs
         screenOptions={{
           tabBarStyle: {

@@ -22,29 +22,22 @@ const Home = () => {
           headerShown: false,
         }}
       />
-
-      <LinearGradient
-        colors={["#F5FFF5", "#DBFFD8"]}
-        style={{ flex: 1 }}
-      >
-        <ScrollView
-          contentContainerStyle={{ paddingBottom: 45 }}
-          showsVerticalScrollIndicator={false}
+      <SafeAreaView style={{ flex: 1 }} className="bg-[#F5FFF5]">
+        <LinearGradient colors={["#F5FFF5", "#DBFFD8"]} style={{ flex: 1 }}>
+          <ScrollView
+            contentContainerStyle={{ paddingBottom: 100 }}
+            showsVerticalScrollIndicator={false}
           >
-          <SafeAreaView className="flex-1 px-5 gap-2 pb-24">
-            <Header username={userDoc?.username || "User"} />
-            <EnvImpactPreview />
-            <ScanWidget scans={3 - userDoc?.dailyScans || 0} />
-            <DailyQuizWidget />
-
-            <MissionsWidget />
-
-
-          </SafeAreaView>
-        </ScrollView>
-
-
-      </LinearGradient>
+            <View className="flex-1 px-5 gap-2 pb-24">
+              <Header username={userDoc?.username || "User"} />
+              <EnvImpactPreview />
+              <ScanWidget scans={3 - userDoc?.dailyScans || 0} />
+              <DailyQuizWidget />
+              <MissionsWidget />
+            </View>
+          </ScrollView>
+        </LinearGradient>
+      </SafeAreaView>
     </>
   );
 };

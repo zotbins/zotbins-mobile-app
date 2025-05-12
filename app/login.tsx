@@ -50,6 +50,7 @@ const createUserDocument = async (
   const xp: number = 0;
   const level: number = 1;
   const totalPoints: number = 0;
+  const weeklyPoints: number = 0;
   const dailyStreak: number = 0;
   const dailyScans: number = 0;
   const totalScans: number = 0;
@@ -67,6 +68,7 @@ const createUserDocument = async (
     xp,
     level,
     totalPoints,
+    weeklyPoints,
     dailyStreak,
     dailyScans,
     totalScans,

@@ -16,7 +16,7 @@ const Header: React.FC<HeaderProps> = ({ username }) => {
       <View className="flex-col justify-between py-6 px-2">
         <SimpleLogoSvg width={100} height={50} />
 
-        <Text className="text-darkGreen text-4xl font-semibold mt-3">
+        <Text className="text-darkGreen text-4xl font-bold mt-3">
           Hello, {username}!
         </Text>
       </View>

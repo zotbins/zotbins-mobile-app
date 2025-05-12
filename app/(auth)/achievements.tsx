@@ -17,10 +17,10 @@ const AchievementsScreen = () => {
           headerLeft: () => <BackButton />,
         }}
       />
-      <ScrollView className="flex-1 bg-lightBackground" showsVerticalScrollIndicator={false}>
-      <View className="flex-1 px-8">
-        <View className="mt-24 mb-8">
-          <Text className="text-5xl font-bold text-darkGreen">Achievements</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+      <View className="px-8">
+        <View className="mt-20 mb-8">
+          <Text className="text-4xl font-bold text-darkGreen">Achievements</Text>
         </View>
         
         <AchievementsList 
