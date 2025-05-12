@@ -9,7 +9,13 @@
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash-screen.png",
-      "resizeMode": "contain"
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff",
+      "imageResizeMode": "contain",
+      "dark": {
+            "image": "./assets/images/splash-screen.png",
+            "backgroundColor": "#000000"
+          }
     },
     "ios": {
       "supportsTablet": true,
@@ -53,7 +59,8 @@
         }
       ],
       "@react-native-firebase/app",
-      "@react-native-firebase/auth"
+      "@react-native-firebase/auth",
+      "expo-apple-authentication"
     ],
     "experiments": {
       "typedRoutes": true
