@@ -1,4 +1,5 @@
 #!/bin/bash
+npm install 
 
 cd /Volumes/workspace/repository/ios
 
