@@ -60,6 +60,7 @@ async function createUserDocument(
     friendRequestsSent: [],
     friendRequestsReceived: [],
     blockedUsers: [],
+    restoresLeft: 1,
   });
 }
 

@@ -45,9 +45,8 @@ const CameraScreen = () => {
       const photo = await camera.takePhoto();
       console.log("Photo taken:", photo);
 
-      const uri = Platform.OS === "android"
-      ? `file://${photo.path}`
-      : photo.path;
+      const uri =
+        Platform.OS === "android" ? `file://${photo.path}` : photo.path;
 
       setImage(uri);
       console.log("Image URI:", uri);
@@ -101,6 +100,10 @@ const CameraScreen = () => {
             image={image}
             imageDimensions={imageDimensions}
             setImage={setImage}
+            onSuccessfulScan={async () => {
+              // handle successful scan here
+              router.back();
+            }}
           />
         )}
       </View>
