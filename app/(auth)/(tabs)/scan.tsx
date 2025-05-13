@@ -25,7 +25,6 @@ const Scan = () => {
   const [currentStreak, setCurrentStreak] = useState(0);
   const { userDoc } = useUserContext();
   const [showRestorePopup, setShowRestorePopup] = useState(false);
-
   const getDailyScanCount = async (user: FirebaseAuthTypes.User) => {
     try {
       const db = getFirestore();
@@ -64,15 +63,6 @@ const Scan = () => {
       const updatedStreak = isNewDay
         ? (userData?.dailyStreak ?? 0) + 1
         : userData?.dailyStreak ?? 0;
-
-      // Update user document
-      await updateDoc(userRef, {
-        dailyScans: increment(1),
-        totalScans: increment(1),
-        lastStreakUpdate: now,
-        dailyStreak: updatedStreak,
-        ...(isNewDay && { xp: increment(10) }), // Award XP for maintaining streak
-      });
 
       // Show streak popup if this is the first scan of the day
       if (isNewDay) {
@@ -159,35 +149,6 @@ const Scan = () => {
     } catch (error) {
       console.error("Error testing restore:", error);
     }
-    // if (!user) return;
-
-    // try {
-    //   const db = getFirestore();
-    //   const userRef = doc(db, "users", user.uid);
-    //   // Set last update to 25 hours ago
-    //   await updateDoc(userRef, {
-    //     lastStreakUpdate: Date.now() - 25 * 60 * 60 * 1000,
-    //     restoresLeft: 1,
-    //   });
-
-    //   // Check for restore conditions
-    //   const userDoc = await getDoc(userRef);
-    //   if (userDoc.exists) {
-    //     const data = userDoc.data() as {
-    //       lastStreakUpdate: number;
-    //       restoresLeft: number;
-    //     };
-    //     const lastUpdate = data.lastStreakUpdate;
-    //     const now = Date.now();
-    //     const hoursSinceLastUpdate = (now - lastUpdate) / (1000 * 60 * 60);
-
-    //     if (hoursSinceLastUpdate > 24 && data.restoresLeft > 0) {
-    //       setShowRestorePopup(true);
-    //     }
-    //   }
-    // } catch (error) {
-    //   console.error("Error testing restore:", error);
-    // }
   };
 
   return (
@@ -206,7 +167,6 @@ const Scan = () => {
           streakCount={userDoc?.dailyStreak || 0}
           type="restore"
           onRestore={() => {
-            // Handle restore logic
             if (userDoc) {
               const userRef = doc(getFirestore(), "users", userDoc.uid);
               updateDoc(userRef, {

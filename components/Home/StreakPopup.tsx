@@ -1,26 +1,39 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, Pressable, Modal, Image } from "react-native";
 import { LinearGradient } from "react-native-linear-gradient";
 import StreakFire from "../../assets/images/streakFire.svg";
+import RestoreFire from "@/assets/images/RestoreFire.svg"
 import { AntDesign } from "@expo/vector-icons";
+import { doc, getFirestore, updateDoc } from "@react-native-firebase/firestore";
+import { useUserContext } from "@/context/UserProvider";
 
 interface StreakPopupProps {
   visible: boolean;
   onClose: () => void;
   streakCount: number;
-  type: "streak" | "restore";
   onRestore?: () => void;
+  type: "streak" | "restore";
   restoresLeft?: number;
+  uid: string;
 }
 
 const StreakPopup = ({
   visible,
   onClose,
   streakCount,
-  type,
   onRestore,
+  type,
   restoresLeft,
+  uid,
 }: StreakPopupProps) => {
+  const handleRestore = async () => {
+    try {
+      onRestore();
+    } catch (error) {
+      console.error("Error updating restores left:", error);
+    }
+  };
+
   return (
     <Modal
       visible={visible}
@@ -69,22 +82,24 @@ const StreakPopup = ({
                   >
                     <AntDesign name="close" size={24} color="#00762B" />
                   </Pressable>
-                  <View className="items-center">
-                    <StreakFire width={200} height={150} />
-
-                    <Text className="text-4xl text-darkGreen font-bold relative -top-16">
-                      {streakCount}
-                    </Text>
+                  <View className="items-center mb-8">
+                    <RestoreFire width={200} height={150} />
                   </View>
                 </View>
                 <Text className="text-xl font-bold text-mediumGreen">
                   You lost your {streakCount} day streak!
                 </Text>
-                <Text className="text-center text-gray-600 my-6 text-base/7">
-                  You have {restoresLeft} restore left. Restores will reset
-                  {"\n"}
+                <Text className="text-center text-gray-600 my-4 text-base/7">
+                  You have {restoresLeft} restore left. Restores will {"\n"}reset
                   at the end of the month.
                 </Text>
+                {restoresLeft || 0 > 0 ?
+                  <Pressable className="border rounded-full px-12 py-4 border border-darkGreen bg-primaryGreen mt-4" onPress={handleRestore}>
+                    <Text className="text-white text-xl font-bold">
+                      Restore
+                    </Text>
+                  </Pressable>
+                  : null}
               </View>
             </View>
           </>
