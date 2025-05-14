@@ -3,7 +3,7 @@ import { View, Text, Pressable } from "react-native";
 import NextButton from "@/components/Onboarding/NextButton";
 
 interface OnboardingPageProps {
-  Icon: React.FC<{ width: number; height: number }>;
+  Icon: React.ComponentType<any>;
   headerText: string;
   bodyText: string;
   onNext: () => void;
