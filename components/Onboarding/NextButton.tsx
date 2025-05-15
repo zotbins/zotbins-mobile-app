@@ -40,7 +40,7 @@ const NextButton: React.FC<NextButtonProps> = ({ onPress, style, progress = 0 })
         }}
       >
         <Circle
-          stroke="#00B94A"
+          stroke="#00D363"
           fill="none"
           cx={ringSize / 2}
           cy={ringSize / 2}
