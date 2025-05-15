@@ -1,6 +1,6 @@
 import { ScrollView, Text, View, Dimensions } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
-import { getFirestore, collection, getDocs } from "@react-native-firebase/firestore";
+import { getFirestore, collection, query, where, onSnapshot } from "@react-native-firebase/firestore";
 import { getAuth, FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { LinearGradient } from "expo-linear-gradient";
 import MissionItem from "./MissionItem";
@@ -27,12 +27,18 @@ const MissionsWidget = () => {
     const scrollViewRef = useRef<ScrollView>(null);
     const user = getAuth().currentUser;
 
-    const getMissions = async (user: FirebaseAuthTypes.User) => {
-        try {
-            const db = getFirestore();
-            const missionsCollectionRef = collection(db, "users", user.uid, "missions");
-            const querySnapshot = await getDocs(missionsCollectionRef);
+    // Set up listener so missions are updated in real time
+    useEffect(() => {
+        if (!user) {
+            console.error("User is not logged in");
+            return;
+        }
 
+        const db = getFirestore();
+        const missionsCollectionRef = collection(db, "users", user.uid, "missions");
+        const missionQuery = query(missionsCollectionRef, where('status', '==', true));
+        
+        const unsubscribe = onSnapshot(missionQuery, (querySnapshot) => {
             const allMissions: Mission[] = [];
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
@@ -52,26 +58,20 @@ const MissionsWidget = () => {
             const allDailyMissions = allMissions.filter((mission) => mission.type === "daily");
             const allWeeklyMissions = allMissions.filter((mission) => mission.type === "weekly");
 
-            const randomDailyMissions = allDailyMissions.sort(() => Math.random() - 0.5).slice(0, 3);
-            const randomWeeklyMissions = allWeeklyMissions.sort(() => Math.random() - 0.5).slice(0, 3);
-
-            setDailyMissions(randomDailyMissions);
-            setWeeklyMissions(randomWeeklyMissions);
-        } catch (error) {
+            setDailyMissions(allDailyMissions);
+            setWeeklyMissions(allWeeklyMissions);
+        }, (error) => {
             console.error("Error fetching missions: ", error);
-        }
-    };
+        });
+        
+        return () => unsubscribe();
+    }, [user]);
 
     const handleScroll = (event: any) => {
         const contentOffsetX = event.nativeEvent.contentOffset.x;
         const index = Math.round(contentOffsetX / widgetWidth);
         setCurrentIndex(index);
     };
-
-    useEffect(() => {
-        if (user) getMissions(user);
-        else console.error("User is not logged in");
-    }, []);
 
     return (
         <LinearGradient

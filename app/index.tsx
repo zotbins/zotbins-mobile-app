@@ -26,7 +26,6 @@ const Home = () => {
   }, [initializing]);
 
   useEffect(() => {
-
     if (!initializing) {
       if (!userDoc) {
         router.replace("/login");
@@ -34,7 +33,7 @@ const Home = () => {
         router.replace("/(auth)/(tabs)/home");
       }
     }
-  }, [router, userDoc]);
+  }, [router, userDoc, initializing]);
 
   return (
     <View style={styles.container}>

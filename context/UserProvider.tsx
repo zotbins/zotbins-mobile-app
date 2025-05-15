@@ -36,16 +36,47 @@ async function populateMissions(uid: string) {
   const db = getFirestore();
   const missionsRef = collection(db, "missions");
   const userMissionsRef = collection(db, "users", uid, "missions");
-  const q = query(missionsRef, where('status', '==', true));
+  
+  // Get existing user missions to check for weekly missions
+  const existingUserMissions = await getDocs(query(userMissionsRef));
+  const existingWeeklyMissions = new Map();
+  
+  existingUserMissions.forEach((doc) => {
+    const data = doc.data();
+    if (data.type === "weekly") {
+      // Save weekly missions that are still in progress
+      existingWeeklyMissions.set(doc.id, data);
+    }
+  });
+  
+  // Get all missions from the missions collection
+  const q = query(missionsRef);
   const missionsSnapshot = await getDocs(q);
 
   const batch = writeBatch(db);
   const now = new Date();
+  
   missionsSnapshot.forEach((document) => {
-    const userMissionRef = doc(userMissionsRef, document.id);
+    const missionData = document.data();
+    const missionId = document.id;
+    const missionStatus = missionData.status;
+    const userMissionRef = doc(userMissionsRef, missionId);
+    
+    // Check if this is a weekly mission that we should preserve
+    if (missionData.type === "weekly" && existingWeeklyMissions.has(missionId) && missionStatus) {
+      // Check if it hasn't been 7 days since the last assigned date
+      const assignedAtValue = existingWeeklyMissions.get(missionId)?.assignedAt;
+      const assignedAt = assignedAtValue ? new Date(assignedAtValue) : null;
+      if (assignedAt && (now.getTime() - assignedAt.getTime()) < 7 * 24 * 60 * 60 * 1000) {
+        // If it has been less than 7 days, skip this mission
+        return;
+      }
+    }
+    
+    // For all other missions (daily or new weekly), set them fresh
     batch.set(userMissionRef, {
-      ...document.data(),
-      id: document.id,
+      ...missionData,
+      id: missionId,
       progress: 0,
       userStatus: false,
       assignedAt: now.getTime(),
@@ -93,15 +124,14 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       lastLoginUpdate: now.getTime(),
       xp: increment(5),
     };
-
     if (hoursDiff >= 24 && hoursDiff < 48) {
       // Update data including new missions
-      await populateMissions(uid);
+      populateMissions(uid); // No need to await this, as the missions are synced in the background
       await updateDoc(userRef, baseUpdatePayload);
       console.log("Data updated for new day");
     } else if (hoursDiff >= 48) {
       // adds new missions
-      await populateMissions(uid);
+      populateMissions(uid); // No need to await this, as the missions are synced in the background
       // reset dailystreak
       await updateDoc(userRef, {
         ...baseUpdatePayload,
