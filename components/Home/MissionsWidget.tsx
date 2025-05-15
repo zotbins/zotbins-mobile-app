@@ -1,6 +1,6 @@
 import { ScrollView, Text, View, Dimensions } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
-import { getFirestore, collection, getDocs } from "@react-native-firebase/firestore";
+import { getFirestore, collection, getDocs, query, where } from "@react-native-firebase/firestore";
 import { getAuth, FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { LinearGradient } from "expo-linear-gradient";
 import MissionItem from "./MissionItem";
@@ -31,7 +31,8 @@ const MissionsWidget = () => {
         try {
             const db = getFirestore();
             const missionsCollectionRef = collection(db, "users", user.uid, "missions");
-            const querySnapshot = await getDocs(missionsCollectionRef);
+            const missionQuery = await query(missionsCollectionRef, where('status', '==', true));
+            const querySnapshot = await getDocs(missionQuery);
 
             const allMissions: Mission[] = [];
             querySnapshot.forEach((doc) => {
@@ -52,11 +53,9 @@ const MissionsWidget = () => {
             const allDailyMissions = allMissions.filter((mission) => mission.type === "daily");
             const allWeeklyMissions = allMissions.filter((mission) => mission.type === "weekly");
 
-            const randomDailyMissions = allDailyMissions.sort(() => Math.random() - 0.5).slice(0, 3);
-            const randomWeeklyMissions = allWeeklyMissions.sort(() => Math.random() - 0.5).slice(0, 3);
 
-            setDailyMissions(randomDailyMissions);
-            setWeeklyMissions(randomWeeklyMissions);
+            setDailyMissions(allDailyMissions);
+            setWeeklyMissions(allWeeklyMissions);
         } catch (error) {
             console.error("Error fetching missions: ", error);
         }

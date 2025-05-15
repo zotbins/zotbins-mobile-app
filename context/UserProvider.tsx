@@ -36,7 +36,7 @@ async function populateMissions(uid: string) {
   const db = getFirestore();
   const missionsRef = collection(db, "missions");
   const userMissionsRef = collection(db, "users", uid, "missions");
-  const q = query(missionsRef, where('status', '==', true));
+  const q = query(missionsRef);
   const missionsSnapshot = await getDocs(q);
 
   const batch = writeBatch(db);
