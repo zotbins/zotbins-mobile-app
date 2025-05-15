@@ -2,7 +2,13 @@ import React from "react";
 import OnboardingPage from "@/components/Onboarding/OnboardingPage";
 import AchievementsIcon from "@/assets/images/onboarding/achievements_icon.svg";
 
-const OnboardingAchievements = ({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) => {
+interface OnboardingAchievementsProps {
+  onNext: () => void;
+  onSkip: () => void;
+  progress: number;
+}
+
+const OnboardingAchievements: React.FC<OnboardingAchievementsProps> = ({ onNext, onSkip, progress }) => {
   return (
     <OnboardingPage
       Icon={AchievementsIcon}
@@ -10,6 +16,7 @@ const OnboardingAchievements = ({ onNext, onSkip }: { onNext: () => void; onSkip
       bodyText="Unlock rewards by completing missions and achievements."
       onNext={onNext}
       onSkip={onSkip}
+      progress={progress} 
     />
   );
 };
