@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { View, ImageBackground } from "react-native";
+
 import OnboardingSplash from "@/components/Onboarding/OnboardingSplash";
 import OnboardingAbout from "@/components/Onboarding/OnboardingAbout";
-import OnboardingQuiz from "@/components/Onboarding/OnboardingQuizFeature";
 import OnboardingScanner from "@/components/Onboarding/OnboardingScannerFeature";
+import OnboardingQuiz from "@/components/Onboarding/OnboardingQuizFeature";
 import OnboardingAchievements from "@/components/Onboarding/OnboardingAchievements";
 import OnboardingEnd from "@/components/Onboarding/OnboardingEnd";
 
@@ -33,6 +34,15 @@ export default function Onboarding() {
     setCurrentPage(onboardingPages.length - 1);
   };
 
+  const progressMap: Record<number, number> = {
+    0: 0.0,
+    1: 0.25,
+    2: 0.5,
+    3: 0.75,
+    4: 1.0,
+    5: 1.0,
+  };
+
   return (
     <ImageBackground
       source={require("../assets/images/onboarding/background.png")}
@@ -40,7 +50,11 @@ export default function Onboarding() {
       resizeMode="cover"
     >
       <View style={{ flex: 1 }}>
-        <CurrentPageComponent onNext={handleNext} onSkip={handleSkip} />
+        <CurrentPageComponent
+          onNext={handleNext}
+          onSkip={handleSkip}
+          progress={progressMap[currentPage]}
+        />
       </View>
     </ImageBackground>
   );
