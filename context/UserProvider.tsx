@@ -47,7 +47,6 @@ async function populateMissions(uid: string) {
       ...document.data(),
       id: document.id,
       progress: 0,
-      userStatus: false,
       assignedAt: now.getTime(),
     });
   });
