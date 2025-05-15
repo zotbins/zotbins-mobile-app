@@ -54,26 +54,35 @@ const NextButton: React.FC<NextButtonProps> = ({ onPress, style, progress = 0 })
           originY={ringSize / 2}
         />
       </Svg>
-
-      <Pressable
-        onPress={onPress}
-        className="active:opacity-50"
+      <View
         style={{
-          width: iconSize,
-          height: iconSize,
-          justifyContent: "center",
-          alignItems: "center",
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.5,
+          shadowRadius: 4,
+          elevation: 4,
         }}
       >
-        <BackIcon
-          width="100%"
-          height="100%"
+        <Pressable
+          onPress={onPress}
+          className="active:opacity-50"
           style={{
-            transform: [{ scaleX: -1 }, { translateY: 4.5 }],
+            width: iconSize,
+            height: iconSize,
+            justifyContent: "center",
+            alignItems: "center",
           }}
-        />
+        >
+          <BackIcon
+            width="100%"
+            height="100%"
+            style={{
+              transform: [{ scaleX: -1 }, { translateY: 4.5 }],
+            }}
+          />
 
-      </Pressable>
+        </Pressable>
+      </View>
 
     </View>
   );
