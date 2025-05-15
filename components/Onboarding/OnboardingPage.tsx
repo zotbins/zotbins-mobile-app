@@ -8,6 +8,7 @@ interface OnboardingPageProps {
   bodyText: string;
   onNext: () => void;
   onSkip: () => void;
+  progress: number;
 }
 
 const OnboardingPage: React.FC<OnboardingPageProps> = ({
@@ -16,6 +17,7 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({
   bodyText,
   onNext,
   onSkip,
+  progress,
 }) => {
 
   return (
@@ -83,8 +85,7 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({
           </Text>
         </Pressable>
 
-        {/* Next Button */}
-        <NextButton onPress={onNext} />
+        <NextButton onPress={onNext} progress={progress} />
       </View>
     </View>
   );
