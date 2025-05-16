@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "ZotZeroMobile.app"
-               BlueprintName = "ZotZeroMobile"
-               ReferencedContainer = "container:ZotZeroMobile.xcodeproj">
+               BuildableName = "ZotBins.app"
+               BlueprintName = "ZotBins"
+               ReferencedContainer = "container:ZotBins.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "ZotZeroMobileTests.xctest"
-               BlueprintName = "ZotZeroMobileTests"
-               ReferencedContainer = "container:ZotZeroMobile.xcodeproj">
+               BuildableName = "ZotBinsTests.xctest"
+               BlueprintName = "ZotBinsTests"
+               ReferencedContainer = "container:ZotBins.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ZotZeroMobile.app"
-            BlueprintName = "ZotZeroMobile"
-            ReferencedContainer = "container:ZotZeroMobile.xcodeproj">
+            BuildableName = "ZotBins.app"
+            BlueprintName = "ZotBins"
+            ReferencedContainer = "container:ZotBins.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ZotZeroMobile.app"
-            BlueprintName = "ZotZeroMobile"
-            ReferencedContainer = "container:ZotZeroMobile.xcodeproj">
+            BuildableName = "ZotBins.app"
+            BlueprintName = "ZotBins"
+            ReferencedContainer = "container:ZotBins.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

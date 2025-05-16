@@ -9,7 +9,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>ZotZero-Mobile</string>
+    <string>ZotBins</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -42,7 +42,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>exp+zotzero-mobile</string>
+          <string>exp+zotbins</string>
         </array>
       </dict>
     </array>

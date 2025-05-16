@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ZotZero-Mobile",
-    "slug": "zotzero-mobile",
+    "name": "ZotBins",
+    "slug": "ZotBins",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
