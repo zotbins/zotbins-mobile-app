@@ -1,4 +1,4 @@
-import { useUserContext } from "@/context/UserProvider"
+import { useUserContext } from "@/context/UserProvider";
 import {
   getStorage,
   ref,
@@ -91,7 +91,7 @@ const Profile = () => {
 
       uploadTask.on(
         "state_changed",
-        () => { },
+        () => {},
         (error) => {
           console.error(error);
         },
@@ -110,9 +110,7 @@ const Profile = () => {
 
       <LinearGradient colors={["#F5FFF5", "#DBFFD8"]} style={{ flex: 1 }}>
         <SafeAreaView className="flex-1 px-5 gap-2">
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-          >
+          <ScrollView showsVerticalScrollIndicator={false}>
             <View className="flex justify-center items-center w-full">
               <View className="w-11/12 flex flex-row justify-between items-baseline h-16">
                 <SimpleLogoSvg width={100} height={100} />
@@ -192,9 +190,13 @@ const Profile = () => {
             </View>
 
             <View className="flex flex-row items-center mt-6 ml-4 mb-4">
-              <Text className="text-2xl font-bold text-darkGreen">Achievements</Text>
+              <Text className="text-2xl font-bold text-darkGreen">
+                Achievements
+              </Text>
               <Pressable onPress={() => router.push("/achievements")}>
-                <Text className="text-md text-darkGreen underline mt-1 ml-2">See all</Text>
+                <Text className="text-md text-darkGreen underline mt-1 ml-2">
+                  See all
+                </Text>
               </Pressable>
             </View>
             <AchievementsList limit={5} containerStyle="px-2 w-full mb-24" />

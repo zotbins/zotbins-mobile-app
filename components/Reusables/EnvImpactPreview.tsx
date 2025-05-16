@@ -102,59 +102,71 @@ const EnvImpactPreview = () => {
   };
 
   return (
-    <LinearGradient
-      colors={['#004c18', '#DFFFE3', '#DFFFE3', '#004c18']}
-      style={{ padding: 1, borderRadius: 35, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4, shadowRadius: 3.84 }}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      className="mb-4 shadow-lg"
-      locations={[0, 0.1, 0.9, 1]}
-    >
-      <Pressable
-        style={{ padding: 1, borderRadius: 35, shadowColor: '#000', shadowOffset: { width: 0, height: 7 }, shadowOpacity: 0.4, shadowRadius: 3.84 }}
-        className="flex-row py-8 rounded-[33px] justify-evenly bg-lightBackground"
-        onPress={() => router.push("/envimpact")}
+    <View className="mb-3 shadow-sm">
+      <LinearGradient
+        colors={["#008229", "#DFFFE3", "#B4FABD", "#004C18"]}
+        style={{
+          padding: 1,
+          borderRadius: 35,
+        }}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        className="mb-4 shadow-lg"
+        locations={[0.1, 0.5, 0.8, 1]}
       >
-        <View className="absolute top-4 right-4">
-          <ChevronRight/>
-        </View>
-        {/* carbon footprint stats*/}
-        <View className="flex-col items-center justify-center px-3">
-          <Text className="text-darkestGreen text-lg font-semibold">
-            {calculateCO2Saved()}
-          </Text>
-          <Text className="text-darkestGreen text-lg font-semibold">
-            CO₂ saved
-          </Text>
-        </View>
+        <Pressable
+          style={{
+            padding: 1,
+            borderRadius: 35,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 7 },
+            shadowOpacity: 0.4,
+            shadowRadius: 3.84,
+          }}
+          className="flex-row py-8 rounded-[33px] justify-evenly bg-lightBackground"
+          onPress={() => router.push("/envimpact")}
+        >
+          <View className="absolute top-4 right-4">
+            <ChevronRight />
+          </View>
+          {/* carbon footprint stats*/}
+          <View className="flex-col items-center justify-center px-3">
+            <Text className="text-darkestGreen text-lg font-semibold">
+              {calculateCO2Saved()}
+            </Text>
+            <Text className="text-darkestGreen text-lg font-semibold">
+              CO₂ saved
+            </Text>
+          </View>
 
-        {/* vertical divider */}
-        <View className="w-px h-full bg-gray-200 self-center"></View>
+          {/* vertical divider */}
+          <View className="w-px h-full bg-gray-200 self-center"></View>
 
-        <View className="flex-col justify-center items-center px-3">
-          <Text className="text-darkestGreen text-lg font-semibold">
-            {userDoc?.landfillScanned || 0} items
-          </Text>
-          <Text className="text-darkestGreen text-lg font-semibold">
-            {" "}
-            discarded
-          </Text>
-        </View>
+          <View className="flex-col justify-center items-center px-3">
+            <Text className="text-darkestGreen text-lg font-semibold">
+              {userDoc?.landfillScanned || 0} items
+            </Text>
+            <Text className="text-darkestGreen text-lg font-semibold">
+              {" "}
+              discarded
+            </Text>
+          </View>
 
-        {/* vertical divider */}
-        <View className="w-px h-full bg-gray-200 self-center"></View>
+          {/* vertical divider */}
+          <View className="w-px h-full bg-gray-200 self-center"></View>
 
-        <View className="flex-col justify-center items-center px-3 mr-4">
-          <Text className="text-darkestGreen text-lg font-semibold">
-            {userDoc?.recyclableScanned || 0} items
-          </Text>
-          <Text className="text-darkestGreen text-lg font-semibold">
-            {" "}
-            recycled
-          </Text>
-        </View>
-      </Pressable>
-    </LinearGradient>
+          <View className="flex-col justify-center items-center px-3 mr-4">
+            <Text className="text-darkestGreen text-lg font-semibold">
+              {userDoc?.recyclableScanned || 0} items
+            </Text>
+            <Text className="text-darkestGreen text-lg font-semibold">
+              {" "}
+              recycled
+            </Text>
+          </View>
+        </Pressable>
+      </LinearGradient>
+    </View>
   );
 };
 

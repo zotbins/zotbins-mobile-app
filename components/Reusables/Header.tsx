@@ -13,9 +13,8 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ username }) => {
 
   return (
-      <View className="flex-col justify-between py-6 px-2">
-        <SimpleLogoSvg width={100} height={50} />
-
+      <View className="flex-col justify-between py-5 px-2">
+        <SimpleLogoSvg width={100} height={40} />
         <Text className="text-darkGreen text-4xl font-bold mt-3">
           Hello, {username}!
         </Text>
