@@ -40,6 +40,7 @@ const sortAchievements = (achievements: Achievement[]): Achievement[] => {
   const inProgress = achievements.filter(a => a.userStatus === false);
   
   // sort completed achievements by dateAchieved (most recent first)
+  console.log("Completed Achievements: ", completed);
   const sortedCompleted = completed.sort((a, b) => {
     // if timestamps exist, sort by them (most recent first)
     if (a.dateAchieved && b.dateAchieved) {
@@ -131,7 +132,7 @@ export const AchievementsProvider = ({ children }: { children: ReactNode }) => {
                 id: docSnap.id,
                 ...d,
                 // If the achievement is completed but no dateAchieved, use current timestamp as default
-                dateAchieved: d.dateAchieved || null,
+                dateAchieved: d.dateAchieved || Timestamp.now(),
               };
             });
             // Sort the achievements before setting state
