@@ -197,7 +197,7 @@ const AccountSetup = () => {
                     )
                   }
                 >
-                  Terms of Services
+                  Terms of Service
                 </Text>
               </Text>
             </View>
