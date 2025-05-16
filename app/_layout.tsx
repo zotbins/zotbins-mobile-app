@@ -101,9 +101,9 @@ export default function RootLayout() {
         // if user has no spiritTrash, redirect to spirit trash quiz
         // else if (spiritTrash === "") {
         //   // router.replace("/spirittrash");
-        // else {
-        //   router.replace("/(tabs)/home");
-        // }
+        else {
+          router.replace("/(tabs)/home");
+        }
       });
     } else if (!user) {
       router.replace("/login");

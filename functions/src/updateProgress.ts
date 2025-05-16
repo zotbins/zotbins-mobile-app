@@ -20,8 +20,9 @@ export const updateAchievementProgress = async (actionType: string, increment: n
 
             if (actionType === data.actionType && !userStatus) {
                 const newProgress = progress + increment;
+                console.log(new Date().toLocaleString().split(',')[0]);
                 if (newProgress >= actionAmount) {
-                    batch.update(userAchievementRef, { progress: actionAmount, userStatus: true });
+                    batch.update(userAchievementRef, { progress: actionAmount, userStatus: true, dateAchieved: Date.now()});
                     await handleRewards(user.uid, rewardAmount, rewardType);
                 } else {
                     batch.update(userAchievementRef, { progress: newProgress });
