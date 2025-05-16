@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Alert,
   Text,
@@ -10,9 +10,9 @@ import {
   Platform,
   SafeAreaView,
   Image,
-} from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import auth from '@react-native-firebase/auth';
+} from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import auth from "@react-native-firebase/auth";
 import {
   getFirestore,
   doc,
@@ -23,12 +23,15 @@ import {
   getDocs,
   writeBatch,
   serverTimestamp,
-} from '@react-native-firebase/firestore';
-import LinearGradient from 'react-native-linear-gradient';
-import LeftCircle from '@/assets/images/left-bg-circle.png';
-import RightCircle from '@/assets/images/right-bg-circle.png';
-import BottomCircle from '@/assets/images/bottom-bg-circle.png';
-import { FontAwesome } from '@expo/vector-icons';
+} from "@react-native-firebase/firestore";
+import { Linking } from "react-native";
+
+import Checkbox from "expo-checkbox";
+import LinearGradient from "react-native-linear-gradient";
+import LeftCircle from "@/assets/images/left-bg-circle.png";
+import RightCircle from "@/assets/images/right-bg-circle.png";
+import BottomCircle from "@/assets/images/bottom-bg-circle.png";
+import { FontAwesome } from "@expo/vector-icons";
 
 async function createUserDocument(
   uid: string,
@@ -38,7 +41,7 @@ async function createUserDocument(
   username: string
 ) {
   const db = getFirestore();
-  const userRef = doc(db, 'users', uid);
+  const userRef = doc(db, "users", uid);
   await setDoc(userRef, {
     email,
     uid,
@@ -54,7 +57,7 @@ async function createUserDocument(
     lastLoginUpdate: Date.now(),
     lastStreakUpdate: Date.now(),
     footprint: 0,
-    spiritTrash: '',
+    spiritTrash: "",
     username,
     friendsList: [],
     friendRequestsSent: [],
@@ -66,11 +69,13 @@ async function createUserDocument(
 
 async function populateMissions(uid: string) {
   const db = getFirestore();
-  const missionsRef = collection(db, 'missions');
-  const userMissionsRef = collection(db, 'users', uid, 'missions');
-  const missionsSnapshot = await getDocs(query(missionsRef, where('status', '==', true)));
+  const missionsRef = collection(db, "missions");
+  const userMissionsRef = collection(db, "users", uid, "missions");
+  const missionsSnapshot = await getDocs(
+    query(missionsRef, where("status", "==", true))
+  );
   const batch = writeBatch(db);
-  missionsSnapshot.forEach(docSnap => {
+  missionsSnapshot.forEach((docSnap) => {
     const userMissionRef = doc(userMissionsRef, docSnap.id);
     batch.set(userMissionRef, {
       ...docSnap.data(),
@@ -85,11 +90,11 @@ async function populateMissions(uid: string) {
 
 async function populateAchievements(uid: string) {
   const db = getFirestore();
-  const achRef = collection(db, 'achievements');
-  const userAchRef = collection(db, 'users', uid, 'achievements');
+  const achRef = collection(db, "achievements");
+  const userAchRef = collection(db, "users", uid, "achievements");
   const achSnapshot = await getDocs(achRef);
   const batch = writeBatch(db);
-  achSnapshot.forEach(docSnap => {
+  achSnapshot.forEach((docSnap) => {
     const userDoc = doc(userAchRef, docSnap.id);
     batch.set(userDoc, {
       ...docSnap.data(),
@@ -108,25 +113,26 @@ export default function SignupCredentials() {
     firstName: string;
     lastName: string;
   }>();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const validatePassword = () => {
     if (password !== confirmPassword) {
-      Alert.alert('Error', "Passwords don't match");
+      Alert.alert("Error", "Passwords don't match");
       return false;
     }
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
+      Alert.alert("Error", "Password must be at least 6 characters");
       return false;
     }
     const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
     if (!re.test(password)) {
       Alert.alert(
-        'Error',
-        'Must contain upper, lower, number, and be ≥6 chars'
+        "Error",
+        "Must contain upper, lower, number, and be ≥6 chars"
       );
       return false;
     }
@@ -134,39 +140,39 @@ export default function SignupCredentials() {
   };
 
   const signUp = async () => {
-    if (!email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill out all fields');
+    if (!email || !password || !confirmPassword || !agreedToTerms) {
+      Alert.alert("Error", "Please fill out all fields");
       return;
     }
     if (!validatePassword()) return;
+
+
+    if (!agreedToTerms) {
+      Alert.alert("Error", "You must agree to the Privacy Policy and Terms of Service to continue.");
+      return;
+    }
 
     setLoading(true);
     try {
       const resp = await auth().createUserWithEmailAndPassword(email, password);
       if (resp.additionalUserInfo?.isNewUser) {
         const uid = resp.user.uid;
-        await createUserDocument(
-          uid,
-          email,
-          firstName!,
-          lastName!,
-          username!
-        );
+        await createUserDocument(uid, email, firstName!, lastName!, username!);
         await populateMissions(uid);
         await populateAchievements(uid);
-        router.replace('/spirittrash');
+        router.replace("/spirittrash");
       } else {
-        Alert.alert('Info', 'Account already exists.');
+        Alert.alert("Info", "Account already exists.");
       }
     } catch (e: any) {
-      Alert.alert('Registration failed', e.message);
+      Alert.alert("Registration failed", e.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <LinearGradient colors={['#48BB78', '#009838']} style={{ flex: 1 }}>
+    <LinearGradient colors={["#48BB78", "#009838"]} style={{ flex: 1 }}>
       <Image source={LeftCircle} className="absolute" />
       <Image source={RightCircle} className="absolute top-56 right-0" />
       <Image
@@ -175,8 +181,8 @@ export default function SignupCredentials() {
       />
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
         className="flex-1"
       >
         <SafeAreaView className="mx-5 pt-10 flex-1">
@@ -238,6 +244,40 @@ export default function SignupCredentials() {
                 color="white"
                 className="absolute left-2"
               />
+            </View>
+
+            {/* Terms and Conditions */}
+            <View className="flex-row items-center mt-4 mb-2 ml-1">
+              <Checkbox
+                value={agreedToTerms}
+                onValueChange={setAgreedToTerms}
+                color={agreedToTerms ? "#009838" : undefined}
+                className="mr-2"
+              />
+              <Text className="text-white text-sm flex-1">
+                I agree to the{" "}
+                <Text
+                  className="underline"
+                  onPress={() =>
+                    Linking.openURL(
+                      "https://docs.google.com/document/d/1dQKEX97twJYKaWKl1xt-mqr1uISkzUAtmTWxODRS8eA/edit?tab=t.0"
+                    )
+                  }
+                >
+                  Privacy Policy
+                </Text>
+                {" "}and{" "}
+                <Text
+                  className="underline"
+                  onPress={() =>
+                    Linking.openURL(
+                      "https://docs.google.com/document/d/1dQKEX97twJYKaWKl1xt-mqr1uISkzUAtmTWxODRS8eA/edit?tab=t.0"
+                    )
+                  }
+                >
+                  Terms of Service
+                </Text>
+              </Text>
             </View>
 
             {loading ? (
