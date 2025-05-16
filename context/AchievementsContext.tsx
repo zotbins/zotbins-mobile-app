@@ -40,7 +40,6 @@ const sortAchievements = (achievements: Achievement[]): Achievement[] => {
   const inProgress = achievements.filter(a => a.userStatus === false);
   
   // sort completed achievements by dateAchieved (most recent first)
-  console.log("Completed Achievements: ", completed);
   const sortedCompleted = completed.sort((a, b) => {
     // if timestamps exist, sort by them (most recent first)
     if (a.dateAchieved && b.dateAchieved) {

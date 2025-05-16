@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   View,
   ImageBackground,
+  Image,
 } from "react-native";
 import React, { useEffect } from "react";
 import { router, Stack } from "expo-router";
@@ -18,6 +19,16 @@ import {
 import { getAuth } from "@react-native-firebase/auth";
 import Background from "@/assets/images/quizBackground.png";
 import { Ionicons } from "@expo/vector-icons";
+
+import applecore from "@/assets/images/spirittrashicons/applecore.png";
+import banana from "@/assets/images/spirittrashicons/banana.png";
+import candywrapper from "@/assets/images/spirittrashicons/candywrapper.png";
+import chips from "@/assets/images/spirittrashicons/chips.png";
+import soda from "@/assets/images/spirittrashicons/soda.png";
+import battery from "@/assets/images/spirittrashicons/battery.png";
+import spork from "@/assets/images/spirittrashicons/spork.png";
+import teabag from "@/assets/images/spirittrashicons/teabag.png";
+import box from "@/assets/images/spirittrashicons/box.png";
 
 // update spiritTrash in firestore
 const updateSpiritTrash = async (spiritTrash: string) => {
@@ -34,6 +45,33 @@ const updateSpiritTrash = async (spiritTrash: string) => {
   }
 };
 
+// get spirit trash icon based on spirit trash result
+const getSpiritTrashIcon = (spiritTrash: string) => {
+  console.log("spiritTrash", spiritTrash);
+  switch (spiritTrash) {
+    case "Apple Core":
+      return applecore;
+    case "Banana Peel":
+      return banana;
+    case "Candy Wrapper":
+      return candywrapper;
+    case "Chip Bag":
+      return chips;
+    case "Soda Can":
+      return soda;
+    case "Lithium Ion Battery":
+      return battery;
+    case "Plastic Spork":
+      return spork;
+    case "Tea Bag":
+      return teabag;
+    case "Cardboard Box":
+      return box
+    default:
+      return null;
+  }
+};
+
 const SpiritTrash = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isOptionsDisabled, setIsOptionsDisabled] = useState(true);
@@ -44,7 +82,7 @@ const SpiritTrash = () => {
     "Apple Core": 0,
     "Banana Peel": 0,
     "Tea Bag": 0,
-    "Energy Drink Can": 0,
+    "Soda Can": 0,
     "Lithium Ion Battery": 0,
     "Cardboard Box": 0,
   });
@@ -65,7 +103,7 @@ const SpiritTrash = () => {
         },
         {
           text: "High-intensity workouts",
-          scores: { "Energy Drink Can": 4, "Banana Peel": 1 },
+          scores: { "Soda Can": 4, "Banana Peel": 1 },
         },
         {
           text: "Tinkering with electronics",
@@ -78,7 +116,7 @@ const SpiritTrash = () => {
       answers: [
         {
           text: "Quick and practical",
-          scores: { "Plastic Spork": 3, "Energy Drink Can": 2 },
+          scores: { "Plastic Spork": 3, "Soda Can": 2 },
         },
         {
           text: "Careful planning",
@@ -100,7 +138,7 @@ const SpiritTrash = () => {
       answers: [
         {
           text: "Consistently charged up",
-          scores: { "Energy Drink Can": 3, "Lithium Ion Battery": 2 },
+          scores: { "Soda Can": 3, "Lithium Ion Battery": 2 },
         },
         {
           text: "Steady and reliable",
@@ -130,7 +168,7 @@ const SpiritTrash = () => {
         },
         {
           text: "Energetic and bold",
-          scores: { "Energy Drink Can": 3, "Chip Bag": 2 },
+          scores: { "Soda Can": 3, "Chip Bag": 2 },
         },
         {
           text: "Calm and grounding",
@@ -148,7 +186,7 @@ const SpiritTrash = () => {
         },
         {
           text: "Gaming marathon with friends",
-          scores: { "Chip Bag": 3, "Energy Drink Can": 2 },
+          scores: { "Chip Bag": 3, "Soda Can": 2 },
         },
         {
           text: "Going to an amusement park",
@@ -197,11 +235,13 @@ const SpiritTrash = () => {
     const categories = {
       Garbage: ["Candy Wrapper", "Chip Bag", "Plastic Spork"],
       Compost: ["Apple Core", "Banana Peel", "Tea Bag"],
-      Recyclable: ["Energy Drink Can", "Lithium Ion Battery", "Cardboard Box"],
+      Recyclable: ["Soda Can", "Lithium Ion Battery", "Cardboard Box"],
     };
-    return (Object.entries(categories).find(([_, items]) =>
-      items.includes(trash)
-    ) as [string, string[]])[0];
+    return (
+      Object.entries(categories).find(([_, items]) =>
+        items.includes(trash)
+      ) as [string, string[]]
+    )[0];
   };
 
   const showNextButton = () => {
@@ -269,16 +309,18 @@ const SpiritTrash = () => {
                 >
                   {({ pressed }) => (
                     <View
-                      className={`border border-brightGreen2 my-3 rounded-full py-2.5 ${selectedAnswerIndex === index
+                      className={`border border-brightGreen2 my-3 rounded-full py-2.5 ${
+                        selectedAnswerIndex === index
                           ? "bg-brightGreen4"
                           : "bg-primaryGreen"
-                        }`}
+                      }`}
                     >
                       <Text
-                        className={`text-lg text-center p-2 ${selectedAnswerIndex === index
+                        className={`text-lg text-center p-2 ${
+                          selectedAnswerIndex === index
                             ? "text-mediumGreen"
                             : "text-white"
-                          }`}
+                        }`}
                       >
                         {answer.text}
                       </Text>
@@ -288,9 +330,7 @@ const SpiritTrash = () => {
               ))}
 
               {/* next button */}
-              <View className="flex items-end mt-52">
-              {showNextButton()}
-              </View>
+              <View className="flex items-end mt-52">{showNextButton()}</View>
             </View>
           </View>
         ) : (
@@ -299,8 +339,12 @@ const SpiritTrash = () => {
             <Text className="text-3xl text-center text-white font-semibold">
               Your spirit trash is...
             </Text>
-            <View className="rounded-sm bg-white p-20 py-28 my-5">
-              <Text>placeholder</Text>
+            <View className="rounded-sm p-10 py-14 my-5">
+              <Image
+                source={getSpiritTrashIcon(spiritResult)}
+                className="w-48 h-48"
+                resizeMode="contain"
+              />
             </View>
             <Text className="text-4xl font-bold my-3 text-white">
               {spiritResult}
