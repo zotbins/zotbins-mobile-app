@@ -66,6 +66,18 @@ const Profile = () => {
     }
   };
 
+  const trashImages: { [key: string]: any } = {
+    "Apple Core": require("@/assets/images/spirittrashicons/applecore.png"),
+    "Banana Peel": require("@/assets/images/spirittrashicons/banana.png"),
+    "Lithium Ion Battery": require("@/assets/images/spirittrashicons/battery.png"),
+    "Cardboard Box": require("@/assets/images/spirittrashicons/box.png"),
+    "Candy Wrapper": require("@/assets/images/spirittrashicons/candywrapper.png"),
+    "Chip Bag": require("@/assets/images/spirittrashicons/chips.png"),
+    "Soda Can": require("@/assets/images/spirittrashicons/soda.png"),
+    "Plastic Spork": require("@/assets/images/spirittrashicons/spork.png"),
+    "Tea Bag": require("@/assets/images/spirittrashicons/teabag.png"),
+}
+
   // pick image from camera roll, upload to firebase storage, and set user photoURL to storage URL
   const pickImage = async () => {
     requestPermission();
@@ -155,7 +167,10 @@ const Profile = () => {
                 >
                   <View className="bg-lightBackground rounded-full py-2 flex flex-row items-center justify-between">
                     <View className="flex flex-col items-center w-1/4 pl-4">
-                      <SpiritIcon />
+                      <Image 
+                        source={trashImages[spiritTrash]}
+                        style={{ width: 25, height: 25, resizeMode: "contain" }}
+                      />
                       <Text className="font-medium text-xs text-mediumGreen text-center">
                         {spiritTrash}
                       </Text>
