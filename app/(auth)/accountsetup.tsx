@@ -11,7 +11,15 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { getFirestore, doc, updateDoc, where, query, collection, getDocs } from "@react-native-firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  updateDoc,
+  where,
+  query,
+  collection,
+  getDocs,
+} from "@react-native-firebase/firestore";
 import { getAuth } from "@react-native-firebase/auth";
 import { router, Stack } from "expo-router";
 import Checkbox from "expo-checkbox";
@@ -36,14 +44,21 @@ const AccountSetup = () => {
     return querySnapshot.empty;
   };
 
-  const setAccountDetails = async (username: string, firstName: string, lastName: string) => {
+  const setAccountDetails = async (
+    username: string,
+    firstName: string,
+    lastName: string
+  ) => {
     if (username === "" || firstName === "" || lastName === "") {
       Alert.alert("Error", "Please fill out all fields");
       return;
     }
 
     if (!agreedToTerms) {
-      Alert.alert("Error", "You must agree to the Privacy Policy and Terms of Service to continue.");
+      Alert.alert(
+        "Error",
+        "You must agree to the Privacy Policy and Terms of Service to continue."
+      );
       return;
     }
 
@@ -64,7 +79,7 @@ const AccountSetup = () => {
           lastName: lastName,
         });
         // navigate to spirittrash page
-        router.replace("/spirittrash");
+        // router.replace("/spirittrash");
       }
     } catch (error) {
       console.error("Error setting account details:", error);
@@ -95,7 +110,7 @@ const AccountSetup = () => {
               headerTitle: "",
             }}
           />
-          
+
           <Text className="text-white text-4xl font-semibold mt-16 pl-1">
             Complete Your Profile
           </Text>
@@ -172,8 +187,8 @@ const AccountSetup = () => {
                   }
                 >
                   Privacy Policy
-                </Text>
-                {" "}and{" "}
+                </Text>{" "}
+                and{" "}
                 <Text
                   className="underline"
                   onPress={() =>
