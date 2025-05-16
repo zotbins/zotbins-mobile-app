@@ -35,19 +35,19 @@ allprojects {
             url(new File(['node', '--print', "require.resolve('jsc-android/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim(), '../dist'))
         }
 
-        maven {
+        google()
+        mavenCentral()
+        maven { url 'https://www.jitpack.io' }
+                maven {
             url 'https://api.mapbox.com/downloads/v2/releases/maven'
             authentication {
                 basic(BasicAuthentication)
             }
             credentials {
-                username = 'mapbox'
-                password = project.findProperty('MAPBOX_DOWNLOADS_TOKEN') ?: ""
+                username = "mapbox"
+                password = project.hasProperty('MAPBOX_DOWNLOADS_TOKEN') ? project.property('MAPBOX_DOWNLOADS_TOKEN') : System.getenv('MAPBOX_DOWNLOADS_TOKEN')
             }
         }
 
-        google()
-        mavenCentral()
-        maven { url 'https://www.jitpack.io' }
     }
 }

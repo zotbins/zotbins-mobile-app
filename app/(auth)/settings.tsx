@@ -1,4 +1,4 @@
-import { getAuth } from "@react-native-firebase/auth";
+import auth, { getAuth } from "@react-native-firebase/auth";
 import { router, Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -11,7 +11,13 @@ import {
   Image,
   ImageSourcePropType,
 } from "react-native";
-import { getFirestore, doc, getDoc } from "@react-native-firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  deleteDoc,
+} from "@react-native-firebase/firestore";
+
 import BackButton from "@/components/Reusables/back-button.svg";
 import SimpleLogoSvg from "@/components/Reusables/SimpleLogoSVG";
 import { FontAwesome } from "@expo/vector-icons";
@@ -232,7 +238,14 @@ const Settings = () => {
                 FAQ
               </Text>
             </Pressable>
-
+            <Pressable
+              onPress={() => router.replace("/(auth)/deleteaccount")}
+              className="bg-brightGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-9/12"
+            >
+              <Text className="text-darkGreen text-center font-bold text-xl">
+                Delete Account
+              </Text>
+            </Pressable>
             <Pressable
               onPress={() => getAuth().signOut()}
               className="bg-primaryGreen py-4 rounded-full my-2 active:opacity-50 border border-green-500 w-2/5 mt-5"
