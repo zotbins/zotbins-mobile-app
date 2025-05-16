@@ -1,7 +1,7 @@
 // Takes in an action type ie. mission, scan, points, level, quiz
 // Increments by the value passed in
 // Checks if the user has completed the enough actions to mark achievement as complete through userStatus
-import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, writeBatch, increment } from "@react-native-firebase/firestore";
+import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, writeBatch, increment, Timestamp } from "@react-native-firebase/firestore";
 import { getAuth } from "@react-native-firebase/auth";
 
 export const updateAchievementProgress = async (actionType: string, increment: number) => {
@@ -22,7 +22,7 @@ export const updateAchievementProgress = async (actionType: string, increment: n
                 const newProgress = progress + increment;
                 console.log(new Date().toLocaleString().split(',')[0]);
                 if (newProgress >= actionAmount) {
-                    batch.update(userAchievementRef, { progress: actionAmount, userStatus: true, dateAchieved: Date.now()});
+                    batch.update(userAchievementRef, { progress: actionAmount, userStatus: true, dateAchieved: Timestamp.now() });
                     await handleRewards(user.uid, rewardAmount, rewardType);
                 } else {
                     batch.update(userAchievementRef, { progress: newProgress });
