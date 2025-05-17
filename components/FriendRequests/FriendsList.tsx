@@ -50,7 +50,7 @@ const FriendsList = () => {
                 });
                 const storage = getStorage();
                 const friendsWithPfps = await Promise.all(friendsData.map(async (friend) => {
-                    const storageRef = ref(storage, `profilePics/${friend.uid}`);
+                    const storageRef = ref(storage, `zotzero-user-profile-pics/${friend.uid}`);
                     try {
                         const url = await getDownloadURL(storageRef);
                         return { ...friend, profilePic: url };
